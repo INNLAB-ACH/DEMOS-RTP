@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demos RtP — ACH Colombia</title>
+<link rel="stylesheet" href="assets/index.css">
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="top-bar__inner">
+    <a class="logo" href="./index.html">
+      <span class="logo__mark">ach</span>
+      <span class="logo__text">
+        <strong>ach Colombia</strong>
+        <span>Request to Pay</span>
+      </span>
+    </a>
+    <span class="top-bar__eyebrow">Demos · Iniciación de pagos</span>
+  </div>
+</header>
+
+<div class="page-header">
+  <span class="page-header__eyebrow">Iniciación de pagos · Request to Pay (RtP)</span>
+  <h1 class="page-header__title">Demos RtP — ACH Colombia</h1>
+  <p class="page-header__subtitle">Colección de prototipos interactivos que ilustran cómo un comercio puede iniciar un cobro y un usuario autorizarlo directamente desde su cuenta bancaria, sin tarjeta, a través de distintos canales de origen.</p>
+
+  <div class="kpi-bar">
+    <div class="kpi-item">
+      <span class="kpi-item__value">3</span>
+      <span class="kpi-item__label">Demos disponibles</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-item__value">3</span>
+      <span class="kpi-item__label">Canales de origen del cobro</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-item__value">1</span>
+      <span class="kpi-item__label">Flujo de pago ACH/RTP</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="section-title">
+    <span class="section-title__label">Sobre esta iniciativa</span>
+    <h2 class="section-title__heading">¿Qué es RtP (Request to Pay)?</h2>
+  </div>
+  <p>RtP es la iniciativa de ACH Colombia para habilitar la <strong>iniciación de pagos</strong>: un comercio o cobrador genera una solicitud de cobro que el pagador autoriza directamente desde su entidad financiera, debitando su cuenta sin necesidad de tarjeta plástica ni redirecciones complejas. El objetivo es ofrecer una alternativa de pago inmediata, segura y de bajo costo, integrada de forma nativa en los canales donde el pagador ya está: el checkout de una tienda, una notificación de cobro recurrente o una conversación de WhatsApp.</p>
+  <p>Los demos de esta colección simulan, de extremo a extremo, la experiencia del usuario al recibir y autorizar un cobro RtP desde tres puntos de entrada distintos. Cada uno reproduce las pantallas clave del flujo — selección del método de pago, elección de banco y cuenta, autorización biométrica y confirmación — para evaluar la experiencia de cara al cliente final en distintos contextos de uso.</p>
+</section>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="section-title">
+    <span class="section-title__label">Demos</span>
+    <h2 class="section-title__heading">Accede a cada prototipo</h2>
+  </div>
+
+  <div class="demo-grid">
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · Ecommerce</span>
+      <div class="demo-card__icon">🛒</div>
+      <h3 class="demo-card__title">Pago ACH desde carrito de ecommerce</h3>
+      <p class="demo-card__desc">Checkout de una tienda en línea ficticia (PetLand) donde "Cóbrame con ACH" aparece junto a tarjeta, PSE y efectivo contraentrega. El comprador elige su banco, selecciona la cuenta a debitar, autoriza con huella dactilar dentro de la app del banco y regresa al comercio con el pago confirmado.</p>
+      <a class="demo-card__cta" href="./in-bank/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · Suscripción recurrente</span>
+      <div class="demo-card__icon">🎬</div>
+      <h3 class="demo-card__title">Cobro recurrente de suscripción</h3>
+      <p class="demo-card__desc">Plataforma de streaming ficticia (Suscrito) que notifica un pago pendiente de la mensualidad. El usuario selecciona su banco favorito o busca otro, escoge la cuenta a debitar y confirma el pago, mostrando cómo RtP puede sostener cobros periódicos automáticos.</p>
+      <a class="demo-card__cta" href="./suscrito/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · Conversacional</span>
+      <div class="demo-card__icon">💬</div>
+      <h3 class="demo-card__title">Pago ACH/RTP por WhatsApp</h3>
+      <p class="demo-card__desc">El demo más completo: un comercio (Pizza Nostra) envía el cobro por WhatsApp y ofrece tres rutas de pago — autorizar dentro de WhatsApp, ir a la app del banco o pagar desde el portal de ACH — incluyendo login, selección de cuenta, biometría y recibo final detallado.</p>
+      <a class="demo-card__cta" href="./whatsapp/index.html">Ver demo →</a>
+    </article>
+
+  </div>
+</section>
+
+<footer class="page-footer">
+  <span class="logo__mark">ach</span>
+  <span class="page-footer__info">Demos RtP · ACH Colombia · Uso interno</span>
+  <span>achcolombia.com.co</span>
+  <span class="page-footer__ally">
+    <img class="page-footer__ally-logo" src="assets/logo-innlab.png" alt="Logo aliado Innlab">
+  </span>
+</footer>
+
+</body>
+</html>

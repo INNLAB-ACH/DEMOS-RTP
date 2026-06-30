@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!-- saved from url=(0094)https://nestortobar.github.io/git_ach/microsegmentos/refinamiento-microsegmentos-ach-2027.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refinamiento de Microsegmentos — ACH Colombia 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <link href="./Refinamiento de Microsegmentos — ACH Colombia 2027_files/css2" rel="stylesheet">
+  <link rel="stylesheet" href="./Refinamiento de Microsegmentos — ACH Colombia 2027_files/estilos.css">
+  <style>
+    .tabla-draft { opacity: 0.32; filter: grayscale(1); pointer-events: none; }
+    .tabla-definitiva td, .tabla-definitiva th { vertical-align: top; }
+  </style>
+<style>
+    body { padding-top: 66px; }
+    .top-menu {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(26, 26, 26, .92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 255, 255, .12);
+      padding: 10px 16px;
+    }
+    .top-menu__inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; gap: 10px; align-items: center; justify-content: center;
+    }
+    .top-menu__link {
+      text-decoration: none; font-size: 12px; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: rgba(255, 255, 255, .82);
+      border: 1px solid rgba(255, 255, 255, .2);
+      border-radius: 999px; padding: 8px 14px;
+      transition: background-color .2s, color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .top-menu__link:hover { color: #fff; border-color: rgba(255, 255, 255, .45); }
+    .top-menu__link--active { background: #e4eb60; border-color: #e4eb60; color: #1a1a1a; }
+    @media (max-width: 900px) {
+      body { padding-top: 74px; }
+      .top-menu { padding: 10px 12px; }
+      .top-menu__inner { justify-content: flex-start; overflow-x: auto; }
+    }
+  </style><script src="chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/js/recordConsoleEvents.js"></script></head>
+<body><nav class="top-menu" aria-label="Entregables de microsegmentos"><div class="top-menu__inner"><a href="https://nestortobar.github.io/git_ach/microsegmentos/brief-microsegmentos.html" class="top-menu__link">Brief</a><a href="https://nestortobar.github.io/git_ach/microsegmentos/modelo-matriz-microsegmentos.html" class="top-menu__link">Modelo</a><a href="https://nestortobar.github.io/git_ach/microsegmentos/matriz-plantilla-campo.html" class="top-menu__link">Plantilla</a><a href="https://nestortobar.github.io/git_ach/microsegmentos/plan-investigacion-detallado.html" class="top-menu__link">Plan</a><a href="https://nestortobar.github.io/git_ach/microsegmentos/estimacion-horas-v1.html" class="top-menu__link">Estimacion</a><a href="https://nestortobar.github.io/git_ach/microsegmentos/refinamiento-microsegmentos-ach-2027.html" class="top-menu__link top-menu__link--active">Refinamiento</a></div></nav>
+<div class="reporte">
+
+  <div class="report-header">
+    <div class="report-header__top">
+      <div class="report-header__logo">
+        <img src="data:image/png;base64,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" alt="INNLAB" style="height: 40px">
+      </div>
+      <div class="report-header__meta">
+        <span class="report-header__meta-label">Proyecto</span>
+        <span class="report-header__meta-value">Microsegmentos ACH 2027</span>
+      </div>
+    </div>
+    <div class="report-header__title-block">
+      <span class="report-header__eyebrow">INNLAB · Universidad Icesi</span>
+      <h1 class="report-header__title">Refinamiento de microsegmentos</h1>
+      <p class="report-header__subtitle">Propuesta de mapeo para discusión interna antes de validar con ACH Colombia</p>
+    </div>
+    <div class="report-header__kpi-bar">
+      <div class="report-header__kpi-item">
+        <span class="report-header__kpi-value">6 → 8</span>
+        <span class="report-header__kpi-label">Microsegmentos</span>
+      </div>
+      <div class="report-header__kpi-item">
+        <span class="report-header__kpi-value">3</span>
+        <span class="report-header__kpi-label">Lógicas de corte nuevas</span>
+      </div>
+      <div class="report-header__kpi-item">
+        <span class="report-header__kpi-value">1</span>
+        <span class="report-header__kpi-label">Punto a validar con cliente</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="reporte-body">
+
+    <div class="section">
+      <div class="section-title">
+        <span class="section-title__label">Sección 1</span>
+        <h2 class="section-title__heading">De qué se trata el ejercicio</h2>
+      </div>
+      <p>ACH Colombia está en planeación estratégica de producto para 2027 y necesita reducir su portafolio de ~30 iniciativas a 15–20 bien fundamentadas. Para apoyar esa decisión, el equipo Icesi/INNLAB está construyendo un insumo de investigación generativa: identificar los <em>jobs to be done</em> que los clientes de ACH no tienen resueltos ni con el portafolio actual ni con lo que ofrece el mercado, usando el marco de JTBD + Four Forces.</p>
+    </div>
+
+    <hr class="divider--thick">
+
+    <div class="section">
+      <div class="section-title section-title--compact">
+        <span class="section-title__label">Sección 2</span>
+        <h2 class="section-title__heading">Cómo lo habíamos planteado inicialmente</h2>
+      </div>
+      <p>El alcance original se definió sobre seis microsegmentos amplios: EF Vigiladas, EF No Vigiladas, Personas Naturales, Corporativos, Mipymes y Gobierno. Sobre esa base ya se construyó el plan de investigación completo (24 entrevistas, 9 semanas, 4 fases) y la estimación de horas (87 horas, 62 Sr. / 25 Jr.).</p>
+
+    <hr class="divider--thick">
+
+    <div class="section">
+      <div class="section-title section-title--compact">
+        <span class="section-title__label">Sección 3</span>
+        <h2 class="section-title__heading">Lo que pidió el equipo de ACH</h2>
+      </div>
+      <p>En una reunión posterior, el equipo de ACH solicitó llevar el ejercicio a un nivel más granular — microsegmentos dentro de cada categoría amplia, similar a como ellos mismos segmentan internamente a sus clientes. Por ejemplo: dentro de Entidades Financieras, vigiladas grandes / medianas / pequeñas y no vigiladas cooperativas / fintech; dentro de Empresas, por tamaño y luego por sector económico, como Corporativo-Transporte, Corporativo-Público, etc.</p>
+    </div>
+
+    <div style="margin-top: 20px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.12);">
+        <img src="./Refinamiento de Microsegmentos — ACH Colombia 2027_files/microsegmentos.png" alt="Esquema interno de segmentación de clientes ACH Colombia — Nuestros Clientes" style="width: 100%; display: block;">
+      </div>
+
+      <div style="margin-top: 24px;">
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 10px;">Por qué esta microsegmentación no sería la adecuada para el ejercicio</h3>
+        <p>El esquema que ACH usa internamente para clasificar a sus clientes mezcla tres lógicas de corte distintas sin distinguirlas: tamaño (Entidades Financieras, Empresas), vigilancia regulatoria (Entidades Financieras), sector económico (Empresas) y estructura administrativa (Gobierno). Cada una responde a una pregunta distinta, y ninguna predice bien el <em>job</em> ni la ansiedad de adopción — que es justamente lo que este ejercicio de investigación necesita capturar.</p>
+        <p style="margin-top: 12px; font-weight: 600;">Tres problemas concretos si se sigue ese esquema literalmente:</p>
+        <ol class="lista-numerada" style="margin-top: 8px;">
+          <li><strong>Multiplica celdas sin agregar diferenciación real.</strong> Aplicado a Empresas, cinco tamaños por nueve sectores económicos dan 45 combinaciones teóricas. La gran mayoría comparte el mismo job de cobro — el sector es ruido, no señal.</li>
+          <li><strong>El tamaño no predice comportamiento de adopción.</strong> Una entidad vigilada grande y una pequeña no tienen el mismo decisor ni la misma ansiedad solo por compartir la etiqueta "vigilada". Lo que sí predice el job es el peso del comité de decisión y la dependencia de sistemas legados — variables que el esquema de ACH no captura.</li>
+          <li><strong>La estructura administrativa no es lo mismo que el ciclo de decisión real.</strong> En Gobierno, "centralizado vs. descentralizado" agrupa a ICETEX con un ministerio por compartir jerarquía administrativa, aunque tengan decisores y ansiedades completamente distintas.</li>
+        </ol>
+        <p style="margin-top: 12px;">En síntesis: el esquema de ACH es útil para fines comerciales — saber a quién contactar y cómo está organizada la cuenta — pero no para investigación generativa, donde lo que necesitamos identificar es qué agrupaciones comparten el mismo <em>job</em> no resuelto. Por eso propusimos un criterio alternativo basado en fricción de gobernanza, dependencia tecnológica y patrón transaccional, que es el que sustenta los 8 microsegmentos de la sección siguiente.</p>
+      </div>
+    </div>
+
+    <hr class="divider--thick">
+
+    <div class="section">
+      <div class="section-title">
+        <span class="section-title__label">Sección 4</span>
+        <h2 class="section-title__heading">Lo que encontramos al analizar esa categorización</h2>
+        <p class="section-title__desc">El esquema interno de ACH mezcla tres lógicas de corte sin distinguirlas</p>
+      </div>
+      <p>Al revisar el esquema que ACH usa internamente para clasificar a sus clientes, identificamos que mezcla tres lógicas de corte distintas sin distinguirlas: tamaño (Entidades Financieras, Empresas), vigilancia regulatoria (Entidades Financieras), sector económico (Empresas), y estructura administrativa (Gobierno). Estas variables son útiles para fines comerciales — saber a quién llamar — pero no predicen bien el <em>job</em> ni la <em>ansiedad de adopción</em>, que es lo que necesitamos capturar para este ejercicio de investigación.</p>
+
+      <div class="cita">
+        <span class="cita__texto">En lugar de simplemente "hacer más micro" cada categoría siguiendo el esquema de ACH, propusimos un criterio alternativo de corte: agrupar por fricción de gobernanza, dependencia de sistemas legados y homogeneidad del patrón transaccional — variables que sí predicen comportamiento de adopción.</span>
+        <span class="cita__fuente">Criterio metodológico · Equipo Icesi/INNLAB</span>
+      </div>
+    </div>
+
+    <hr class="divider--thick">
+
+    <div class="section">
+      <div class="section-title">
+        <span class="section-title__label">Sección 5</span>
+        <h2 class="section-title__heading">Propuesta de microsegmentación — 8 microsegmentos</h2>
+        <p class="section-title__desc">Organizados por comportamiento de adopción, no por estructura comercial</p>
+      </div>
+
+      <div class="tabla-wrapper tabla-draft">
+        <table class="tabla-datos tabla-datos--striped">
+          <thead>
+            <tr>
+              <th class="num">#</th>
+              <th>Categoría ACH</th>
+              <th>Microsegmento propuesto</th>
+              <th>Por qué</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td>
+              <td>Entidades financieras</td>
+              <td><strong>EF de alta complejidad</strong> — bancos sistémicos vigilados grandes</td>
+              <td>El comité de decisión y la dependencia de sistemas legados predicen el job; el tamaño solo es proxy de eso.</td>
+            </tr>
+            <tr>
+              <td class="num">2</td>
+              <td>Entidades financieras</td>
+              <td><strong>EF de baja fricción</strong> — cooperativas, fintech y vigiladas pequeñas/medianas</td>
+              <td>Comparten decisor único o casi y la misma ansiedad: costo de cumplimiento. Por eso se fusionan, sin importar si están vigiladas o no.</td>
+            </tr>
+            <tr>
+              <td class="num">3</td>
+              <td>Empresas</td>
+              <td><strong>Cobro recurrente</strong> — transporte, telcos, servicios públicos, peajes</td>
+              <td>El sector no importa si el patrón de cobro es el mismo; la ansiedad central es que falle el cobro automático.</td>
+            </tr>
+            <tr>
+              <td class="num">4</td>
+              <td>Empresas</td>
+              <td><strong>Cobro transaccional</strong> — e-commerce, moda, hogar, corresponsales</td>
+              <td>Ansiedad distinta: fraude y contracargo, no recurrencia. Justifica un microsegmento separado del anterior.</td>
+            </tr>
+            <tr>
+              <td class="num">5</td>
+              <td>Personas naturales</td>
+              <td><strong>Asalariados e independientes</strong> (sin cambios)</td>
+              <td>El corte laboral sí predice momento de pago e ingreso, variables centrales para JTBD de cobro.</td>
+            </tr>
+            <tr>
+              <td class="num">6</td>
+              <td>Gobierno</td>
+              <td><strong>Tesoro único</strong> — SIIF, MinHacienda</td>
+              <td>Ciclo de decisión largo y político; control del flujo de caja centralizado.</td>
+            </tr>
+            <tr class="row--highlight">
+              <td class="num">7</td>
+              <td>Gobierno</td>
+              <td><strong>Entidad territorial autónoma</strong> — alcaldías, gobernaciones</td>
+              <td>Ciclo más rápido que el tesoro único pero fragmentado en cientos de entidades; decisor local, no central.</td>
+            </tr>
+            <tr>
+              <td class="num">8</td>
+              <td>Gobierno</td>
+              <td><strong>Entidad de servicio masivo</strong> — ICETEX, Registraduría</td>
+              <td>Su job es volumen y disponibilidad, no presupuesto; decisor y ansiedad distintos a los otros dos grupos de gobierno.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 36px;">
+        <h2 class="section-title__heading">Microsegmentos definitivos — propuesta refinada (8 microsegmentos)</h2><br>
+        <div class="tabla-wrapper tabla-definitiva">
+          <table class="tabla-datos tabla-datos--striped">
+            <thead>
+              <tr>
+                <th class="num">#</th>
+                <th>Categoría ACH</th>
+                <th>Microsegmento</th>
+                <th>Criterio de agrupación</th>
+                <th>Justificación</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="num">1</td>
+                <td>Entidades financieras</td>
+                <td><strong>EF de alta complejidad</strong> — bancos sistémicos vigilados de gran tamaño</td>
+                <td>Peso del comité de decisión y dependencia de sistemas legados</td>
+                <td>Estas entidades requieren aprobación de comités de riesgo, áreas legales y mesas técnicas antes de cualquier integración. El job no está definido por el tamaño en sí, sino por la cantidad de instancias que deben aprobar un cambio y por cuánto su infraestructura tecnológica heredada limita la velocidad de adopción. La ansiedad central es operativa: no romper algo que ya funciona a gran escala.</td>
+              </tr>
+              <tr>
+                <td class="num">2</td>
+                <td>Entidades financieras</td>
+                <td><strong>EF de baja fricción</strong> — entidades vigiladas de tamaño pequeño o mediano, con estructura organizacional reducida</td>
+                <td>Velocidad de decisión interna, determinada por el tamaño de la estructura organizacional, no por el estatus regulatorio</td>
+                <td>A diferencia del grupo anterior, estas entidades tienen decisor único o un grupo reducido de personas que concentran tecnología, operaciones y negocio. El cumplimiento regulatorio aplica igual que a las grandes, pero al tener estructuras más chicas, el proceso de decisión y adopción fluye con menor fricción. Se excluyen explícitamente las entidades de naturaleza fintech o de modelo de participación nuevo, que se tratan en el microsegmento 3 por tener una lógica de vinculación distinta.</td>
+              </tr>
+              <tr>
+                <td class="num">3</td>
+                <td>Entidades financieras / Empresas <em>(rol híbrido)</em></td>
+                <td><strong>Nuevos participantes del ecosistema</strong> — fintech, pasarelas de pago y entidades que operan simultáneamente como participante del sistema y como empresa habilitadora de cobro</td>
+                <td>Naturaleza híbrida del rol: un mismo actor puede vincularse bajo el régimen de "entidad" para unos servicios y bajo el régimen de "empresa" para otros</td>
+                <td>Este grupo no encaja en la lógica tradicional de "entidad financiera" ni de "empresa", porque su relación comercial cambia según el servicio que estén usando. Tienen particularidades normativas y de flexibilidad operativa distintas tanto de las entidades tradicionales como de las empresas convencionales, y representan una proporción creciente de las solicitudes de vinculación al sistema. Tratarlos como microsegmento aparte permite construir una oferta de valor que reconozca ese doble rol, en lugar de forzarlos dentro de una categoría que no refleja cómo operan.</td>
+              </tr>
+              <tr>
+                <td class="num">4</td>
+                <td>Empresas</td>
+                <td><strong>Cobro recurrente</strong> — empresas cuyo modelo de negocio depende de cobros periódicos y predecibles (ej. transporte, telecomunicaciones, servicios públicos, peajes)</td>
+                <td>Homogeneidad del patrón transaccional, no el sector económico</td>
+                <td>El sector al que pertenece la empresa no predice el job si el patrón de cobro es equivalente: lo que define la necesidad es que el cobro deba ejecutarse de forma automática y recurrente, sobre una base de clientes estable. La ansiedad central de este grupo es que el cobro automático falle, generando pérdida de ingreso o reproceso operativo.</td>
+              </tr>
+              <tr>
+                <td class="num">5</td>
+                <td>Empresas</td>
+                <td><strong>Cobro transaccional</strong> — empresas cuyo modelo de negocio depende de transacciones puntuales y no recurrentes (ej. comercio electrónico, retail, corresponsalías)</td>
+                <td>Homogeneidad del patrón transaccional, distinto al del grupo anterior</td>
+                <td>Aunque también son "empresas" en el esquema comercial de ACH, su ansiedad central es distinta: no temen que falle un cobro recurrente, sino el fraude y el contracargo en transacciones individuales. Esta diferencia de ansiedad justifica separarlo del microsegmento de cobro recurrente, aunque ambos sean "empresas" en sentido amplio.</td>
+              </tr>
+              <tr>
+                <td class="num">6</td>
+                <td>Personas naturales</td>
+                <td><strong>Personas naturales</strong> — asalariados e independientes, tratados como un mismo microsegmento</td>
+                <td>Uso de producto, no situación laboral</td>
+                <td>Se evaluó dividir este grupo por tipo de vínculo laboral, pero se determinó que la mayoría de los productos (transferencias, pagos, consulta de información) se usan de forma idéntica independientemente de si la persona es asalariada o independiente. La única diferencia relevante aparece en productos específicos de cobro (por ejemplo, uso de QR o recepción de pagos por independientes que prestan servicios), que no alcanza a justificar la apertura de un microsegmento separado en esta etapa.</td>
+              </tr>
+              <tr>
+                <td class="num">7</td>
+                <td>Gobierno</td>
+                <td><strong>Gobierno — tesoro centralizado</strong> — entidades que dependen de una única bolsa de presupuesto nacional (ej. ministerios, entidad rectora de hacienda pública)</td>
+                <td>Origen y control del flujo de caja</td>
+                <td>Estas entidades no manejan tesorería propia: dependen de la asignación y aprobación de un presupuesto público centralizado, lo que implica un ciclo de decisión largo, de naturaleza política y sujeto a procesos presupuestales formales. El decisor real no está dentro de la entidad misma, sino en la instancia que controla la bolsa central.</td>
+              </tr>
+              <tr>
+                <td class="num">8</td>
+                <td>Gobierno</td>
+                <td><strong>Gobierno — tesoro independiente</strong> — entidades territoriales (ej. alcaldías, gobernaciones) y entidades de servicio público con tesorería propia (ej. universidades públicas, hospitales públicos, entidades de servicio masivo al ciudadano)</td>
+                <td>Origen y control del flujo de caja, distinto al del grupo anterior</td>
+                <td>A diferencia del microsegmento anterior, estas entidades administran su propia tesorería de forma independiente del presupuesto nacional centralizado. Inicialmente se consideró separar a las entidades territoriales de las entidades de servicio masivo al ciudadano, pero se determinó que la variable que más predice el job — el manejo autónomo del flujo de caja — es compartida por ambas, por lo que se mantienen unidas en un mismo microsegmento.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider--thick">
+
+    <div class="section">
+      <div class="section-title section-title--compact">
+        <span class="section-title__label">Sección 6</span>
+        <h2 class="section-title__heading">Resultado neto</h2>
+      </div>
+      <p>Ninguno de estos microsegmentos se definió por tamaño de organización, sector económico o estructura administrativa per se. El criterio común en los ocho es identificar quién decide, qué tan rápido fluye esa decisión, y qué patrón de comportamiento transaccional o de adopción comparte el grupo — variables que predicen el job to be done y la ansiedad de adopción mejor que las categorías comerciales con las que ACH organiza internamente a sus clientes.</p>
+    </div>
+
+  </div>
+
+  <div class="report-footer">
+    <img src="data:image/png;base64,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" alt="INNLAB" style="height: 28px">
+    <span class="report-footer__info">Refinamiento de microsegmentos · ACH Colombia 2027 · Uso interno — equipo Icesi/INNLAB</span>
+    <span class="report-footer__url">icesi.edu.co</span>
+  </div>
+
+</div>
+  <script src="./Refinamiento de Microsegmentos — ACH Colombia 2027_files/nav.js.descarga"></script>
+
+
+<div id="give-freely-root-ejkiikneibegknkgimmihdpcbcedgmpo" class="give-freely-root" data-extension-id="ejkiikneibegknkgimmihdpcbcedgmpo" data-extension-name="Volume Booster" style="display: block;"><template shadowrootmode="open"><style>
+  :host {
+    all: initial;
+  }
+
+  .gf-scroll-remove::-webkit-scrollbar {
+    border-radius-bottom-right: 15px;
+  }
+
+  button {
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .give-freely-close-button:hover {
+    opacity: 0.7;
+  }
+
+  input[type="radio"] {
+    margin-right: 8px;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #e5e5e5;
+    margin: 1em 0;
+  }
+
+  @media (max-width: 600px), (max-height: 480px) {
+    #give-freely-checkout-popup {
+      display: none !important;
+    }
+  }
+</style><div><div class="gf-app"></div></div></template></div></body></html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Pago ACH desde Carrito Ecommerce</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <div class="status-bar">
+    <span class="status-time">11:15</span>
+    <span class="status-icons">📶 📡 🔋 85%</span>
+  </div>
+
+  <!-- Screen 1: Carrito -->
+  <div class="screen-cart" id="screenCart">
+    <div class="store-header">
+      <span class="back-arrow">←</span>
+      <div class="store-title">PetLand</div>
+      <span class="cart-icon">🛒</span>
+    </div>
+
+    <div class="cart-body" id="cartBody">
+      <div class="cart-section-title">Tu carrito (3 productos)</div>
+
+      <div class="cart-item">
+        <div class="cart-item-img">🐶</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">Alimento para perro premium 3kg</div>
+          <div class="cart-item-qty">Cantidad: 1</div>
+        </div>
+        <div class="cart-item-price">$89.900</div>
+      </div>
+
+      <div class="cart-item">
+        <div class="cart-item-img">🐱</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">Cama ortopédica para gato</div>
+          <div class="cart-item-qty">Cantidad: 1</div>
+        </div>
+        <div class="cart-item-price">$145.000</div>
+      </div>
+
+      <div class="cart-item">
+        <div class="cart-item-img">🦴</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">Juguete mordedor resistente</div>
+          <div class="cart-item-qty">Cantidad: 2</div>
+        </div>
+        <div class="cart-item-price">$49.800</div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="cart-summary-row">
+          <span>Subtotal</span><span>$284.700</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Envío</span><span>$8.000</span>
+        </div>
+        <div class="cart-summary-row cart-summary-total">
+          <span>Total</span><span>$292.700</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation banner, shown after a completed payment -->
+    <div class="confirmation-banner" id="confirmationBanner" hidden>
+      <div class="confirmation-icon">✅</div>
+      <div class="confirmation-title">¡Pago confirmado!</div>
+      <div class="confirmation-amount" id="confirmationAmount">$292.700</div>
+      <div class="confirmation-detail">Pagado con <strong>ACH</strong></div>
+      <div class="confirmation-detail" id="confirmationAccount">—</div>
+      <button class="cart-cta confirmation-close" id="btnCloseConfirmation">Continuar comprando</button>
+    </div>
+
+    <button class="cart-cta" id="btnGoToPay">Ir a pagar</button>
+  </div>
+
+  <!-- Screen 2: Métodos de pago -->
+  <div class="screen-payment" id="screenPayment" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToCart">←</span>
+      <div class="payment-title">Método de pago</div>
+    </div>
+
+    <div class="payment-body" id="paymentBody">
+      <div class="payment-summary">
+        <span>Total a pagar</span>
+        <span class="payment-summary-amount">$292.700</span>
+      </div>
+
+      <div class="payment-method-list" id="paymentMethodList">
+        <button class="payment-method-item" data-method="card">
+          <span class="payment-method-icon">💳</span>
+          <span class="payment-method-name">Tarjeta de crédito/débito</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+        <button class="payment-method-item" data-method="pse">
+          <span class="payment-method-icon">🏦</span>
+          <span class="payment-method-name">PSE</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+        <button class="payment-method-item" data-method="ach">
+          <span class="payment-method-icon">🟢</span>
+          <span class="payment-method-name">Cóbrame con ACH</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+        <button class="payment-method-item" data-method="cash">
+          <span class="payment-method-icon">💵</span>
+          <span class="payment-method-name">Efectivo contraentrega</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Waiting state: shown while the merchant app waits for the bank's confirmation -->
+    <div class="payment-waiting" id="paymentWaiting" hidden>
+      <div class="payment-waiting-spinner"></div>
+      <div class="payment-waiting-text">Esperando confirmación de pago...</div>
+    </div>
+
+    <button class="cart-cta" id="btnGoToPayFinal" disabled>Ir a pagar</button>
+  </div>
+
+  <!-- Overlay backdrop -->
+  <div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
+
+  <!-- Sheet: Abrir con -->
+  <div class="sheet sheet-medium" id="sheetOpenWith" hidden>
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Abrir con</h3>
+    <div class="bank-app-list" id="bankAppList">
+      <button class="bank-app-pick" data-bank="amarillo" data-name="Banco Amarillo">
+        <span class="bank-logo dot-amarillo">BA</span>
+        <span class="bank-app-pick-name">Banco Amarillo</span>
+        <span class="account-check">✔</span>
+      </button>
+      <button class="bank-app-pick" data-bank="rojo" data-name="Banco Rojo">
+        <span class="bank-logo dot-rojo">BR</span>
+        <span class="bank-app-pick-name">Banco Rojo</span>
+        <span class="account-check">✔</span>
+      </button>
+      <button class="bank-app-pick" data-bank="azul" data-name="Banco Azul">
+        <span class="bank-logo dot-azul">BZ</span>
+        <span class="bank-app-pick-name">Banco Azul</span>
+        <span class="account-check">✔</span>
+      </button>
+    </div>
+    <button class="sheet-cta" id="btnOpenBankApp" disabled>Abrir</button>
+  </div>
+
+  <!-- Screen: app del banco -->
+  <div class="screen-bank-app" id="screenBankApp" hidden>
+    <div class="bank-app-header" id="bankAppHeader">
+      <span class="bank-app-close" id="btnCloseBankApp">✕</span>
+      <span class="bank-app-name" id="bankAppName">Banco</span>
+    </div>
+    <div class="bank-app-body" id="bankAppPaymentView">
+      <div class="bank-app-charge-label">Cobro de</div>
+      <div class="bank-app-merchant">PetLand</div>
+      <div class="bank-app-amount">$292.700</div>
+      <div class="bank-app-concept">Compra carrito (3 productos)</div>
+
+      <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+      <div class="account-list" id="bankAppAccountList">
+        <button class="account-item" data-account="ahorros" data-balance="$980.300">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta de Ahorros</span>
+            <span class="account-balance">Saldo: $980.300</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-account="corriente" data-balance="$210.750">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente</span>
+            <span class="account-balance">Saldo: $210.750</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+      </div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment" disabled>Autorizar pago</button>
+
+    <!-- Bank's own confirmation, shown right after biometric authorization -->
+    <div class="bank-app-body bank-app-confirm" id="bankAppConfirmView" hidden>
+      <div class="confirmation-icon">✅</div>
+      <div class="bank-app-confirm-title">Pago exitoso</div>
+      <div class="bank-app-amount" id="bankAppConfirmAmount">$292.700</div>
+      <div class="bank-app-concept">PetLand · Compra carrito (3 productos)</div>
+      <div class="bank-app-confirm-account" id="bankAppConfirmAccount">—</div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnReturnToMerchant" hidden>Regresar al comercio</button>
+  </div>
+
+  <!-- Screen: biometría del OS -->
+  <div class="screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Coloca tu huella</div>
+    <div class="biometric-sub">Verificando identidad...</div>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

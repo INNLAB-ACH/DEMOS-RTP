@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suscrito</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="screen-catalog" id="screenCatalog">
+  <header class="catalog-header">
+    <div class="catalog-logo">SUSCRITO</div>
+    <nav class="catalog-nav">
+      <span class="nav-item active">Inicio</span>
+      <span class="nav-item">Series</span>
+      <span class="nav-item">Películas</span>
+      <span class="nav-item">Mi lista</span>
+    </nav>
+    <div class="catalog-profile"></div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-art"></div>
+    <div class="hero-info">
+      <h1>El Último Horizonte</h1>
+      <p>Una odisea espacial sobre el último tripulante de una nave perdida entre las estrellas.</p>
+      <div class="hero-actions">
+        <button class="btn-hero-play">▶ Reproducir</button>
+        <button class="btn-hero-info">ⓘ Más información</button>
+      </div>
+    </div>
+  </section>
+
+  <main class="catalog-rows">
+    <div class="row-block">
+      <h2 class="row-title">Tendencias ahora</h2>
+      <div class="row-track">
+        <div class="poster-card poster-1"><span>Horizonte Rojo</span></div>
+        <div class="poster-card poster-2"><span>Ciudad Nocturna</span></div>
+        <div class="poster-card poster-3"><span>Travesía</span></div>
+        <div class="poster-card poster-4"><span>El Pacto</span></div>
+        <div class="poster-card poster-5"><span>Sombras del Sur</span></div>
+        <div class="poster-card poster-6"><span>Códice</span></div>
+      </div>
+    </div>
+
+    <div class="row-block">
+      <h2 class="row-title">Series originales</h2>
+      <div class="row-track">
+        <div class="poster-card poster-2"><span>Ruta 9</span></div>
+        <div class="poster-card poster-5"><span>Alta Mar</span></div>
+        <div class="poster-card poster-1"><span>Vértigo</span></div>
+        <div class="poster-card poster-4"><span>La Otra Cara</span></div>
+        <div class="poster-card poster-3"><span>Frontera</span></div>
+        <div class="poster-card poster-6"><span>Origen 7</span></div>
+      </div>
+    </div>
+
+    <div class="row-block">
+      <h2 class="row-title">Continuar viendo</h2>
+      <div class="row-track">
+        <div class="poster-card poster-3"><span>Anómalo</span></div>
+        <div class="poster-card poster-6"><span>El Faro</span></div>
+        <div class="poster-card poster-1"><span>Distrito 8</span></div>
+        <div class="poster-card poster-4"><span>Marea Alta</span></div>
+        <div class="poster-card poster-2"><span>Reflejo</span></div>
+        <div class="poster-card poster-5"><span>Cenit</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
+
+<div class="sheet sheet-small" id="sheetPendingPayment" hidden>
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon sheet-icon-warning">!</div>
+  <h3 class="sheet-title">Pago pendiente</h3>
+  <p class="sheet-text">Tu suscripción mensual tiene un pago pendiente de <strong>$34.900</strong>. Autorízalo para seguir disfrutando del catálogo sin interrupciones.</p>
+  <button class="sheet-cta" id="btnAuthorizePayment">Autorizar pago</button>
+  <button class="sheet-secondary" id="btnCancelPayment">Cancelar</button>
+</div>
+
+<div class="sheet sheet-medium" id="sheetBankSelection" hidden>
+  <div class="sheet-handle"></div>
+  <h3 class="sheet-title">Selecciona tu banco</h3>
+  <p class="sheet-text">Elige uno de tus bancos favoritos o busca otro banco.</p>
+
+  <div class="bank-grid" id="bankGrid">
+    <div class="bank-item" data-bank="amarillo" data-bank-name="Banco Amarillo">
+      <span class="bank-dot dot-amarillo"></span>
+      <span class="bank-name">Banco Amarillo</span>
+    </div>
+    <div class="bank-item" data-bank="rojo" data-bank-name="Banco Rojo">
+      <span class="bank-dot dot-rojo"></span>
+      <span class="bank-name">Banco Rojo</span>
+    </div>
+    <div class="bank-item" data-bank="azul" data-bank-name="Banco Azul">
+      <span class="bank-dot dot-azul"></span>
+      <span class="bank-name">Banco Azul</span>
+    </div>
+    <div class="bank-item bank-item-other" id="bankItemOther">
+      <span class="bank-dot dot-otros"></span>
+      <span class="bank-name">Otros bancos</span>
+    </div>
+  </div>
+
+  <select class="other-banks-select" id="otherBanksSelect" hidden>
+    <option value="" disabled selected>Selecciona un banco</option>
+    <option value="verde" data-bank-name="Banco Verde">Banco Verde</option>
+    <option value="morado" data-bank-name="Banco Morado">Banco Morado</option>
+    <option value="naranja" data-bank-name="Banco Naranja">Banco Naranja</option>
+    <option value="gris" data-bank-name="Banco Gris">Banco Gris</option>
+    <option value="turquesa" data-bank-name="Banco Turquesa">Banco Turquesa</option>
+  </select>
+
+  <button class="sheet-cta" id="btnGoToPay" disabled>Pagar</button>
+</div>
+
+<div class="sheet sheet-medium" id="sheetAccountSelection" hidden>
+  <div class="sheet-handle"></div>
+  <h3 class="sheet-title">Selecciona tu cuenta</h3>
+  <p class="sheet-text" id="accountSelectionBankLabel">Cuentas inscritas</p>
+
+  <div class="account-list" id="accountList">
+    <div class="account-item" data-account="ahorros" data-balance="$1.250.000">
+      <div class="account-info">
+        <span class="account-type">Cuenta de ahorros</span>
+        <span class="account-number">**** 4821</span>
+      </div>
+      <span class="account-balance">$1.250.000</span>
+      <span class="account-check"></span>
+    </div>
+    <div class="account-item" data-account="corriente" data-balance="$3.480.500">
+      <div class="account-info">
+        <span class="account-type">Cuenta corriente</span>
+        <span class="account-number">**** 7732</span>
+      </div>
+      <span class="account-balance">$3.480.500</span>
+      <span class="account-check"></span>
+    </div>
+    <div class="account-item" data-account="nomina" data-balance="$620.300">
+      <div class="account-info">
+        <span class="account-type">Cuenta nómina</span>
+        <span class="account-number">**** 1190</span>
+      </div>
+      <span class="account-balance">$620.300</span>
+      <span class="account-check"></span>
+    </div>
+  </div>
+
+  <button class="sheet-cta" id="btnConfirmPayment" disabled>Pagar</button>
+</div>
+
+<div class="sheet sheet-medium" id="sheetPaymentConfirmed" hidden>
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon sheet-icon-success">✓</div>
+  <h3 class="sheet-title">Pago confirmado</h3>
+  <div class="confirmation-summary">
+    <div class="confirmation-row"><span>Banco</span><strong id="confirmBankName">—</strong></div>
+    <div class="confirmation-row"><span>Cuenta</span><strong id="confirmAccountName">—</strong></div>
+    <div class="confirmation-row"><span>Monto</span><strong>$34.900</strong></div>
+    <div class="confirmation-row"><span>Fecha</span><strong id="confirmDate">—</strong></div>
+  </div>
+  <button class="sheet-cta" id="btnCloseConfirmation">Listo</button>
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>
