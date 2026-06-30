@@ -32,6 +32,15 @@
 
   const fingerprintTap = document.getElementById('fingerprintTap');
 
+  const screenBankLogin = document.getElementById('screenBankLogin');
+  const bankLoginHeader = document.getElementById('bankLoginHeader');
+  const bankLoginName = document.getElementById('bankLoginName');
+  const bankLoginLogo = document.getElementById('bankLoginLogo');
+  const bankLoginModalBackdrop = document.getElementById('bankLoginModalBackdrop');
+  const bankLoginBiometricModal = document.getElementById('bankLoginBiometricModal');
+  const bankLoginFingerprintTap = document.getElementById('bankLoginFingerprintTap');
+  const bankLoginModalBankName = document.getElementById('bankLoginModalBankName');
+
   const confirmationAmount = document.getElementById('confirmationAmount');
   const confirmationAccount = document.getElementById('confirmationAccount');
   const btnCloseConfirmation = document.getElementById('btnCloseConfirmation');
@@ -47,6 +56,9 @@
     sheetOpenWith.hidden = true;
     screenBankApp.hidden = true;
     screenBiometric.hidden = true;
+    screenBankLogin.hidden = true;
+    bankLoginModalBackdrop.hidden = true;
+    bankLoginBiometricModal.hidden = true;
   }
 
   // Step 1 -> 2: ir a pagar desde el carrito
@@ -102,9 +114,36 @@
     btnOpenBankApp.disabled = false;
   });
 
-  // Step 3 -> 4: abrir la app del banco elegido
+  // Step 3 -> 3.5: abrir la app del banco elegido, primero su pantalla de login
   btnOpenBankApp.addEventListener('click', function () {
     if (!selectedBank) return;
+
+    const initials = selectedBank.name
+      .split(' ')
+      .map(function (w) { return w[0]; })
+      .join('')
+      .toUpperCase();
+
+    bankLoginHeader.className = 'bank-app-header theme-' + selectedBank.key;
+    bankLoginName.textContent = selectedBank.name;
+    bankLoginLogo.className = 'bank-login-logo bank-logo dot-' + selectedBank.key;
+    bankLoginLogo.textContent = initials;
+    bankLoginModalBankName.textContent = selectedBank.name;
+
+    sheetOpenWith.hidden = true;
+    overlayBackdrop.hidden = true;
+
+    screenBankLogin.hidden = false;
+    bankLoginModalBackdrop.hidden = false;
+    bankLoginBiometricModal.hidden = false;
+  });
+
+  // Step 3.5: biometría de login del banco se confirma -> pantalla de pago del banco
+  function completeBankLogin() {
+    if (bankLoginBiometricModal.hidden) return;
+    bankLoginBiometricModal.hidden = true;
+    bankLoginModalBackdrop.hidden = true;
+    screenBankLogin.hidden = true;
 
     bankAppHeader.className = 'bank-app-header theme-' + selectedBank.key;
     bankAppName.textContent = selectedBank.name;
@@ -120,10 +159,18 @@
     bankAppConfirmView.hidden = true;
     btnReturnToMerchant.hidden = true;
 
-    sheetOpenWith.hidden = true;
-    overlayBackdrop.hidden = true;
     screenBankApp.hidden = false;
+  }
+
+  bankLoginFingerprintTap.addEventListener('click', completeBankLogin);
+
+  // Auto-completa la biometría de login tras un breve retardo simulado
+  const bankLoginObserver = new MutationObserver(function () {
+    if (!bankLoginBiometricModal.hidden) {
+      setTimeout(completeBankLogin, 1300);
+    }
   });
+  bankLoginObserver.observe(bankLoginBiometricModal, { attributes: true, attributeFilter: ['hidden'] });
 
   btnCloseBankApp.addEventListener('click', function () {
     screenBankApp.hidden = true;
