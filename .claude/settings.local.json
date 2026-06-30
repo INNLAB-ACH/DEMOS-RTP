@@ -11,7 +11,11 @@
       "Bash(which chromium-cli *)",
       "Read(//c/Users/1130613425/.claude/**)",
       "Read(//c//**)",
-      "Bash(chromium-cli --session demo)"
+      "Bash(chromium-cli --session demo)",
+      "Bash(python3 -c \"import playwright\")",
+      "Bash(pip show *)",
+      "Bash(node -e \"console.log\\(1\\)\")",
+      "Bash(pkill -f \"http.server 8910\")"
     ]
   }
 }
