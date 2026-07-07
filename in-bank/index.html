@@ -126,31 +126,97 @@
     <button class="cart-cta" id="btnGoToPayFinal" disabled>Ir a pagar</button>
   </div>
 
-  <!-- Overlay backdrop -->
-  <div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
-
-  <!-- Sheet: Abrir con -->
-  <div class="sheet sheet-medium" id="sheetOpenWith" hidden>
-    <div class="sheet-handle"></div>
-    <h3 class="sheet-title">Abrir con</h3>
-    <div class="bank-app-list" id="bankAppList">
-      <button class="bank-app-pick" data-bank="amarillo" data-name="Banco Amarillo">
-        <span class="bank-logo dot-amarillo">BA</span>
-        <span class="bank-app-pick-name">Banco Amarillo</span>
-        <span class="account-check">✔</span>
-      </button>
-      <button class="bank-app-pick" data-bank="rojo" data-name="Banco Rojo">
-        <span class="bank-logo dot-rojo">BR</span>
-        <span class="bank-app-pick-name">Banco Rojo</span>
-        <span class="account-check">✔</span>
-      </button>
-      <button class="bank-app-pick" data-bank="azul" data-name="Banco Azul">
-        <span class="bank-logo dot-azul">BZ</span>
-        <span class="bank-app-pick-name">Banco Azul</span>
-        <span class="account-check">✔</span>
-      </button>
+  <!-- Screen: selección de banco -->
+  <div class="screen-bank-picker" id="screenBankPicker" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToPayment">←</span>
+      <div class="payment-title">Selecciona tu banco</div>
     </div>
-    <button class="sheet-cta" id="btnOpenBankApp" disabled>Abrir</button>
+    <div class="payment-body">
+      <div class="bank-search">🔍 Buscar banco</div>
+      <div class="bank-favorites-label">Favoritos</div>
+      <div class="bank-favorites" id="bankFavorites">
+        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
+          <span class="bank-logo dot-amarillo">BA</span>
+          <span class="bank-favorite-name">Banco Amarillo</span>
+        </button>
+        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
+          <span class="bank-logo dot-rojo">BR</span>
+          <span class="bank-favorite-name">Banco Rojo</span>
+        </button>
+        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
+          <span class="bank-logo dot-azul">BZ</span>
+          <span class="bank-favorite-name">Banco Azul</span>
+        </button>
+      </div>
+      <div class="bank-other-label">Otros bancos</div>
+      <div class="bank-other-list">
+        <div class="bank-other-item">Banco Verde</div>
+        <div class="bank-other-item">Banco Morado</div>
+        <div class="bank-other-item">Banco Gris</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: verificación de identidad -->
+  <div class="screen-identity" id="screenIdentityVerification" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToBankPicker">←</span>
+      <div class="payment-title">Confirma tu identidad</div>
+    </div>
+    <div class="payment-body">
+      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="identityBankName">Banco</strong> para continuar con el pago.</div>
+
+      <div class="bank-favorites" id="authMethodList">
+        <button class="bank-favorite" data-method="email">
+          <span class="bank-logo bank-logo-plain">📧</span>
+          <span class="bank-favorite-name">Correo</span>
+        </button>
+        <button class="bank-favorite" data-method="phone">
+          <span class="bank-logo bank-logo-plain">📱</span>
+          <span class="bank-favorite-name">Celular</span>
+        </button>
+        <button class="bank-favorite" data-method="id">
+          <span class="bank-logo bank-logo-plain">🪪</span>
+          <span class="bank-favorite-name">Cédula</span>
+        </button>
+      </div>
+
+      <div class="email-field" id="authFieldEmail">
+        <label for="identityEmailInput">Correo electrónico</label>
+        <input type="email" id="identityEmailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldPhone" hidden>
+        <label for="identityPhoneInput">Número celular</label>
+        <input type="tel" id="identityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldId" hidden>
+        <label for="identityIdTypeSelect">Tipo de identificación</label>
+        <select id="identityIdTypeSelect" class="email-input">
+          <option value="">Selecciona...</option>
+          <option value="CC">Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+        </select>
+        <label for="identityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
+        <input type="text" id="identityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+      </div>
+    </div>
+    <button class="cart-cta" id="btnStartPayment" disabled>Iniciar pago</button>
+  </div>
+
+  <!-- Full screen: simulated push notification / lock screen -->
+  <div class="screen-push-notification" id="screenPushNotification" hidden>
+    <div class="push-lockscreen-time">11:16</div>
+    <div class="push-lockscreen-date">Autorización pendiente</div>
+    <button class="push-notification-card" id="pushNotificationCard">
+      <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+      <span class="push-notification-body">
+        <span class="push-notification-title" id="pushNotificationTitle">Banco</span>
+        <span class="push-notification-text">Tienes un pago pendiente por autorizar. Toca para continuar.</span>
+      </span>
+    </button>
   </div>
 
   <!-- Screen: app del banco -->
