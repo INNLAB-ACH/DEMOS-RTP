@@ -28,11 +28,11 @@
 
   <div class="kpi-bar">
     <div class="kpi-item">
-      <span class="kpi-item__value">3</span>
+      <span class="kpi-item__value">4</span>
       <span class="kpi-item__label">Demos disponibles</span>
     </div>
     <div class="kpi-item">
-      <span class="kpi-item__value">3</span>
+      <span class="kpi-item__value">4</span>
       <span class="kpi-item__label">Canales de origen del cobro</span>
     </div>
     <div class="kpi-item">
@@ -50,7 +50,7 @@
     <h2 class="section-title__heading">¿Qué es RtP (Request to Pay)?</h2>
   </div>
   <p>RtP es la iniciativa de ACH Colombia para habilitar la <strong>iniciación de pagos</strong>: un comercio o cobrador genera una solicitud de cobro que el pagador autoriza directamente desde su entidad financiera, debitando su cuenta sin necesidad de tarjeta plástica ni redirecciones complejas. El objetivo es ofrecer una alternativa de pago inmediata, segura y de bajo costo, integrada de forma nativa en los canales donde el pagador ya está: el checkout de una tienda, una notificación de cobro recurrente o una conversación de WhatsApp.</p>
-  <p>Los demos de esta colección simulan, de extremo a extremo, la experiencia del usuario al recibir y autorizar un cobro RtP desde tres puntos de entrada distintos. Cada uno reproduce las pantallas clave del flujo — selección del método de pago, elección de banco y cuenta, autorización biométrica y confirmación — para evaluar la experiencia de cara al cliente final en distintos contextos de uso.</p>
+  <p>Los demos de esta colección simulan, de extremo a extremo, la experiencia del usuario al recibir y autorizar un cobro RtP desde cuatro puntos de entrada distintos. Cada uno reproduce las pantallas clave del flujo — selección del método de pago, elección de banco y cuenta, autorización biométrica y confirmación — para evaluar la experiencia de cara al cliente final en distintos contextos de uso.</p>
 </section>
 
 <hr class="divider">
@@ -85,6 +85,14 @@
       <h3 class="demo-card__title">Pago ACH/RTP por WhatsApp</h3>
       <p class="demo-card__desc">El demo más completo: un comercio (Pizza Nostra) envía el cobro por WhatsApp y ofrece tres rutas de pago — autorizar dentro de WhatsApp, ir a la app del banco o pagar desde el portal de ACH — incluyendo login, selección de cuenta, biometría y recibo final detallado.</p>
       <a class="demo-card__cta" href="./whatsapp/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · Presencial</span>
+      <div class="demo-card__icon">🧾</div>
+      <h3 class="demo-card__title">Pago presente con QR dinámico</h3>
+      <p class="demo-card__desc">Simulación lado a lado de un cobro en tienda física: el tendero (Tienda La Esquina) se loguea en su portal web con cédula y contraseña, ingresa el valor a cobrar y genera un QR dinámico. El cliente lo paga escaneando desde la cámara del celular — pasando por el portal de selección de banco e identidad — o directamente desde el lector QR de la app de su banco.</p>
+      <a class="demo-card__cta" href="./pago-presente/index.html">Ver demo →</a>
     </article>
 
   </div>
