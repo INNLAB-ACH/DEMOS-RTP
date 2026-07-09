@@ -82,6 +82,51 @@
   <button class="sheet-secondary" id="btnCancelPayment">Cancelar</button>
 </div>
 
+<div class="sheet sheet-medium" id="sheetPaymentMethod" hidden>
+  <div class="sheet-handle"></div>
+  <h3 class="sheet-title">¿Cómo quieres pagar?</h3>
+  <p class="sheet-text">Elige la forma en la que quieres autorizar el pago de tu suscripción.</p>
+
+  <button class="web-action-card" id="btnMethodQR">
+    <span class="web-action-card__icon">🔳</span>
+    <span class="web-action-card__text">
+      <strong>Pagar con QR</strong>
+      <span>Escanea el código con tu celular</span>
+    </span>
+    <span class="web-action-card__arrow">→</span>
+  </button>
+
+  <button class="web-action-card" id="btnMethodBank">
+    <span class="web-action-card__icon">🏦</span>
+    <span class="web-action-card__text">
+      <strong>Pagar desde mi banco</strong>
+      <span>Selecciona tu banco y autoriza desde tu celular</span>
+    </span>
+    <span class="web-action-card__arrow">→</span>
+  </button>
+
+  <button class="sheet-secondary" id="btnBackToPending">Volver</button>
+</div>
+
+<div class="sheet sheet-medium sheet-qr" id="sheetSubscriptionQR" hidden>
+  <div class="sheet-handle"></div>
+  <div class="web-topbar">
+    <span class="back-arrow" id="btnBackFromQR">←</span>
+    <span class="web-topbar__store">Pago con QR</span>
+  </div>
+  <div class="qr-merchant-name">Suscrito · Suscripción mensual</div>
+  <div class="qr-amount" id="subQrAmount">$34.900</div>
+  <div class="qr-concept">Esperando pago</div>
+  <div class="qr-card">
+    <canvas id="subQrCanvas" width="180" height="180"></canvas>
+  </div>
+  <div class="qr-waiting">
+    <span class="qr-waiting__spinner"></span>
+    <span>Esperando que confirmes el pago desde tu celular...</span>
+  </div>
+  <div class="qr-hint">El código se renueva automáticamente cada 60 segundos por seguridad.</div>
+</div>
+
 <div class="sheet sheet-medium" id="sheetBankSelection" hidden>
   <div class="sheet-handle"></div>
   <h3 class="sheet-title">Selecciona tu banco</h3>
@@ -115,42 +160,54 @@
     <option value="turquesa" data-bank-name="Banco Turquesa">Banco Turquesa</option>
   </select>
 
-  <button class="sheet-cta" id="btnGoToPay" disabled>Pagar</button>
+  <button class="sheet-cta" id="btnGoToPay" disabled>Continuar</button>
 </div>
 
-<div class="sheet sheet-medium" id="sheetAccountSelection" hidden>
+<div class="sheet sheet-medium" id="sheetIdentityVerification" hidden>
   <div class="sheet-handle"></div>
-  <h3 class="sheet-title">Selecciona tu cuenta</h3>
-  <p class="sheet-text" id="accountSelectionBankLabel">Cuentas inscritas</p>
+  <div class="sheet-back-row">
+    <button class="sheet-back" id="btnBackToBankSelectionDesktop" aria-label="Regresar">←</button>
+    <h3 class="sheet-title">Confirma tu identidad</h3>
+  </div>
+  <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="suscIdentityBankName">Banco</strong> para continuar con el pago.</div>
 
-  <div class="account-list" id="accountList">
-    <div class="account-item" data-account="ahorros" data-balance="$1.250.000">
-      <div class="account-info">
-        <span class="account-type">Cuenta de ahorros</span>
-        <span class="account-number">**** 4821</span>
-      </div>
-      <span class="account-balance">$1.250.000</span>
-      <span class="account-check"></span>
-    </div>
-    <div class="account-item" data-account="corriente" data-balance="$3.480.500">
-      <div class="account-info">
-        <span class="account-type">Cuenta corriente</span>
-        <span class="account-number">**** 7732</span>
-      </div>
-      <span class="account-balance">$3.480.500</span>
-      <span class="account-check"></span>
-    </div>
-    <div class="account-item" data-account="nomina" data-balance="$620.300">
-      <div class="account-info">
-        <span class="account-type">Cuenta nómina</span>
-        <span class="account-number">**** 1190</span>
-      </div>
-      <span class="account-balance">$620.300</span>
-      <span class="account-check"></span>
-    </div>
+  <div class="bank-favorites" id="suscAuthMethodList">
+    <button class="bank-favorite" data-method="email">
+      <span class="bank-logo bank-logo-plain">📧</span>
+      <span class="bank-favorite-name">Correo</span>
+    </button>
+    <button class="bank-favorite" data-method="phone">
+      <span class="bank-logo bank-logo-plain">📱</span>
+      <span class="bank-favorite-name">Celular</span>
+    </button>
+    <button class="bank-favorite" data-method="id">
+      <span class="bank-logo bank-logo-plain">🪪</span>
+      <span class="bank-favorite-name">Cédula</span>
+    </button>
   </div>
 
-  <button class="sheet-cta" id="btnConfirmPayment" disabled>Pagar</button>
+  <div class="email-field" id="suscAuthFieldEmail">
+    <label for="suscIdentityEmailInput">Correo electrónico</label>
+    <input type="email" id="suscIdentityEmailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
+  </div>
+
+  <div class="email-field" id="suscAuthFieldPhone" hidden>
+    <label for="suscIdentityPhoneInput">Número celular</label>
+    <input type="tel" id="suscIdentityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+  </div>
+
+  <div class="email-field" id="suscAuthFieldId" hidden>
+    <label for="suscIdentityIdTypeSelect">Tipo de identificación</label>
+    <select id="suscIdentityIdTypeSelect" class="email-input">
+      <option value="">Selecciona...</option>
+      <option value="CC">Cédula de ciudadanía</option>
+      <option value="CE">Cédula de extranjería</option>
+    </select>
+    <label for="suscIdentityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
+    <input type="text" id="suscIdentityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+  </div>
+
+  <button class="sheet-cta" id="btnSuscStartPayment" disabled>Iniciar pago</button>
 </div>
 
 <div class="sheet sheet-medium" id="sheetPaymentConfirmed" hidden>
@@ -164,6 +221,297 @@
     <div class="confirmation-row"><span>Fecha</span><strong id="confirmDate">—</strong></div>
   </div>
   <button class="sheet-cta" id="btnCloseConfirmation">Listo</button>
+</div>
+
+<div class="pay-stage" id="payStage" hidden>
+  <div class="dual-stage">
+
+    <!-- ============ Columna izquierda: navegador desktop ============ -->
+    <div class="device-col device-col-desktop">
+      <div class="device-label">
+        <span class="device-label__icon">💻</span>
+        <span class="device-label__text">
+          <strong>Suscrito</strong>
+          <span>Portal web de suscripción</span>
+        </span>
+      </div>
+
+      <div class="browser-frame" id="browserFrame">
+        <div class="browser-chrome">
+          <span class="browser-dot browser-dot-red"></span>
+          <span class="browser-dot browser-dot-yellow"></span>
+          <span class="browser-dot browser-dot-green"></span>
+          <div class="browser-address-bar">
+            <span class="browser-address-lock">🔒</span>
+            <span class="browser-address-text">suscrito.app/mi-cuenta</span>
+          </div>
+        </div>
+        <div class="browser-body" id="browserBody"></div>
+      </div>
+    </div>
+
+    <div class="stage-connector">
+      <span class="stage-connector__arrow">⇄</span>
+      <span class="stage-connector__label" id="stageConnectorLabel">Elige un método</span>
+    </div>
+
+    <!-- ============ Columna derecha: celular del usuario ============ -->
+    <div class="device-col">
+      <div class="device-label">
+        <span class="device-label__icon">🙋</span>
+        <span class="device-label__text">
+          <strong>Tu celular</strong>
+          <span>App / notificaciones</span>
+        </span>
+      </div>
+
+      <div class="phone" id="phoneColumn">
+        <div class="phone-notch"></div>
+        <div class="status-bar">
+          <span class="status-time">11:15</span>
+          <span class="status-icons">📶 📡 🔋 92%</span>
+        </div>
+
+        <!-- Idle / lockscreen inicial -->
+        <div class="screen-web" id="pScreenIdle">
+          <div class="phone-home-wallpaper">
+            <div class="phone-home-clock">11:15</div>
+            <div class="phone-home-date">Jueves, 9 de julio</div>
+          </div>
+          <div class="p-idle-hint" id="pIdleHint">Tu celular está en espera. Elige un método de pago en la pantalla de tu izquierda.</div>
+        </div>
+
+        <!-- ===== Flujo QR: elegir canal ===== -->
+        <div class="screen-web" id="qrScreenChooseChannel" hidden>
+          <div class="web-topbar">
+            <span class="back-arrow" id="btnQrChannelBack">←</span>
+            <span class="web-topbar__store">Pagar suscripción</span>
+          </div>
+          <div class="p-idle-hint">Vas a pagar tu suscripción. Elige cómo quieres escanear el QR:</div>
+
+          <button class="web-action-card" id="btnQrScanCamera">
+            <span class="web-action-card__icon">📷</span>
+            <span class="web-action-card__text">
+              <strong>Escanear con la cámara</strong>
+              <span>Usa la cámara nativa del celular</span>
+            </span>
+            <span class="web-action-card__arrow">→</span>
+          </button>
+
+          <button class="web-action-card" id="btnQrScanBankApp">
+            <span class="web-action-card__icon">🏦</span>
+            <span class="web-action-card__text">
+              <strong>Abrir app de mi banco</strong>
+              <span>Escanear desde el lector QR del banco</span>
+            </span>
+            <span class="web-action-card__arrow">→</span>
+          </button>
+        </div>
+
+        <!-- ===== Flujo QR: cámara nativa ===== -->
+        <div class="screen-camera" id="qrScreenCamera" hidden>
+          <div class="camera-topbar">
+            <span class="back-arrow" id="btnQrCameraBack">←</span>
+            <span>Cámara</span>
+          </div>
+          <div class="camera-viewfinder">
+            <div class="camera-frame-corner corner-tl"></div>
+            <div class="camera-frame-corner corner-tr"></div>
+            <div class="camera-frame-corner corner-bl"></div>
+            <div class="camera-frame-corner corner-br"></div>
+            <div class="camera-scanline"></div>
+            <div class="camera-qr-preview">▦</div>
+          </div>
+          <div class="camera-hint">Apunta al código QR de tu suscripción</div>
+        </div>
+
+        <!-- ===== Flujo QR: selector de banco (portal) ===== -->
+        <div class="screen-web" id="qrScreenBankPicker" hidden>
+          <div class="web-topbar">
+            <span class="back-arrow" id="btnQrBankPickerBack">←</span>
+            <span class="web-topbar__store">Portal de pagos ACH</span>
+          </div>
+          <div class="p-portal-merchant">
+            <div class="p-portal-merchant-name">Suscrito · Suscripción mensual</div>
+            <div class="p-portal-merchant-amount" id="qrPortalAmount">$0</div>
+          </div>
+
+          <div class="bank-search">🔍 Buscar banco</div>
+          <div class="bank-favorites-label">Favoritos</div>
+          <div class="bank-favorites" id="qrBankFavorites">
+            <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
+              <span class="bank-logo dot-amarillo">BA</span>
+              <span class="bank-favorite-name">Banco Amarillo</span>
+            </button>
+            <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
+              <span class="bank-logo dot-rojo">BR</span>
+              <span class="bank-favorite-name">Banco Rojo</span>
+            </button>
+            <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
+              <span class="bank-logo dot-azul">BZ</span>
+              <span class="bank-favorite-name">Banco Azul</span>
+            </button>
+          </div>
+          <div class="bank-other-label">Otros bancos</div>
+          <div class="bank-other-list">
+            <div class="bank-other-item">Banco Verde</div>
+            <div class="bank-other-item">Banco Morado</div>
+            <div class="bank-other-item">Banco Gris</div>
+          </div>
+        </div>
+
+        <!-- ===== Flujo QR: verificación de identidad ===== -->
+        <div class="screen-web" id="qrScreenIdentity" hidden>
+          <div class="web-topbar">
+            <span class="back-arrow" id="btnQrIdentityBack">←</span>
+            <span class="web-topbar__store">Confirma tu identidad</span>
+          </div>
+          <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="qrIdentityBankName">Banco</strong> para continuar con el pago.</div>
+
+          <div class="bank-favorites" id="qrAuthMethodList">
+            <button class="bank-favorite" data-method="email">
+              <span class="bank-logo bank-logo-plain">📧</span>
+              <span class="bank-favorite-name">Correo</span>
+            </button>
+            <button class="bank-favorite" data-method="phone">
+              <span class="bank-logo bank-logo-plain">📱</span>
+              <span class="bank-favorite-name">Celular</span>
+            </button>
+            <button class="bank-favorite" data-method="id">
+              <span class="bank-logo bank-logo-plain">🪪</span>
+              <span class="bank-favorite-name">Cédula</span>
+            </button>
+          </div>
+
+          <div class="email-field" id="qrAuthFieldEmail">
+            <label for="qrIdentityEmailInput">Correo electrónico</label>
+            <input type="email" id="qrIdentityEmailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
+          </div>
+
+          <div class="email-field" id="qrAuthFieldPhone" hidden>
+            <label for="qrIdentityPhoneInput">Número celular</label>
+            <input type="tel" id="qrIdentityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+          </div>
+
+          <div class="email-field" id="qrAuthFieldId" hidden>
+            <label for="qrIdentityIdTypeSelect">Tipo de identificación</label>
+            <select id="qrIdentityIdTypeSelect" class="email-input">
+              <option value="">Selecciona...</option>
+              <option value="CC">Cédula de ciudadanía</option>
+              <option value="CE">Cédula de extranjería</option>
+            </select>
+            <label for="qrIdentityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
+            <input type="text" id="qrIdentityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+          </div>
+
+          <button class="sheet-cta" id="btnQrStartPayment" disabled>Iniciar pago</button>
+        </div>
+
+        <!-- ===== Flujo QR: app del banco propio, ya logueado ===== -->
+        <div class="screen-bank-app" id="qrScreenBankAppHome" hidden>
+          <div class="bank-app-header theme-azul">
+            <span class="bank-app-name">Mi Banco</span>
+          </div>
+          <div class="bank-app-body">
+            <div class="bank-app-charge-label">Hola 👋</div>
+            <div class="bank-app-merchant">¿Qué deseas hacer?</div>
+          </div>
+          <button class="web-action-card p-bankapp-scan-card" id="btnQrBankAppScan">
+            <span class="web-action-card__icon">🔳</span>
+            <span class="web-action-card__text">
+              <strong>Escanear QR para pagar</strong>
+              <span>Lector QR integrado del banco</span>
+            </span>
+            <span class="web-action-card__arrow">→</span>
+          </button>
+        </div>
+
+        <!-- ===== Flujo QR: cámara de la app del banco ===== -->
+        <div class="screen-camera" id="qrScreenBankAppCamera" hidden>
+          <div class="camera-topbar camera-topbar-bank theme-azul">
+            <span class="back-arrow" id="btnQrBankAppCameraBack">←</span>
+            <span>Escanear QR</span>
+          </div>
+          <div class="camera-viewfinder">
+            <div class="camera-frame-corner corner-tl"></div>
+            <div class="camera-frame-corner corner-tr"></div>
+            <div class="camera-frame-corner corner-bl"></div>
+            <div class="camera-frame-corner corner-br"></div>
+            <div class="camera-scanline"></div>
+            <div class="camera-qr-preview">▦</div>
+          </div>
+          <div class="camera-hint">Apunta al código QR de tu suscripción</div>
+        </div>
+
+        <!-- ===== Compartida: notificación push ===== -->
+        <div class="screen-push-notification" id="subScreenPushNotification" hidden>
+          <div class="push-lockscreen-time">11:16</div>
+          <div class="push-lockscreen-date">Autorización pendiente</div>
+          <button class="push-notification-card" id="subPushNotificationCard">
+            <span class="push-notification-icon" id="subPushNotificationIcon">BA</span>
+            <span class="push-notification-body">
+              <span class="push-notification-title" id="subPushNotificationTitle">Banco</span>
+              <span class="push-notification-text">Tienes un pago pendiente por autorizar. Toca para continuar.</span>
+            </span>
+          </button>
+        </div>
+
+        <!-- ===== Compartida: biometría ===== -->
+        <div class="screen-biometric" id="subScreenBiometric" hidden>
+          <div class="biometric-fingerprint" id="subFingerprintTap">👆</div>
+          <div class="biometric-text">Coloca tu huella</div>
+          <div class="biometric-sub">Verificando identidad...</div>
+        </div>
+
+        <!-- ===== Compartida: resumen del banco (cuenta a debitar + autorizar) ===== -->
+        <div class="screen-bank-app" id="subScreenBankSummary" hidden>
+          <div class="bank-app-header" id="subSummaryScreenHeader">
+            <span class="bank-app-name" id="subSummaryScreenBankName">Banco</span>
+          </div>
+          <div class="bank-app-body">
+            <div class="bank-app-charge-label">Cobro de</div>
+            <div class="bank-app-merchant">Suscrito · Suscripción mensual</div>
+            <div class="bank-app-amount" id="subSummaryAmount">$0</div>
+            <div class="bank-app-concept">Pago de suscripción</div>
+
+            <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+            <div class="account-list" id="subBankSummaryAccountList">
+              <button class="account-item" data-account="ahorros" data-name="Cuenta de Ahorros" data-balance="$980.300">
+                <span class="account-dot dot-bank-app"></span>
+                <span class="account-info">
+                  <span class="account-name">Cuenta de Ahorros</span>
+                  <span class="account-balance">Saldo: $980.300</span>
+                </span>
+                <span class="account-check">✔</span>
+              </button>
+              <button class="account-item" data-account="corriente" data-name="Cuenta Corriente" data-balance="$210.750">
+                <span class="account-dot dot-bank-app"></span>
+                <span class="account-info">
+                  <span class="account-name">Cuenta Corriente</span>
+                  <span class="account-balance">Saldo: $210.750</span>
+                </span>
+                <span class="account-check">✔</span>
+              </button>
+            </div>
+          </div>
+          <button class="sheet-cta bank-app-cta" id="btnSubAuthorizeBankPayment" disabled>Autorizar pago desde mi banco</button>
+        </div>
+
+        <!-- ===== Compartida: éxito ===== -->
+        <div class="screen-web screen-web-success" id="subScreenSuccess" hidden>
+          <div class="web-success-icon">✅</div>
+          <div class="web-success-title">¡Pago exitoso!</div>
+          <div class="web-success-amount" id="subSuccessAmount">$0</div>
+          <div class="web-success-row"><span>Suscripción</span><span>Suscrito</span></div>
+          <div class="web-success-row"><span>Cuenta origen</span><span id="subSuccessAccount">—</span></div>
+          <div class="web-success-row"><span>Hora</span><span id="subSuccessTime">—</span></div>
+          <button class="web-cta" id="btnSubDone">Listo</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
