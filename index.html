@@ -28,12 +28,12 @@
 
   <div class="kpi-bar">
     <div class="kpi-item">
-      <span class="kpi-item__value">4</span>
+      <span class="kpi-item__value">10</span>
       <span class="kpi-item__label">Demos disponibles</span>
     </div>
     <div class="kpi-item">
-      <span class="kpi-item__value">4</span>
-      <span class="kpi-item__label">Canales de origen del cobro</span>
+      <span class="kpi-item__value">2</span>
+      <span class="kpi-item__label">Segmentos cubiertos (B2C / B2B)</span>
     </div>
     <div class="kpi-item">
       <span class="kpi-item__value">1</span>
@@ -93,6 +93,68 @@
       <h3 class="demo-card__title">Pago presente con QR dinámico</h3>
       <p class="demo-card__desc">Simulación lado a lado de un cobro en tienda física: el tendero (Tienda La Esquina) se loguea en su portal web con cédula y contraseña, ingresa el valor a cobrar y genera un QR dinámico. El cliente lo paga escaneando desde la cámara del celular — pasando por el portal de selección de banco e identidad — o directamente desde el lector QR de la app de su banco.</p>
       <a class="demo-card__cta" href="./pago-presente/index.html">Ver demo →</a>
+    </article>
+
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="section">
+  <div class="section-title">
+    <span class="section-title__label">Demos · Extensión B2B / B2C</span>
+    <h2 class="section-title__heading">Nuevas experiencias RTP (GOU Payments / Grupo Aval)</h2>
+  </div>
+  <p>Seis prototipos adicionales que extienden el catálogo hacia el cobro empresarial (B2B) y amplían el B2C más allá de lo ya validado, pensados para GOU Payments como consumidor de esta infraestructura en las apps de los bancos de Grupo Aval. Ver <a href="./docs/prototipos/plan-implementacion.md">plan de implementación</a> para el detalle de fases y enablers.</p>
+
+  <div class="demo-grid">
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · P2P</span>
+      <div class="demo-card__icon">🤝</div>
+      <h3 class="demo-card__title">P2P con motivo o plantilla</h3>
+      <p class="demo-card__desc">Extensión del RTP asíncrono de WhatsApp para cobros entre personas: el cobrador elige una plantilla (arriendo, servicios, préstamo) y el contacto recibe la solicitud con el motivo visible en la notificación, el detalle y el recibo final.</p>
+      <a class="demo-card__cta" href="./p2p-motivo/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · B2B / Aprobación</span>
+      <div class="demo-card__icon">📋</div>
+      <h3 class="demo-card__title">Notificación multicanal a aprobador</h3>
+      <p class="demo-card__desc">Un cobro entra a la banca empresarial y se replica como alerta en WhatsApp hacia un aprobador fuera de la oficina, quien revisa el detalle corporativo (empresa, centro de costo, beneficiario) y confirma la aprobación, distinta de un pago directo.</p>
+      <a class="demo-card__cta" href="./aprobacion-whatsapp/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · B2B / Facturación</span>
+      <div class="demo-card__icon">🧮</div>
+      <h3 class="demo-card__title">Factura con RTP embebido</h3>
+      <p class="demo-card__desc">Una empresa pagadora recibe una factura con metadata embebida (número, concepto, emisor, vencimiento, referencia ERP), paga con un gesto desde su banca empresarial y recibe una confirmación de conciliación automática.</p>
+      <a class="demo-card__cta" href="./factura-rtp/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · Colaborativo</span>
+      <div class="demo-card__icon">🐄</div>
+      <h3 class="demo-card__title">Solicitud colaborativa (vaquita)</h3>
+      <p class="demo-card__desc">Un organizador crea una meta colectiva distribuida entre varios participantes; cada uno paga su parte de forma independiente mientras el organizador ve el consolidado de estados y el progreso hacia la meta en tiempo real.</p>
+      <a class="demo-card__cta" href="./vaquita/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · B2B / Mandato</span>
+      <div class="demo-card__icon">🏢</div>
+      <h3 class="demo-card__title">Recaudo recurrente con mandato empresarial</h3>
+      <p class="demo-card__desc">Un proveedor configura un mandato de recaudo y un cliente corporativo lo autoriza una sola vez desde su banca empresarial; los ciclos de cobro posteriores solo requieren una confirmación ligera, sin repetir la autorización completa.</p>
+      <a class="demo-card__cta" href="./mandato-empresarial/index.html">Ver demo →</a>
+    </article>
+
+    <article class="demo-card">
+      <span class="demo-card__tag">Canal · Recurrencia doméstica</span>
+      <div class="demo-card__icon">🔁</div>
+      <h3 class="demo-card__title">Recaudo recurrente doméstico</h3>
+      <p class="demo-card__desc">Misma lógica de mandato que el prototipo empresarial, aplicada a un cobro periódico de persona natural (ej. gimnasio): autorización única y confirmaciones livianas en los ciclos siguientes, con gestión y cancelación del mandato en cualquier momento.</p>
+      <a class="demo-card__cta" href="./mandato-domestico/index.html">Ver demo →</a>
     </article>
 
   </div>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Aprobación corporativa por WhatsApp — RTP</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Contexto: bandeja de cobros de la banca empresarial (no es el foco de la demo) -->
+  <div class="inbox-panel">
+    <div class="inbox-panel-header">
+      <span class="inbox-panel-title">🏢 Banca Empresarial · Bandeja de cobros</span>
+    </div>
+    <div class="inbox-row">
+      <div class="inbox-row-main">
+        <div class="inbox-row-company">Distribuidora ANDES S.A.S.</div>
+        <div class="inbox-row-detail">Proveedores Insumos del Valle SAS · Logística — Bodega Central</div>
+      </div>
+      <div class="inbox-row-side">
+        <div class="inbox-row-amount">$8.450.000</div>
+        <div class="inbox-row-status">Esperando aprobación</div>
+      </div>
+    </div>
+    <div class="inbox-panel-note">Este RTP se replicó automáticamente como alerta de WhatsApp al aprobador →</div>
+  </div>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+
+    <div class="status-bar">
+      <span class="status-time">11:15</span>
+      <span class="status-icons">📶 📡 🔋 85%</span>
+    </div>
+
+    <div class="chat-header">
+      <span class="back-arrow">←</span>
+      <div class="avatar">🏦</div>
+      <div class="chat-title">
+        <div class="chat-name">BancaEmpresas <span class="verified-badge" title="Cuenta verificada">✔</span></div>
+        <div class="chat-status">Alertas automáticas</div>
+      </div>
+      <div class="header-icons">
+        <span>📹</span>
+        <span>📞</span>
+        <span>⋮</span>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+
+      <div class="bubble incoming order-bubble" id="alertBubble">
+        <div class="corp-badge">Aprobación corporativa</div>
+        <div class="bubble-text">
+          Tienes un cobro pendiente de aprobar por <strong id="bubbleAmount">$8.450.000</strong> de
+          <strong id="bubbleEmpresa">Distribuidora ANDES S.A.S.</strong>
+        </div>
+        <div class="bubble-sub">Beneficiario: <span id="bubbleBeneficiario">Proveedores Insumos del Valle SAS</span></div>
+        <div class="order-actions">
+          <button class="btn-pay-wa" id="btnPayWhatsapp">Revisar y aprobar</button>
+        </div>
+        <div class="bubble-time">11:15</div>
+      </div>
+
+      <div class="bubble incoming receipt-bubble" id="receiptBubble" hidden>
+        <div class="receipt-preview">✅</div>
+        <div class="receipt-amount">Aprobación registrada: <strong id="receiptAmountText">$8.450.000</strong></div>
+        <button class="btn-view-receipt" id="btnViewReceipt">Ver confirmación</button>
+        <div class="bubble-time" id="receiptTime">11:18</div>
+      </div>
+
+    </div>
+
+    <div class="chat-input-bar">
+      <span class="input-icon">😊</span>
+      <div class="input-field">Escribe un mensaje</div>
+      <span class="input-icon">📎</span>
+      <span class="input-icon">📷</span>
+      <span class="mic-icon">🎤</span>
+    </div>
+
+    <!-- Overlay backdrop -->
+    <div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
+
+    <!-- Sheet: approval detail -->
+    <div class="sheet sheet-large" id="sheetDetail" hidden>
+      <div class="sheet-handle"></div>
+      <h3 class="sheet-title">Detalle de la aprobación</h3>
+      <div class="corp-badge corp-badge-block">Aprobación corporativa — no es tu gasto personal</div>
+      <div class="approval-item">
+        <div class="approval-item-row">
+          <span class="approval-item-label">Empresa pagadora</span>
+          <span class="approval-item-value" id="detailEmpresa">Distribuidora ANDES S.A.S.</span>
+        </div>
+        <div class="approval-item-row">
+          <span class="approval-item-label">Centro de costo</span>
+          <span class="approval-item-value" id="detailCentroCosto">Logística — Bodega Central</span>
+        </div>
+        <div class="approval-item-row">
+          <span class="approval-item-label">Beneficiario</span>
+          <span class="approval-item-value" id="detailBeneficiario">Proveedores Insumos del Valle SAS</span>
+        </div>
+        <div class="approval-item-row">
+          <span class="approval-item-label">Aprobador</span>
+          <span class="approval-item-value" id="detailAprobador">Roberto Salazar (Gerente Financiero)</span>
+        </div>
+      </div>
+      <div class="order-summary">
+        <div class="order-summary-row order-summary-total">
+          <span>Monto a aprobar</span><span id="detailAmount">$8.450.000</span>
+        </div>
+      </div>
+      <button class="sheet-cta" id="btnAuthorize">Continuar con la aprobación</button>
+    </div>
+
+    <!-- Full screen: biometric -->
+    <div class="screen-biometric" id="screenBiometric" hidden>
+      <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+      <div class="biometric-text">Coloca tu huella</div>
+      <div class="biometric-sub">Verificando identidad del aprobador...</div>
+    </div>
+
+    <!-- Sheet: corporate account picker -->
+    <div class="sheet sheet-large" id="sheetBankPicker" hidden>
+      <div class="sheet-handle"></div>
+      <div class="sheet-back-row">
+        <button class="sheet-back" id="btnBackToDetail" aria-label="Regresar">←</button>
+        <h3 class="sheet-title">Selecciona la cuenta empresarial</h3>
+      </div>
+      <div class="bank-search">🔍 Buscar cuenta empresarial</div>
+      <div class="bank-favorites-label">Favoritas</div>
+      <div class="bank-favorites" id="bankFavorites">
+        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo Empresas">
+          <span class="bank-logo dot-amarillo">BA</span>
+          <span class="bank-favorite-name">Banco Amarillo Empresas</span>
+        </button>
+        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo Empresas">
+          <span class="bank-logo dot-rojo">BR</span>
+          <span class="bank-favorite-name">Banco Rojo Empresas</span>
+        </button>
+        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul Empresas">
+          <span class="bank-logo dot-azul">BZ</span>
+          <span class="bank-favorite-name">Banco Azul Empresas</span>
+        </button>
+      </div>
+      <div class="bank-other-label">Otras cuentas empresariales</div>
+      <div class="bank-other-list">
+        <div class="bank-other-item">Banco Verde Empresas</div>
+        <div class="bank-other-item">Banco Morado Empresas</div>
+        <div class="bank-other-item">Banco Gris Empresas</div>
+      </div>
+    </div>
+
+    <!-- Sheet: identity verification -->
+    <div class="sheet sheet-large" id="sheetEmailInput" hidden>
+      <div class="sheet-handle"></div>
+      <div class="sheet-back-row">
+        <button class="sheet-back" id="btnBackToBankPicker" aria-label="Regresar">←</button>
+        <h3 class="sheet-title">Confirma tu identidad como aprobador</h3>
+      </div>
+      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="emailScreenBankName">Banco</strong> para continuar con la aprobación.</div>
+
+      <div class="bank-favorites" id="authMethodList">
+        <button class="bank-favorite" data-method="email">
+          <span class="bank-logo bank-logo-plain">📧</span>
+          <span class="bank-favorite-name">Correo</span>
+        </button>
+        <button class="bank-favorite" data-method="phone">
+          <span class="bank-logo bank-logo-plain">📱</span>
+          <span class="bank-favorite-name">Celular</span>
+        </button>
+        <button class="bank-favorite" data-method="id">
+          <span class="bank-logo bank-logo-plain">🪪</span>
+          <span class="bank-favorite-name">Cédula</span>
+        </button>
+      </div>
+
+      <div class="email-field" id="authFieldEmail">
+        <label for="emailInput">Correo electrónico</label>
+        <input type="email" id="emailInput" class="email-input" placeholder="nombre@empresa.com" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldPhone" hidden>
+        <label for="phoneInput">Número celular</label>
+        <input type="tel" id="phoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldId" hidden>
+        <label for="idTypeSelect">Tipo de identificación</label>
+        <select id="idTypeSelect" class="email-input">
+          <option value="">Selecciona...</option>
+          <option value="CC">Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+        </select>
+        <label for="idNumberInput" class="auth-field-id-number-label">Número de documento</label>
+        <input type="text" id="idNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+      </div>
+
+      <button class="sheet-cta" id="btnStartPayment" disabled>Iniciar verificación</button>
+    </div>
+
+    <!-- Full screen: simulated push notification / lock screen -->
+    <div class="screen-push-notification" id="screenPushNotification" hidden>
+      <div class="push-lockscreen-time">11:16</div>
+      <div class="push-lockscreen-date">Aprobación pendiente</div>
+      <button class="push-notification-card" id="pushNotificationCard">
+        <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+        <span class="push-notification-body">
+          <span class="push-notification-title" id="pushNotificationTitle">Banco</span>
+          <span class="push-notification-text">Tienes una aprobación corporativa pendiente. Toca para continuar.</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Full screen: corporate account summary -->
+    <div class="screen-bank-app" id="screenBankSummary" hidden>
+      <div class="bank-app-header" id="summaryScreenHeader">
+        <span class="bank-app-name" id="summaryScreenBankName">Banco</span>
+      </div>
+      <div class="bank-app-body">
+        <div class="bank-app-charge-label">Resumen de la aprobación</div>
+        <div class="bank-app-merchant" id="summaryEmpresa">Distribuidora ANDES S.A.S.</div>
+        <div class="bank-app-amount" id="summaryAmount">$8.450.000</div>
+        <div class="bank-app-concept" id="summaryBeneficiario">Proveedores Insumos del Valle SAS</div>
+
+        <div class="bank-app-accounts-label">Selecciona la cuenta empresarial a debitar</div>
+        <div class="account-list" id="bankSummaryAccountList">
+          <button class="account-item" data-account="operativa" data-balance="$142.300.000">
+            <span class="account-dot dot-bank-app"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta Operativa</span>
+              <span class="account-balance">Saldo: $142.300.000</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+          <button class="account-item" data-account="nomina" data-balance="$58.900.000">
+            <span class="account-dot dot-bank-app"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta Nómina</span>
+              <span class="account-balance">Saldo: $58.900.000</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+        </div>
+      </div>
+      <button class="sheet-cta bank-app-cta" id="btnAuthorizeBankPayment" disabled>Continuar</button>
+    </div>
+
+    <!-- Sheet: double-check approver confirmation (differentiates B2B from B2C biometric-only flow) -->
+    <div class="sheet sheet-medium" id="sheetApproverConfirm" hidden>
+      <div class="sheet-handle"></div>
+      <h3 class="sheet-title">Confirmación final del aprobador</h3>
+      <div class="corp-badge corp-badge-block">Aprobación corporativa</div>
+      <div class="approver-confirm-text">
+        Estás a punto de aprobar un pago por <strong id="confirmAmount">$8.450.000</strong> en nombre de
+        <strong id="confirmEmpresa">Distribuidora ANDES S.A.S.</strong>. Esta acción queda registrada con tu nombre
+        como aprobador.
+      </div>
+      <label class="approver-checkbox-row">
+        <input type="checkbox" id="approverCheckbox">
+        <span>Confirmo como aprobador en nombre de la empresa</span>
+      </label>
+      <button class="sheet-cta" id="btnConfirmApproval" disabled>Confirmar aprobación</button>
+    </div>
+
+    <!-- Sheet: already approved notice -->
+    <div class="sheet sheet-small" id="sheetAlreadyPaid" hidden>
+      <div class="sheet-handle"></div>
+      <div class="already-paid-icon">✅</div>
+      <h3 class="sheet-title already-paid-title">Este cobro ya fue aprobado</h3>
+      <div class="already-paid-text">Ya aprobaste el pago de <strong id="alreadyPaidAmount">$8.450.000</strong> de este cobro. Revisa la confirmación en el chat.</div>
+      <button class="sheet-cta" id="btnCloseAlreadyPaid">Entendido</button>
+    </div>
+
+    <!-- Sheet: approval confirmation detail -->
+    <div class="sheet sheet-medium" id="sheetReceipt" hidden>
+      <div class="sheet-handle"></div>
+      <h3 class="sheet-title">Aprobación registrada</h3>
+      <div class="receipt-detail">
+        <div class="receipt-row"><span>Empresa pagadora</span><span id="receiptEmpresa">Distribuidora ANDES S.A.S.</span></div>
+        <div class="receipt-row"><span>Centro de costo</span><span id="receiptCentroCosto">Logística — Bodega Central</span></div>
+        <div class="receipt-row"><span>Beneficiario</span><span id="receiptBeneficiario">Proveedores Insumos del Valle SAS</span></div>
+        <div class="receipt-row"><span>Aprobador</span><span id="receiptAprobador">Roberto Salazar (Gerente Financiero)</span></div>
+        <div class="receipt-row"><span>Cuenta debitada</span><span id="receiptBankName">—</span></div>
+        <div class="receipt-row"><span>Fecha</span><span id="receiptDate">—</span></div>
+        <div class="receipt-row receipt-row-total"><span>Monto aprobado</span><span id="receiptDetailAmount">$8.450.000</span></div>
+      </div>
+      <button class="sheet-cta" id="btnCloseReceipt">Cerrar</button>
+    </div>
+
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Mandato de Recaudo Empresarial (B2)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="stage-label">
+  <span class="stage-label__badge">Motor de mandatos · B2 · Empresarial</span>
+  <span class="stage-label__hint">Proveedor configura → cliente corporativo autoriza una vez → cobros por ciclo</span>
+</div>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+  <div class="status-bar">
+    <span class="status-time" id="statusTime">08:30</span>
+    <span class="status-icons">📶 📡 🔋 91%</span>
+  </div>
+
+  <!-- 1. Configuración del mandato (lado proveedor) -->
+  <div class="screen-step screen-provider" id="screenProvider">
+    <div class="app-header">
+      <span class="app-header__title">Panel Proveedor · Andina Insumos S.A.S.</span>
+    </div>
+    <div class="step-body">
+      <div class="step-eyebrow">Paso 1 · Configuración del mandato</div>
+      <h2 class="step-title">Nuevo mandato de recaudo recurrente</h2>
+      <p class="step-sub">Como proveedor, defines las condiciones del cobro recurrente antes de enviarlo al cliente corporativo para su autorización.</p>
+
+      <div class="mock-form">
+        <div class="mock-form-row">
+          <label>Cliente corporativo</label>
+          <div class="mock-form-value">Constructora Vértice S.A.</div>
+        </div>
+        <div class="mock-form-row">
+          <label>Concepto</label>
+          <div class="mock-form-value">Suministro mensual de insumos industriales</div>
+        </div>
+        <div class="mock-form-row">
+          <label>Monto pactado</label>
+          <div class="mock-form-value">$18.500.000 COP / ciclo</div>
+        </div>
+        <div class="mock-form-row">
+          <label>Tope de variación</label>
+          <div class="mock-form-value">Hasta $21.000.000 COP</div>
+        </div>
+        <div class="mock-form-row">
+          <label>Frecuencia</label>
+          <div class="mock-form-value">Mensual</div>
+        </div>
+        <div class="mock-form-row">
+          <label>Vigencia</label>
+          <div class="mock-form-value">12 meses o hasta cancelación</div>
+        </div>
+      </div>
+
+      <div class="provider-status" id="providerStatus">
+        <span class="provider-status__dot"></span>
+        Mandato <strong>MND-EMP-00482</strong> listo para enviar a autorización
+      </div>
+    </div>
+    <button class="cta-primary" id="btnSendMandate">Enviar solicitud de mandato al cliente</button>
+  </div>
+
+  <!-- 2. Solicitud de autorización de mandato (banca empresarial) -->
+  <div class="screen-step screen-bankapp theme-corporate" id="screenMandateRequest" hidden>
+    <div class="bankapp-header">
+      <span class="bankapp-header__bank">Banco Azul Empresas</span>
+      <span class="bankapp-header__user">Constructora Vértice S.A.</span>
+    </div>
+    <div class="step-body">
+      <div class="step-eyebrow">Paso 2 · Solicitud de autorización de mandato</div>
+      <h2 class="step-title">Un proveedor solicita autorización para un cobro recurrente</h2>
+      <p class="step-sub">Revisa completas las condiciones del mandato antes de autorizar. Esta autorización es única: no se repite en cada ciclo.</p>
+
+      <div class="mandate-card" id="mandateCardRequest">
+        <div class="mandate-card__top">
+          <span class="mandate-card__beneficiary" id="mcBeneficiary">Andina Insumos S.A.S.</span>
+          <span class="mandate-tag mandate-tag--proposal" id="mcEstado">Propuesta de mandato</span>
+        </div>
+        <div class="mandate-card__id" id="mcId">Mandato MND-EMP-00482</div>
+        <div class="mandate-row">
+          <span class="mandate-label">Monto pactado</span>
+          <span class="mandate-value" id="mcMonto">$18.500.000</span>
+        </div>
+        <div class="mandate-row">
+          <span class="mandate-label">Frecuencia</span>
+          <span class="mandate-value" id="mcFrecuencia">Mensual</span>
+        </div>
+        <div class="mandate-row">
+          <span class="mandate-label">Vigencia</span>
+          <span class="mandate-value" id="mcVigencia">12 meses / hasta cancelar</span>
+        </div>
+        <div class="mandate-row">
+          <span class="mandate-label">Tope autorizado</span>
+          <span class="mandate-value" id="mcTope">$21.000.000</span>
+        </div>
+        <div class="mandate-row">
+          <span class="mandate-label">Cuenta a debitar</span>
+          <span class="mandate-value">Cuenta Corriente Empresarial ·4821</span>
+        </div>
+      </div>
+
+      <p class="step-fineprint">Al autorizar, aceptas que ACH ejecute cobros automáticos por el monto pactado en cada ciclo, sin exceder el tope, hasta que canceles el mandato.</p>
+    </div>
+    <button class="cta-primary" id="btnGoAuthorize">Autorizar mandato completo</button>
+  </div>
+
+  <!-- 3. Autorización única (firma corporativa + biometría) -->
+  <div class="screen-step screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-corp-label">Autorización única del representante legal</div>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Firma y huella digital</div>
+    <div class="biometric-sub">Verificando identidad corporativa...</div>
+  </div>
+
+  <!-- 4. Mandato activo -->
+  <div class="screen-step screen-bankapp theme-corporate" id="screenMandateActive" hidden>
+    <div class="bankapp-header">
+      <span class="bankapp-header__bank">Banco Azul Empresas</span>
+      <span class="bankapp-header__user">Constructora Vértice S.A.</span>
+    </div>
+    <div class="step-body">
+      <div class="confirm-icon">✅</div>
+      <h2 class="step-title step-title--center">Mandato activo</h2>
+      <p class="step-sub step-sub--center">Quedó registrado en tu banca empresarial. Recibirás una notificación ligera en cada ciclo de cobro.</p>
+
+      <div class="mandate-card" id="mandateCardActive">
+        <div class="mandate-card__top">
+          <span class="mandate-card__beneficiary">Andina Insumos S.A.S.</span>
+          <span class="mandate-tag mandate-tag--active">Mandato activo</span>
+        </div>
+        <div class="mandate-card__id">Mandato MND-EMP-00482</div>
+        <div class="mandate-row"><span class="mandate-label">Monto pactado</span><span class="mandate-value">$18.500.000</span></div>
+        <div class="mandate-row"><span class="mandate-label">Frecuencia</span><span class="mandate-value">Mensual</span></div>
+        <div class="mandate-row"><span class="mandate-label">Próximo cobro</span><span class="mandate-value" id="nextCycleDate">15 ago 2026</span></div>
+      </div>
+    </div>
+    <button class="cta-primary" id="btnSimulateCycle">Simular próximo ciclo de cobro</button>
+    <button class="cta-secondary" id="btnGoManageFromActive">Ver gestión de mandatos</button>
+  </div>
+
+  <!-- 5. Notificación de cobro por ciclo (push ligero) -->
+  <div class="screen-step screen-push-notification" id="screenCycleNotification" hidden>
+    <div class="push-lockscreen-time" id="pushTime">08:30</div>
+    <div class="push-lockscreen-date">Cobro de mandato pendiente</div>
+    <button class="push-notification-card" id="pushNotificationCard">
+      <span class="push-notification-icon">BA</span>
+      <span class="push-notification-body">
+        <span class="push-notification-title">Banco Azul Empresas</span>
+        <span class="push-notification-text" id="pushNotificationText">Ciclo 1 del mandato con Andina Insumos por $18.500.000. Toca para confirmar.</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- 5a. Confirmación de ciclo — primera vez (más completa) -->
+  <div class="screen-step screen-bankapp theme-corporate" id="screenCycleConfirmFull" hidden>
+    <div class="bankapp-header">
+      <span class="bankapp-header__bank">Banco Azul Empresas</span>
+      <span class="bankapp-header__user">Constructora Vértice S.A.</span>
+    </div>
+    <div class="step-body">
+      <div class="step-eyebrow" id="cycleFullEyebrow">Ciclo 1 · Confirmación de cobro</div>
+      <h2 class="step-title">Cobro dentro del mandato ya autorizado</h2>
+      <p class="step-sub">Este ciclo referencia el mandato MND-EMP-00482. No necesitas volver a autorizar desde cero: solo confirma.</p>
+
+      <div class="mandate-card mandate-card--cycle">
+        <div class="mandate-card__top">
+          <span class="mandate-card__beneficiary">Andina Insumos S.A.S.</span>
+          <span class="mandate-tag mandate-tag--cycle" id="cycleFullTag">Ciclo 1 de 2</span>
+        </div>
+        <div class="mandate-row"><span class="mandate-label">Monto de este ciclo</span><span class="mandate-value" id="cycleFullAmount">$18.500.000</span></div>
+        <div class="mandate-row"><span class="mandate-label">Dentro del tope</span><span class="mandate-value">Sí (tope $21.000.000)</span></div>
+        <div class="mandate-row"><span class="mandate-label">Cuenta a debitar</span><span class="mandate-value">Cuenta Corriente Empresarial ·4821</span></div>
+      </div>
+    </div>
+    <button class="cta-primary" id="btnConfirmCycleFull">Confirmar cobro del ciclo</button>
+  </div>
+
+  <!-- 5b. Confirmación de ciclo — ciclos siguientes (ligera, un toque) -->
+  <div class="screen-step screen-bankapp theme-corporate screen-light-confirm" id="screenCycleConfirmLight" hidden>
+    <div class="bankapp-header">
+      <span class="bankapp-header__bank">Banco Azul Empresas</span>
+      <span class="bankapp-header__user">Constructora Vértice S.A.</span>
+    </div>
+    <div class="step-body step-body--center">
+      <div class="step-eyebrow" id="cycleLightEyebrow">Ciclo 2 · Confirmación ligera</div>
+      <div class="light-confirm-amount" id="cycleLightAmount">$18.500.000</div>
+      <p class="step-sub step-sub--center">Andina Insumos S.A.S. · Mandato MND-EMP-00482<br>Sin biometría adicional: el mandato ya fue autorizado una vez.</p>
+    </div>
+    <button class="cta-primary" id="btnConfirmCycleLight">Confirmar con un toque</button>
+  </div>
+
+  <!-- Confirmación de ciclo ejecutado -->
+  <div class="screen-step screen-bankapp theme-corporate" id="screenCycleDone" hidden>
+    <div class="bankapp-header">
+      <span class="bankapp-header__bank">Banco Azul Empresas</span>
+      <span class="bankapp-header__user">Constructora Vértice S.A.</span>
+    </div>
+    <div class="step-body step-body--center">
+      <div class="confirm-icon">✅</div>
+      <h2 class="step-title step-title--center">Cobro de ciclo ejecutado</h2>
+      <div class="light-confirm-amount" id="cycleDoneAmount">$18.500.000</div>
+      <p class="step-sub step-sub--center" id="cycleDoneLabel">Ciclo 1 confirmado y pagado</p>
+    </div>
+    <button class="cta-primary" id="btnAfterCycle">Continuar</button>
+  </div>
+
+  <!-- 6. Gestión de mandatos activos -->
+  <div class="screen-step screen-bankapp theme-corporate" id="screenManagement" hidden>
+    <div class="bankapp-header">
+      <span class="bankapp-header__bank">Banco Azul Empresas</span>
+      <span class="bankapp-header__user" id="btnBackFromManagement">← Constructora Vértice S.A.</span>
+    </div>
+    <div class="step-body">
+      <div class="step-eyebrow">Paso 6 · Gestión de mandatos</div>
+      <h2 class="step-title">Mandatos activos</h2>
+
+      <div class="mandate-card" id="mandateCardManagement">
+        <div class="mandate-card__top">
+          <span class="mandate-card__beneficiary">Andina Insumos S.A.S.</span>
+          <span class="mandate-tag" id="mgmtEstadoTag">Mandato activo</span>
+        </div>
+        <div class="mandate-card__id">Mandato MND-EMP-00482</div>
+        <div class="mandate-row"><span class="mandate-label">Monto pactado</span><span class="mandate-value">$18.500.000</span></div>
+        <div class="mandate-row"><span class="mandate-label">Frecuencia</span><span class="mandate-value">Mensual</span></div>
+        <div class="mandate-row"><span class="mandate-label">Vigencia</span><span class="mandate-value">12 meses / hasta cancelar</span></div>
+        <div class="mandate-row"><span class="mandate-label">Tope</span><span class="mandate-value">$21.000.000</span></div>
+      </div>
+
+      <div class="cycle-history-label">Historial de ciclos</div>
+      <div class="cycle-history" id="cycleHistory"></div>
+    </div>
+    <button class="cta-danger" id="btnCancelMandate">Cancelar mandato</button>
+    <div class="cancel-confirm" id="cancelConfirmBanner" hidden>
+      <span class="cancel-confirm__icon">🛑</span>
+      Mandato cancelado. No se generarán nuevos ciclos de cobro.
+    </div>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

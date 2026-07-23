@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo P2P con motivo — RTP por WhatsApp</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Mock del lado cobrador: selección de plantilla (no interactivo a fondo, solo cambia el escenario) -->
+  <div class="scenario-panel">
+    <div class="scenario-panel-title">Vista del cobrador (mock) — elige la plantilla del cobro</div>
+    <div class="scenario-list" id="scenarioList">
+      <button class="scenario-card selected" data-scenario="arriendo">
+        <span class="scenario-card-icon">🏠</span>
+        <span class="scenario-card-label">Arriendo</span>
+      </button>
+      <button class="scenario-card" data-scenario="servicios">
+        <span class="scenario-card-icon">💡</span>
+        <span class="scenario-card-label">Servicios</span>
+      </button>
+      <button class="scenario-card" data-scenario="prestamo">
+        <span class="scenario-card-icon">🤝</span>
+        <span class="scenario-card-label">Préstamo</span>
+      </button>
+      <button class="scenario-card" data-scenario="otro">
+        <span class="scenario-card-icon">✏️</span>
+        <span class="scenario-card-label">Otro</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="phone">
+    <div class="phone-notch"></div>
+
+    <div class="status-bar">
+      <span class="status-time">11:15</span>
+      <span class="status-icons">📶 📡 🔋 85%</span>
+    </div>
+
+    <div class="chat-header">
+      <span class="back-arrow">←</span>
+      <div class="avatar" id="chatAvatar">LG</div>
+      <div class="chat-title">
+        <div class="chat-name" id="chatName">Laura Gómez</div>
+        <div class="chat-status">en línea</div>
+      </div>
+      <div class="header-icons">
+        <span>📹</span>
+        <span>📞</span>
+        <span>⋮</span>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+
+      <div class="bubble incoming order-bubble" id="chargeBubble">
+        <div class="bubble-text">
+          <strong id="bubbleRequesterName">Laura Gómez</strong> te envió un cobro de
+          <strong id="bubbleAmount">$1.200.000</strong>
+        </div>
+        <div class="motivo-chip">
+          <span class="motivo-chip-label">Motivo</span>
+          <span class="motivo-chip-text" id="bubbleMotivo">Arriendo apartamento — julio 2026</span>
+        </div>
+        <div class="order-actions">
+          <button class="btn-pay-wa" id="btnPayWhatsapp">Ver y pagar</button>
+        </div>
+        <div class="bubble-time" id="chargeBubbleTime">11:15</div>
+      </div>
+
+      <div class="bubble incoming receipt-bubble" id="receiptBubble" hidden>
+        <div class="receipt-preview">🧾</div>
+        <div class="receipt-amount">Pago confirmado: <strong id="receiptAmountText">$1.200.000</strong></div>
+        <button class="btn-view-receipt" id="btnViewReceipt">Ver recibo</button>
+        <div class="bubble-time" id="receiptTime">11:18</div>
+      </div>
+
+    </div>
+
+    <div class="chat-input-bar">
+      <span class="input-icon">😊</span>
+      <div class="input-field">Escribe un mensaje</div>
+      <span class="input-icon">📎</span>
+      <span class="input-icon">📷</span>
+      <span class="mic-icon">🎤</span>
+    </div>
+
+    <!-- Overlay backdrop -->
+    <div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
+
+    <!-- Sheet: charge detail -->
+    <div class="sheet sheet-large" id="sheetDetail" hidden>
+      <div class="sheet-handle"></div>
+      <h3 class="sheet-title">Detalle del cobro</h3>
+      <div class="motivo-card">
+        <div class="motivo-card-icon" id="detailAvatar">LG</div>
+        <div class="motivo-card-info">
+          <div class="motivo-card-name" id="detailRequesterName">Laura Gómez</div>
+          <div class="motivo-card-label">te envió un cobro</div>
+        </div>
+      </div>
+      <div class="motivo-highlight">
+        <div class="motivo-highlight-label">Motivo</div>
+        <div class="motivo-highlight-text" id="detailMotivo">Arriendo apartamento — julio 2026</div>
+      </div>
+      <div class="order-summary">
+        <div class="order-summary-row order-summary-total">
+          <span>Total a pagar</span><span id="detailAmount">$1.200.000</span>
+        </div>
+      </div>
+      <button class="sheet-cta" id="btnAuthorize">Autorizar pago</button>
+    </div>
+
+    <!-- Full screen: biometric -->
+    <div class="screen-biometric" id="screenBiometric" hidden>
+      <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+      <div class="biometric-text">Coloca tu huella</div>
+      <div class="biometric-sub">Verificando identidad...</div>
+    </div>
+
+    <!-- Sheet: bank picker -->
+    <div class="sheet sheet-large" id="sheetBankPicker" hidden>
+      <div class="sheet-handle"></div>
+      <div class="sheet-back-row">
+        <button class="sheet-back" id="btnBackToDetail" aria-label="Regresar">←</button>
+        <h3 class="sheet-title">Selecciona tu banco</h3>
+      </div>
+      <div class="bank-search">🔍 Buscar banco</div>
+      <div class="bank-favorites-label">Favoritos</div>
+      <div class="bank-favorites" id="bankFavorites">
+        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
+          <span class="bank-logo dot-amarillo">BA</span>
+          <span class="bank-favorite-name">Banco Amarillo</span>
+        </button>
+        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
+          <span class="bank-logo dot-rojo">BR</span>
+          <span class="bank-favorite-name">Banco Rojo</span>
+        </button>
+        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
+          <span class="bank-logo dot-azul">BZ</span>
+          <span class="bank-favorite-name">Banco Azul</span>
+        </button>
+      </div>
+      <div class="bank-other-label">Otros bancos</div>
+      <div class="bank-other-list">
+        <div class="bank-other-item">Banco Verde</div>
+        <div class="bank-other-item">Banco Morado</div>
+        <div class="bank-other-item">Banco Gris</div>
+      </div>
+    </div>
+
+    <!-- Sheet: identity verification -->
+    <div class="sheet sheet-large" id="sheetEmailInput" hidden>
+      <div class="sheet-handle"></div>
+      <div class="sheet-back-row">
+        <button class="sheet-back" id="btnBackToBankPicker" aria-label="Regresar">←</button>
+        <h3 class="sheet-title">Confirma tu identidad</h3>
+      </div>
+      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="emailScreenBankName">Banco</strong> para continuar con el pago.</div>
+
+      <div class="bank-favorites" id="authMethodList">
+        <button class="bank-favorite" data-method="email">
+          <span class="bank-logo bank-logo-plain">📧</span>
+          <span class="bank-favorite-name">Correo</span>
+        </button>
+        <button class="bank-favorite" data-method="phone">
+          <span class="bank-logo bank-logo-plain">📱</span>
+          <span class="bank-favorite-name">Celular</span>
+        </button>
+        <button class="bank-favorite" data-method="id">
+          <span class="bank-logo bank-logo-plain">🪪</span>
+          <span class="bank-favorite-name">Cédula</span>
+        </button>
+      </div>
+
+      <div class="email-field" id="authFieldEmail">
+        <label for="emailInput">Correo electrónico</label>
+        <input type="email" id="emailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldPhone" hidden>
+        <label for="phoneInput">Número celular</label>
+        <input type="tel" id="phoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldId" hidden>
+        <label for="idTypeSelect">Tipo de identificación</label>
+        <select id="idTypeSelect" class="email-input">
+          <option value="">Selecciona...</option>
+          <option value="CC">Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+        </select>
+        <label for="idNumberInput" class="auth-field-id-number-label">Número de documento</label>
+        <input type="text" id="idNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+      </div>
+
+      <button class="sheet-cta" id="btnStartPayment" disabled>Iniciar pago</button>
+    </div>
+
+    <!-- Full screen: simulated push notification / lock screen -->
+    <div class="screen-push-notification" id="screenPushNotification" hidden>
+      <div class="push-lockscreen-time">11:16</div>
+      <div class="push-lockscreen-date">Autorización pendiente</div>
+      <button class="push-notification-card" id="pushNotificationCard">
+        <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+        <span class="push-notification-body">
+          <span class="push-notification-title" id="pushNotificationTitle">Banco</span>
+          <span class="push-notification-text">Tienes un cobro pendiente por autorizar. Toca para continuar.</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Full screen: bank payment summary -->
+    <div class="screen-bank-app" id="screenBankSummary" hidden>
+      <div class="bank-app-header" id="summaryScreenHeader">
+        <span class="bank-app-name" id="summaryScreenBankName">Banco</span>
+      </div>
+      <div class="bank-app-body">
+        <div class="bank-app-charge-label">Resumen del pago</div>
+        <div class="bank-app-merchant" id="summaryRequesterName">Laura Gómez</div>
+        <div class="bank-app-amount" id="summaryAmount">$1.200.000</div>
+        <div class="bank-app-concept" id="summaryMotivo">Arriendo apartamento — julio 2026</div>
+
+        <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+        <div class="account-list" id="bankSummaryAccountList">
+          <button class="account-item" data-account="ahorros" data-balance="$980.300">
+            <span class="account-dot dot-bank-app"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta de Ahorros</span>
+              <span class="account-balance">Saldo: $980.300</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+          <button class="account-item" data-account="corriente" data-balance="$210.750">
+            <span class="account-dot dot-bank-app"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta Corriente</span>
+              <span class="account-balance">Saldo: $210.750</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+        </div>
+      </div>
+      <button class="sheet-cta bank-app-cta" id="btnAuthorizeBankPayment" disabled>Autorizar pago desde mi banco</button>
+    </div>
+
+    <!-- Sheet: already paid notice -->
+    <div class="sheet sheet-small" id="sheetAlreadyPaid" hidden>
+      <div class="sheet-handle"></div>
+      <div class="already-paid-icon">✅</div>
+      <h3 class="sheet-title already-paid-title">Este cobro ya fue pagado</h3>
+      <div class="already-paid-text">Ya realizaste el pago de <strong id="alreadyPaidAmount">$1.200.000</strong> de este cobro. Revisa el recibo en el chat.</div>
+      <button class="sheet-cta" id="btnCloseAlreadyPaid">Entendido</button>
+    </div>
+
+    <!-- Sheet: receipt detail -->
+    <div class="sheet sheet-medium" id="sheetReceipt" hidden>
+      <div class="sheet-handle"></div>
+      <h3 class="sheet-title">Recibo de pago</h3>
+      <div class="receipt-detail">
+        <div class="receipt-row"><span>Para</span><span id="receiptRequesterName">Laura Gómez</span></div>
+        <div class="receipt-row"><span>Motivo</span><span id="receiptMotivo">Arriendo apartamento — julio 2026</span></div>
+        <div class="receipt-row"><span>Cuenta origen</span><span id="receiptBankName">—</span></div>
+        <div class="receipt-row"><span>Fecha</span><span id="receiptDate">—</span></div>
+        <div class="receipt-row receipt-row-total"><span>Total pagado</span><span id="receiptDetailAmount">$1.200.000</span></div>
+      </div>
+      <button class="sheet-cta" id="btnCloseReceipt">Cerrar</button>
+    </div>
+
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>
