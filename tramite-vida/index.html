@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Cobro por evento de vida (trámites) — RTP</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <div class="status-bar">
+    <span class="status-time">9:40</span>
+    <span class="status-icons">📶 📡 🔋 91%</span>
+  </div>
+
+  <!-- Screen 1: notificación del trámite (lock screen / push), sin pedir ningún dato -->
+  <div class="screen-push-notification" id="screenPushNotification">
+    <div class="push-lockscreen-time">9:41</div>
+    <div class="push-lockscreen-date">Notificación de trámite</div>
+    <button class="push-notification-card" id="pushNotificationCard">
+      <span class="push-notification-icon" id="pushNotificationIcon">🏥</span>
+      <span class="push-notification-body">
+        <span class="push-notification-title" id="pushNotificationTitle">EPS Sanitas</span>
+        <span class="push-notification-subtitle" id="pushNotificationSubtitle">Copago consulta médica</span>
+        <span class="push-notification-text">Tienes un cobro de <strong id="pushNotificationAmount">$0</strong> pendiente. Toca para ver el detalle.</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- Screen: detalle del trámite con datos precargados -->
+  <div class="screen-tramite-detail" id="screenTramiteDetail" hidden>
+    <div class="tramite-header">
+      <span class="back-arrow" id="btnBackToNotification">←</span>
+      <div class="tramite-title">Detalle del trámite</div>
+    </div>
+
+    <div class="tramite-body" id="tramiteDetailBody">
+      <div class="tramite-detail-badge">RTP con datos precargados</div>
+
+      <div class="tramite-precarga-note">
+        ✅ No necesitas ingresar ninguna referencia. Todos los datos de tu trámite ya
+        llegaron precargados desde la entidad.
+      </div>
+
+      <div class="tramite-meta-card">
+        <div class="tramite-meta-row"><span>Tipo de trámite</span><span id="detailTipoTramite">—</span></div>
+        <div class="tramite-meta-row"><span>Entidad emisora</span><span id="detailEntidadEmisora">—</span></div>
+        <div class="tramite-meta-row"><span>Número de radicado</span><span id="detailNumeroRadicado">—</span></div>
+        <div class="tramite-meta-row"><span>Ciudadano</span><span id="detailNombreCiudadano">—</span></div>
+        <div class="tramite-meta-row"><span>Fecha límite de pago</span><span id="detailFechaLimite">—</span></div>
+      </div>
+
+      <div class="tramite-amount-card">
+        <span>Total a pagar</span>
+        <span class="tramite-amount-value" id="detailMonto">$0</span>
+      </div>
+    </div>
+
+    <button class="cart-cta" id="btnPayTramite">Pagar con RTP</button>
+  </div>
+
+  <!-- Screen: app del banco - selección de cuenta + autorización -->
+  <div class="screen-bank-app" id="screenBankApp" hidden>
+    <div class="bank-app-header" id="bankAppHeader">
+      <span class="bank-app-close" id="btnCloseBankApp">✕</span>
+      <span class="bank-app-name">Tu Banco</span>
+    </div>
+    <div class="bank-app-body" id="bankAppPaymentView">
+      <div class="bank-app-charge-label">Pago de trámite</div>
+      <div class="bank-app-merchant" id="bankAppTipoTramite">Copago consulta médica</div>
+      <div class="bank-app-amount" id="bankAppAmount">$0</div>
+      <div class="bank-app-concept" id="bankAppEntidad">EPS Sanitas</div>
+      <div class="bank-app-tramite-meta" id="bankAppTramiteMeta">Radicado — · Límite —</div>
+
+      <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+      <div class="account-list" id="bankAppAccountList">
+        <button class="account-item" data-account="ahorros" data-balance="$3.120.000">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta de Ahorros</span>
+            <span class="account-balance">Saldo: $3.120.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-account="nomina" data-balance="$740.000">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Nómina</span>
+            <span class="account-balance">Saldo: $740.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+      </div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment" disabled>Autorizar pago</button>
+
+    <!-- Confirmación propia del banco, inmediatamente tras la biometría -->
+    <div class="bank-app-body bank-app-confirm" id="bankAppConfirmView" hidden>
+      <div class="confirmation-icon">✅</div>
+      <div class="bank-app-confirm-title">Pago exitoso</div>
+      <div class="bank-app-amount" id="bankAppConfirmAmount">$0</div>
+      <div class="bank-app-concept" id="bankAppConfirmConcept">Copago consulta médica</div>
+      <div class="bank-app-confirm-account" id="bankAppConfirmAccount">—</div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnReturnToNotification" hidden>Continuar</button>
+  </div>
+
+  <!-- Screen: biometría del OS -->
+  <div class="screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Coloca tu huella</div>
+    <div class="biometric-sub">Verificando identidad...</div>
+  </div>
+
+  <!-- Screen: confirmación final con trazabilidad -->
+  <div class="screen-trazabilidad" id="screenTrazabilidad" hidden>
+    <div class="trazabilidad-body">
+      <div class="confirmation-icon">✅</div>
+      <div class="trazabilidad-title">Trámite pagado</div>
+      <div class="trazabilidad-sub" id="trazabilidadSub">Trazabilidad enviada a EPS Sanitas.</div>
+
+      <div class="tramite-meta-card">
+        <div class="tramite-meta-row"><span>Tipo de trámite</span><span id="trazTipoTramite">—</span></div>
+        <div class="tramite-meta-row"><span>Número de radicado</span><span id="trazNumeroRadicado">—</span></div>
+        <div class="tramite-meta-row"><span>Monto pagado</span><span id="trazMonto">—</span></div>
+        <div class="tramite-meta-row"><span>Cuenta origen</span><span id="trazAccount">—</span></div>
+        <div class="tramite-meta-row tramite-meta-row-highlight"><span>ID de trazabilidad</span><span id="trazTrazabilidadId">—</span></div>
+      </div>
+    </div>
+    <button class="cart-cta" id="btnCloseTrazabilidad">Volver al inicio</button>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

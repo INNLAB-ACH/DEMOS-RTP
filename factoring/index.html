@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Cobro a proveedores vía factoring con RTP (B2B)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <div class="status-bar">
+    <span class="status-time">11:15</span>
+    <span class="status-icons">📶 📡 🔋 85%</span>
+  </div>
+
+  <!-- Screen 1: Facturas por pagar (banca empresarial del comprador) -->
+  <div class="screen-invoices" id="screenInvoices">
+    <div class="store-header">
+      <span class="back-arrow">←</span>
+      <div class="store-title">Banca Empresarial · Cuentas por pagar</div>
+      <span class="cart-icon">🏢</span>
+    </div>
+
+    <div class="invoices-body" id="invoicesBody">
+      <div class="invoices-section-title">Facturas recibidas (2)</div>
+
+      <button class="invoice-card" id="invoiceCardFactorizada" data-invoice="factorizada">
+        <div class="invoice-card-top">
+          <span class="invoice-card-number">Factura FE-2026-00902</span>
+          <span class="invoice-card-badge invoice-card-badge-factoring" id="invoiceCardBadgeFactorizada">Factorizada</span>
+        </div>
+        <div class="invoice-card-concept">Suministro de materia prima textil</div>
+        <div class="invoice-card-issuer">Emisor original: Distribuidora ABC S.A.S. · NIT 900.123.456-7</div>
+        <div class="invoice-card-row">
+          <span class="invoice-card-due">Vence: 05/08/2026</span>
+          <span class="invoice-card-amount">$12.400.000</span>
+        </div>
+      </button>
+
+      <button class="invoice-card" id="invoiceCardSinFactorizar" data-invoice="sinFactorizar">
+        <div class="invoice-card-top">
+          <span class="invoice-card-number">Factura FE-2026-00915</span>
+          <span class="invoice-card-badge invoice-card-badge-pending" id="invoiceCardBadgeSinFactorizar">Sin factorizar</span>
+        </div>
+        <div class="invoice-card-concept">Servicio de transporte de carga</div>
+        <div class="invoice-card-issuer">Emisor: Transportes Cordillera S.A.S. · NIT 901.222.333-9</div>
+        <div class="invoice-card-row">
+          <span class="invoice-card-due">Vence: 12/08/2026</span>
+          <span class="invoice-card-amount">$3.150.000</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen: detalle de factura con beneficiario redirigido -->
+  <div class="screen-invoice-detail" id="screenInvoiceDetail" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToInvoices">←</span>
+      <div class="payment-title">Detalle de factura</div>
+    </div>
+
+    <div class="payment-body" id="invoiceDetailBody">
+      <div class="invoice-detail-badge" id="invoiceDetailStatusBadge">RTP embebido</div>
+
+      <!-- Aviso de redirección de beneficiario: visible ANTES de que el comprador autorice
+           el pago (no solo en el recibo final), por criterio de aceptación de tareas-b5. -->
+      <div class="factoring-banner" id="factoringBanner" hidden>
+        <span class="factoring-banner-icon">⚠️</span>
+        <span class="factoring-banner-text">
+          Esta factura fue <strong>factorizada</strong>. El pago se acreditará a
+          <strong id="factoringBannerFactor">Factoring Andino S.A.</strong>, no al proveedor
+          original <strong id="factoringBannerEmisor">Distribuidora ABC S.A.S.</strong>.
+        </span>
+      </div>
+
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Número de factura</span><span id="detailNumeroFactura">—</span></div>
+        <div class="invoice-meta-row"><span>Concepto</span><span id="detailConcepto">—</span></div>
+        <div class="invoice-meta-row"><span>NIT emisor</span><span id="detailNit">—</span></div>
+        <div class="invoice-meta-row"><span>Fecha de emisión</span><span id="detailFechaEmision">—</span></div>
+        <div class="invoice-meta-row"><span>Fecha de vencimiento</span><span id="detailFechaVencimiento">—</span></div>
+        <div class="invoice-meta-row"><span>Referencia ERP</span><span id="detailReferenciaERP">—</span></div>
+      </div>
+
+      <!-- Ambos beneficiarios, diferenciados: original atenuado/tachado, de pago destacado -->
+      <div class="beneficiarios-card">
+        <div class="beneficiarios-label">Beneficiarios</div>
+        <div class="beneficiario-row beneficiario-original">
+          <span class="beneficiario-tag">Proveedor original</span>
+          <span class="beneficiario-nombre" id="detailBeneficiarioOriginal">Distribuidora ABC S.A.S.</span>
+        </div>
+        <div class="beneficiario-row beneficiario-pago">
+          <span class="beneficiario-tag">Se acredita a</span>
+          <span class="beneficiario-nombre" id="detailBeneficiarioPago">Factoring Andino S.A.</span>
+        </div>
+      </div>
+
+      <div class="invoice-amount-card">
+        <span>Total a pagar</span>
+        <span class="invoice-amount-value" id="detailMonto">$0</span>
+      </div>
+    </div>
+
+    <button class="cart-cta" id="btnPayInvoice">Pagar con RTP</button>
+  </div>
+
+  <!-- Screen: selección de banco (reusado tal cual de factura-rtp/) -->
+  <div class="screen-bank-picker" id="screenBankPicker" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToInvoiceDetail">←</span>
+      <div class="payment-title">Selecciona tu banco</div>
+    </div>
+    <div class="payment-body">
+      <div class="bank-search">🔍 Buscar banco</div>
+      <div class="bank-favorites-label">Favoritos</div>
+      <div class="bank-favorites" id="bankFavorites">
+        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
+          <span class="bank-logo dot-amarillo">BA</span>
+          <span class="bank-favorite-name">Banco Amarillo</span>
+        </button>
+        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
+          <span class="bank-logo dot-rojo">BR</span>
+          <span class="bank-favorite-name">Banco Rojo</span>
+        </button>
+        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
+          <span class="bank-logo dot-azul">BZ</span>
+          <span class="bank-favorite-name">Banco Azul</span>
+        </button>
+      </div>
+      <div class="bank-other-label">Otros bancos</div>
+      <div class="bank-other-list">
+        <div class="bank-other-item">Banco Verde</div>
+        <div class="bank-other-item">Banco Morado</div>
+        <div class="bank-other-item">Banco Gris</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: verificación de identidad (reusado tal cual de factura-rtp/) -->
+  <div class="screen-identity" id="screenIdentityVerification" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToBankPicker">←</span>
+      <div class="payment-title">Confirma tu identidad</div>
+    </div>
+    <div class="payment-body">
+      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="identityBankName">Banco</strong> para autorizar el pago de la factura.</div>
+
+      <div class="bank-favorites" id="authMethodList">
+        <button class="bank-favorite" data-method="email">
+          <span class="bank-logo bank-logo-plain">📧</span>
+          <span class="bank-favorite-name">Correo</span>
+        </button>
+        <button class="bank-favorite" data-method="phone">
+          <span class="bank-logo bank-logo-plain">📱</span>
+          <span class="bank-favorite-name">Celular</span>
+        </button>
+        <button class="bank-favorite" data-method="id">
+          <span class="bank-logo bank-logo-plain">🪪</span>
+          <span class="bank-favorite-name">Cédula</span>
+        </button>
+      </div>
+
+      <div class="email-field" id="authFieldEmail">
+        <label for="identityEmailInput">Correo electrónico</label>
+        <input type="email" id="identityEmailInput" class="email-input" placeholder="tesoreria@empresa.com" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldPhone" hidden>
+        <label for="identityPhoneInput">Número celular</label>
+        <input type="tel" id="identityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldId" hidden>
+        <label for="identityIdTypeSelect">Tipo de identificación</label>
+        <select id="identityIdTypeSelect" class="email-input">
+          <option value="">Selecciona...</option>
+          <option value="CC">Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+        </select>
+        <label for="identityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
+        <input type="text" id="identityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+      </div>
+    </div>
+    <button class="cart-cta" id="btnStartPayment" disabled>Iniciar pago</button>
+  </div>
+
+  <!-- Full screen: simulated push notification / lock screen -->
+  <div class="screen-push-notification" id="screenPushNotification" hidden>
+    <div class="push-lockscreen-time">11:16</div>
+    <div class="push-lockscreen-date">Autorización pendiente</div>
+    <button class="push-notification-card" id="pushNotificationCard">
+      <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+      <span class="push-notification-body">
+        <span class="push-notification-title" id="pushNotificationTitle">Banco</span>
+        <span class="push-notification-text">Tienes una factura pendiente por autorizar. Toca para continuar.</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- Screen: app del banco (reusado tal cual de factura-rtp/) -->
+  <div class="screen-bank-app" id="screenBankApp" hidden>
+    <div class="bank-app-header" id="bankAppHeader">
+      <span class="bank-app-close" id="btnCloseBankApp">✕</span>
+      <span class="bank-app-name" id="bankAppName">Banco</span>
+    </div>
+    <div class="bank-app-body" id="bankAppPaymentView">
+      <div class="bank-app-charge-label">Pago de factura</div>
+      <div class="bank-app-merchant" id="bankAppInvoiceNumber">Factura FE-2026-00902</div>
+      <div class="bank-app-amount" id="bankAppAmount">$12.400.000</div>
+      <div class="bank-app-concept" id="bankAppConcept">Suministro de materia prima textil</div>
+      <div class="bank-app-invoice-meta" id="bankAppInvoiceMeta">Se acredita a: Factoring Andino S.A. · Vence: 05/08/2026</div>
+
+      <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+      <div class="account-list" id="bankAppAccountList">
+        <button class="account-item" data-account="ahorros" data-balance="$18.400.000">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente Principal</span>
+            <span class="account-balance">Saldo: $18.400.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-account="operativa" data-balance="$6.250.000">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Operativa</span>
+            <span class="account-balance">Saldo: $6.250.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+      </div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment" disabled>Autorizar pago</button>
+
+    <!-- Bank's own confirmation, shown right after biometric authorization -->
+    <div class="bank-app-body bank-app-confirm" id="bankAppConfirmView" hidden>
+      <div class="confirmation-icon">✅</div>
+      <div class="bank-app-confirm-title">Pago exitoso</div>
+      <div class="bank-app-amount" id="bankAppConfirmAmount">$12.400.000</div>
+      <div class="bank-app-concept" id="bankAppConfirmConcept">Factura FE-2026-00902</div>
+      <div class="bank-app-confirm-beneficiario" id="bankAppConfirmBeneficiario">Acreditado a: Factoring Andino S.A.</div>
+      <div class="bank-app-confirm-account" id="bankAppConfirmAccount">—</div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnReturnToMerchant" hidden>Regresar a Banca Empresarial</button>
+  </div>
+
+  <!-- Screen: biometría del OS (reusado tal cual de factura-rtp/) -->
+  <div class="screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Coloca tu huella</div>
+    <div class="biometric-sub">Verificando identidad...</div>
+  </div>
+
+  <!-- Screen: confirmación con liquidación posterior al factor -->
+  <div class="screen-reconciliation" id="screenReconciliation" hidden>
+    <div class="reconciliation-body">
+      <div class="confirmation-icon">✅</div>
+      <div class="reconciliation-title">Pago acreditado al factor</div>
+      <div class="reconciliation-sub">El pago quedó cruzado automáticamente contra el ERP del factor.</div>
+
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Número de factura</span><span id="reconInvoiceNumber">—</span></div>
+        <div class="invoice-meta-row"><span>Monto pagado</span><span id="reconAmount">—</span></div>
+        <div class="invoice-meta-row"><span>Cuenta origen</span><span id="reconAccount">—</span></div>
+        <div class="invoice-meta-row"><span>Referencia ERP</span><span id="reconReferenciaERP">—</span></div>
+        <div class="invoice-meta-row invoice-meta-row-highlight"><span>ID de conciliación</span><span id="reconConciliacionId">—</span></div>
+      </div>
+
+      <!-- Mensaje simulado de liquidación posterior factor -> proveedor: comunica que el
+           proveedor NO recibió el pago directamente. -->
+      <div class="liquidacion-banner" id="liquidacionBanner">
+        💸 <span id="liquidacionBannerText">Factoring Andino S.A. liquidará a Distribuidora ABC S.A.S. según sus términos.</span>
+      </div>
+    </div>
+    <button class="cart-cta" id="btnCloseReconciliation">Volver a facturas</button>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

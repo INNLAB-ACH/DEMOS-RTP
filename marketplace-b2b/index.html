@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Checkout B2B en Marketplace con ACH</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <div class="status-bar">
+    <span class="status-time">11:15</span>
+    <span class="status-icons">📶 📡 🔋 85%</span>
+  </div>
+
+  <!-- Screen 1: Orden de compra B2B -->
+  <div class="screen-cart" id="screenOrder">
+    <div class="store-header">
+      <span class="back-arrow">←</span>
+      <div class="store-title">Conecta B2B Marketplace</div>
+      <span class="b2b-badge">B2B</span>
+    </div>
+
+    <div class="cart-body" id="orderBody">
+      <div class="cart-section-title">Orden de compra</div>
+
+      <div class="order-card">
+        <div class="order-card-row"><span>Orden #</span><span id="orderNumber">OC-48213</span></div>
+        <div class="order-card-row"><span>Ítem</span><span id="orderItem">Resina PET grado alimenticio</span></div>
+        <div class="order-card-row"><span>Cantidad</span><span id="orderQty">500 unidades</span></div>
+        <div class="order-card-row"><span>Proveedor</span><span id="orderProvider">Insumos del Caribe S.A.S.</span></div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="cart-summary-row">
+          <span>Subtotal</span><span>$17.850.000</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Comisión plataforma</span><span>$600.000</span>
+        </div>
+        <div class="cart-summary-row cart-summary-total">
+          <span>Total</span><span>$18.450.000</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation banner, shown after a completed payment -->
+    <div class="confirmation-banner" id="confirmationBanner" hidden>
+      <div class="confirmation-icon">✅</div>
+      <div class="confirmation-title">¡Pago confirmado!</div>
+      <div class="confirmation-amount" id="confirmationAmount">$18.450.000</div>
+      <div class="confirmation-detail">Pagado con <strong>ACH</strong></div>
+      <div class="confirmation-detail" id="confirmationAccount">—</div>
+      <div class="confirmation-platform-note">
+        Este pago se acredita a <strong>Conecta B2B Marketplace</strong> (plataforma agregadora), referencia orden
+        <strong id="confirmationOrderRef">OC-48213</strong>. La plataforma liquidará después al proveedor final —
+        ese paso no hace parte de este checkout.
+      </div>
+      <button class="cart-cta confirmation-close" id="btnCloseConfirmation">Continuar comprando</button>
+    </div>
+
+    <button class="cart-cta" id="btnGoToPay">Ir a pagar</button>
+  </div>
+
+  <!-- Screen 2: Métodos de pago -->
+  <div class="screen-payment" id="screenPayment" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToCart">←</span>
+      <div class="payment-title">Método de pago</div>
+    </div>
+
+    <div class="payment-body" id="paymentBody">
+      <div class="payment-summary">
+        <span>Total a pagar</span>
+        <span class="payment-summary-amount">$18.450.000</span>
+      </div>
+
+      <div class="payment-method-list" id="paymentMethodList">
+        <button class="payment-method-item" data-method="card">
+          <span class="payment-method-icon">💳</span>
+          <span class="payment-method-name">Tarjeta empresarial</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+        <button class="payment-method-item" data-method="pse">
+          <span class="payment-method-icon">🏦</span>
+          <span class="payment-method-name">PSE</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+        <button class="payment-method-item" data-method="ach">
+          <span class="payment-method-icon">🟢</span>
+          <span class="payment-method-name">Cóbrame con ACH</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+        <button class="payment-method-item" data-method="giro">
+          <span class="payment-method-icon">📄</span>
+          <span class="payment-method-name">Giro bancario manual</span>
+          <span class="payment-method-check">✔</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Waiting state: shown while the merchant app waits for the bank's confirmation -->
+    <div class="payment-waiting" id="paymentWaiting" hidden>
+      <div class="payment-waiting-spinner"></div>
+      <div class="payment-waiting-text">Esperando confirmación de pago...</div>
+    </div>
+
+    <button class="cart-cta" id="btnGoToPayFinal" disabled>Ir a pagar</button>
+  </div>
+
+  <!-- Screen: selector de rol empresarial (nuevo, mock) -->
+  <div class="screen-role" id="screenRoleSelector" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToPaymentFromRole">←</span>
+      <div class="payment-title">Confirma tu rol</div>
+    </div>
+    <div class="payment-body">
+      <div class="role-card">
+        <div class="role-card-label">Comprando en nombre de</div>
+        <div class="role-card-company" id="roleCompanyName">Distribuidora ANDES S.A.S.</div>
+        <div class="corp-badge corp-badge-block" id="roleBadge">Comprador autorizado</div>
+      </div>
+      <p class="role-note">Esta compra quedará registrada a nombre de la empresa. Verifica que tu rol dentro de la
+        organización esté habilitado para pagos antes de continuar al banco.</p>
+    </div>
+    <button class="cart-cta" id="btnConfirmRole">Confirmar y continuar</button>
+  </div>
+
+  <!-- Screen: selección de banco -->
+  <div class="screen-bank-picker" id="screenBankPicker" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToRole">←</span>
+      <div class="payment-title">Selecciona tu banco</div>
+    </div>
+    <div class="payment-body">
+      <div class="bank-search">🔍 Buscar banco</div>
+      <div class="bank-favorites-label">Favoritos</div>
+      <div class="bank-favorites" id="bankFavorites">
+        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
+          <span class="bank-logo dot-amarillo">BA</span>
+          <span class="bank-favorite-name">Banco Amarillo</span>
+        </button>
+        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
+          <span class="bank-logo dot-rojo">BR</span>
+          <span class="bank-favorite-name">Banco Rojo</span>
+        </button>
+        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
+          <span class="bank-logo dot-azul">BZ</span>
+          <span class="bank-favorite-name">Banco Azul</span>
+        </button>
+      </div>
+      <div class="bank-other-label">Otros bancos</div>
+      <div class="bank-other-list">
+        <div class="bank-other-item">Banco Verde</div>
+        <div class="bank-other-item">Banco Morado</div>
+        <div class="bank-other-item">Banco Gris</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: verificación de identidad -->
+  <div class="screen-identity" id="screenIdentityVerification" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackToBankPicker">←</span>
+      <div class="payment-title">Confirma tu identidad</div>
+    </div>
+    <div class="payment-body">
+      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="identityBankName">Banco</strong> para continuar con el pago.</div>
+
+      <div class="bank-favorites" id="authMethodList">
+        <button class="bank-favorite" data-method="email">
+          <span class="bank-logo bank-logo-plain">📧</span>
+          <span class="bank-favorite-name">Correo</span>
+        </button>
+        <button class="bank-favorite" data-method="phone">
+          <span class="bank-logo bank-logo-plain">📱</span>
+          <span class="bank-favorite-name">Celular</span>
+        </button>
+        <button class="bank-favorite" data-method="id">
+          <span class="bank-logo bank-logo-plain">🪪</span>
+          <span class="bank-favorite-name">Cédula</span>
+        </button>
+      </div>
+
+      <div class="email-field" id="authFieldEmail">
+        <label for="identityEmailInput">Correo electrónico</label>
+        <input type="email" id="identityEmailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldPhone" hidden>
+        <label for="identityPhoneInput">Número celular</label>
+        <input type="tel" id="identityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+      </div>
+
+      <div class="email-field" id="authFieldId" hidden>
+        <label for="identityIdTypeSelect">Tipo de identificación</label>
+        <select id="identityIdTypeSelect" class="email-input">
+          <option value="">Selecciona...</option>
+          <option value="CC">Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+        </select>
+        <label for="identityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
+        <input type="text" id="identityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+      </div>
+    </div>
+    <button class="cart-cta" id="btnStartPayment" disabled>Iniciar pago</button>
+  </div>
+
+  <!-- Full screen: simulated push notification / lock screen -->
+  <div class="screen-push-notification" id="screenPushNotification" hidden>
+    <div class="push-lockscreen-time">11:16</div>
+    <div class="push-lockscreen-date">Autorización pendiente</div>
+    <button class="push-notification-card" id="pushNotificationCard">
+      <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+      <span class="push-notification-body">
+        <span class="push-notification-title" id="pushNotificationTitle">Banco</span>
+        <span class="push-notification-text">Tienes un pago pendiente por autorizar. Toca para continuar.</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- Screen: app del banco -->
+  <div class="screen-bank-app" id="screenBankApp" hidden>
+    <div class="bank-app-header" id="bankAppHeader">
+      <span class="bank-app-close" id="btnCloseBankApp">✕</span>
+      <span class="bank-app-name" id="bankAppName">Banco</span>
+    </div>
+    <div class="bank-app-body" id="bankAppPaymentView">
+      <div class="bank-app-charge-label">Cobro de</div>
+      <div class="bank-app-merchant">Conecta B2B Marketplace</div>
+      <div class="bank-app-amount">$18.450.000</div>
+      <div class="bank-app-concept">Orden de compra OC-48213</div>
+
+      <div class="bank-app-accounts-label">Selecciona la cuenta empresarial a debitar</div>
+      <div class="account-list" id="bankAppAccountList">
+        <button class="account-item" data-account="corriente" data-balance="$142.300.000">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente Empresarial</span>
+            <span class="account-balance">Saldo: $142.300.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-account="ahorros" data-balance="$58.900.000">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta de Ahorros Empresarial</span>
+            <span class="account-balance">Saldo: $58.900.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+      </div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment" disabled>Autorizar pago</button>
+
+    <!-- Bank's own confirmation, shown after the internal approver confirms -->
+    <div class="bank-app-body bank-app-confirm" id="bankAppConfirmView" hidden>
+      <div class="confirmation-icon">✅</div>
+      <div class="bank-app-confirm-title">Pago exitoso</div>
+      <div class="bank-app-amount" id="bankAppConfirmAmount">$18.450.000</div>
+      <div class="bank-app-concept">Conecta B2B Marketplace · Orden OC-48213</div>
+      <div class="bank-app-confirm-account" id="bankAppConfirmAccount">—</div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnReturnToMerchant" hidden>Regresar al comercio</button>
+  </div>
+
+  <!-- Screen: confirmación del aprobador interno (reusa el patrón de aprobacion-whatsapp) -->
+  <div class="screen-approver" id="screenApproverConfirm" hidden>
+    <div class="bank-app-header theme-approver">
+      <span class="bank-app-name">Confirmación final del aprobador</span>
+    </div>
+    <div class="bank-app-body approver-body">
+      <div class="corp-badge corp-badge-block">Aprobación corporativa</div>
+      <div class="approver-confirm-text">
+        Estás a punto de aprobar un pago por <strong id="approverAmount">$18.450.000</strong> en nombre de
+        <strong id="approverCompanyName">Distribuidora ANDES S.A.S.</strong> para la orden
+        <strong id="approverOrderRef">OC-48213</strong>. Esta acción queda registrada con tu nombre como aprobador.
+      </div>
+      <label class="approver-checkbox-row">
+        <input type="checkbox" id="approverCheckbox">
+        <span>Confirmo como aprobador en nombre de la empresa</span>
+      </label>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnConfirmApproval" disabled>Confirmar aprobación</button>
+  </div>
+
+  <!-- Screen: biometría del OS -->
+  <div class="screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Coloca tu huella</div>
+    <div class="biometric-sub">Verificando identidad...</div>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

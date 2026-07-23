@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo RTP por Proximidad — Cobro sin QR</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="stage-header">
+  <span class="stage-header__eyebrow">Canal · Presencial sin QR</span>
+  <h1 class="stage-header__title">RTP por Proximidad — Cobro sin QR</h1>
+  <p class="stage-header__subtitle">Un comercio informal (ej. vendedor ambulante) no tiene cómo mostrar un QR. En vez de generarlo, ingresa el celular o alias del cliente y el sistema le dispara el cobro directo a su app bancaria.</p>
+</div>
+
+<div class="dual-stage">
+
+  <!-- ======================= TENDERO (izquierda) ======================= -->
+  <div class="device-col">
+    <div class="device-label">
+      <span class="device-label__icon">🏪</span>
+      <span class="device-label__text">
+        <strong>Comercio / tendero</strong>
+        <span>Portal web de cobro ACH</span>
+      </span>
+    </div>
+
+    <div class="phone phone-tendero">
+      <div class="phone-notch"></div>
+
+      <div class="status-bar status-bar-tendero">
+        <span class="status-time">11:15</span>
+        <span class="status-icons">📶 📡 🔋 85%</span>
+      </div>
+
+      <!-- T1: Login -->
+      <div class="screen-web" id="tScreenLogin">
+        <div class="web-brand">
+          <span class="web-brand__mark">ach</span>
+          <span class="web-brand__text">Portal Comercio</span>
+        </div>
+        <h2 class="web-title">Inicia sesión</h2>
+        <p class="web-sub">Ingresa con tu cédula y contraseña para cobrar a tus clientes.</p>
+
+        <div class="web-field">
+          <label for="tCedula">Cédula</label>
+          <input type="text" id="tCedula" class="web-input" placeholder="1020304050" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="web-field">
+          <label for="tPassword">Contraseña</label>
+          <input type="password" id="tPassword" class="web-input" placeholder="••••••••" autocomplete="off">
+        </div>
+
+        <button class="web-cta" id="btnTLogin">Iniciar sesión</button>
+        <div class="web-store-name">Carrito Don Ramón · usuario demo</div>
+      </div>
+
+      <!-- T2: Home -->
+      <div class="screen-web" id="tScreenHome" hidden>
+        <div class="web-topbar">
+          <span class="web-topbar__store">Carrito Don Ramón</span>
+          <span class="web-topbar__logout" id="btnTLogout">Salir</span>
+        </div>
+        <div class="web-home-greeting">Hola, Don Ramón 👋</div>
+        <div class="web-home-sub">¿Qué deseas hacer hoy?</div>
+
+        <button class="web-action-card" id="btnTCobrar">
+          <span class="web-action-card__icon">🟢</span>
+          <span class="web-action-card__text">
+            <strong>Cobrar vía ACH</strong>
+            <span>Envía un cobro directo al celular o alias de tu cliente</span>
+          </span>
+          <span class="web-action-card__arrow">→</span>
+        </button>
+
+        <button class="web-action-card web-action-card--disabled">
+          <span class="web-action-card__icon">📊</span>
+          <span class="web-action-card__text">
+            <strong>Ver historial de cobros</strong>
+            <span>Próximamente</span>
+          </span>
+          <span class="web-action-card__arrow">→</span>
+        </button>
+      </div>
+
+      <!-- T3: Monto + identificador del cliente -->
+      <div class="screen-web" id="tScreenAmount" hidden>
+        <div class="web-topbar">
+          <span class="back-arrow" id="btnTBackToHome">←</span>
+          <span class="web-topbar__store">Cobrar vía ACH</span>
+        </div>
+
+        <div class="web-amount-label">Valor a cobrar</div>
+        <div class="web-amount-input-wrap">
+          <span class="web-amount-currency">$</span>
+          <input type="text" id="tAmountInput" class="web-amount-input" placeholder="0" inputmode="numeric" autocomplete="off">
+        </div>
+
+        <div class="web-field">
+          <label for="tConceptInput">Concepto (opcional)</label>
+          <input type="text" id="tConceptInput" class="web-input" placeholder="Ej: Mercado de la semana" autocomplete="off">
+        </div>
+
+        <div class="web-field">
+          <label for="tPayerIdentifierInput">Celular o alias del cliente</label>
+          <input type="text" id="tPayerIdentifierInput" class="web-input" placeholder="Ej: 300 123 4567 o @juanp" autocomplete="off">
+        </div>
+
+        <button class="web-cta" id="btnTEnviarCobro" disabled>Enviar cobro</button>
+      </div>
+
+      <!-- T4: Cobro enviado, esperando confirmación -->
+      <div class="screen-web screen-web-sent" id="tScreenSent" hidden>
+        <div class="web-topbar">
+          <span class="back-arrow" id="btnTCancelSent">←</span>
+          <span class="web-topbar__store">Esperando confirmación</span>
+        </div>
+
+        <div class="sent-merchant-name">Carrito Don Ramón</div>
+        <div class="sent-amount" id="tSentAmount">$0</div>
+        <div class="sent-concept" id="tSentConcept">Cobro ACH</div>
+
+        <div class="sent-card">
+          <div class="sent-card-icon">📲</div>
+          <div class="sent-card-label">Cobro enviado a</div>
+          <div class="sent-card-identifier" id="tSentIdentifier">—</div>
+        </div>
+
+        <div class="sent-waiting">
+          <span class="sent-waiting__spinner"></span>
+          <span>Esperando que tu cliente confirme el pago...</span>
+        </div>
+
+        <div class="sent-hint">El cliente recibe la solicitud directamente en su app bancaria, sin necesidad de escanear ningún código.</div>
+      </div>
+
+      <!-- T5: Pago confirmado -->
+      <div class="screen-web screen-web-success" id="tScreenPaid" hidden>
+        <div class="web-success-icon">✅</div>
+        <div class="web-success-title">¡Pago recibido!</div>
+        <div class="web-success-amount" id="tPaidAmount">$0</div>
+        <div class="web-success-row"><span>Pagador</span><span id="tPaidPayer">—</span></div>
+        <div class="web-success-row"><span>Concepto</span><span id="tPaidConcept">—</span></div>
+        <div class="web-success-row"><span>Hora</span><span id="tPaidTime">—</span></div>
+        <button class="web-cta" id="btnTNuevoCobro">Nuevo cobro</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="stage-connector">
+    <span class="stage-connector__arrow">⇄</span>
+    <span class="stage-connector__label">RTP directo</span>
+  </div>
+
+  <!-- ======================= CLIENTE (derecha) ======================= -->
+  <div class="device-col">
+    <div class="device-label">
+      <span class="device-label__icon">🙋</span>
+      <span class="device-label__text">
+        <strong>Cliente pagador</strong>
+        <span>Celular del comprador</span>
+      </span>
+    </div>
+
+    <div class="phone">
+      <div class="phone-notch"></div>
+
+      <div class="status-bar">
+        <span class="status-time">11:15</span>
+        <span class="status-icons">📶 📡 🔋 92%</span>
+      </div>
+
+      <!-- P1: Home, esperando solicitud -->
+      <div class="screen-web" id="pScreenIdle">
+        <div class="phone-home-wallpaper">
+          <div class="phone-home-clock">11:15</div>
+          <div class="phone-home-date">Martes, 7 de julio</div>
+        </div>
+        <div class="p-idle-hint">Aún no tienes cobros pendientes. Cuando un comercio te envíe un cobro por tu celular o alias, recibirás una notificación aquí.</div>
+      </div>
+
+      <!-- P2: Push notification -->
+      <div class="screen-push-notification" id="screenPushNotification" hidden>
+        <div class="push-lockscreen-time">11:16</div>
+        <div class="push-lockscreen-date">Autorización pendiente</div>
+        <button class="push-notification-card" id="pushNotificationCard">
+          <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+          <span class="push-notification-body">
+            <span class="push-notification-title" id="pushNotificationTitle">Mi Banco</span>
+            <span class="push-notification-text">Tienes un cobro pendiente por confirmar. Toca para continuar.</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- P3: Confirmación de identidad -->
+      <div class="screen-web" id="pScreenIdentityConfirm" hidden>
+        <div class="identity-confirm-icon">🙋</div>
+        <h2 class="web-title identity-confirm-title">¿Eres tú, <span id="identityConfirmName">Juan P.</span>?</h2>
+        <p class="web-sub identity-confirm-sub">Un comercio quiere cobrarte usando el identificador <strong id="identityConfirmIdentifier">300 123 4567</strong>. Confirma que se trata de ti antes de ver el detalle del cobro.</p>
+
+        <button class="web-cta" id="btnIdentityConfirmYes">Sí, soy yo</button>
+        <button class="web-cta web-cta--secondary" id="btnIdentityConfirmNo">No soy yo</button>
+      </div>
+
+      <!-- P4: Resumen del banco (cuenta a debitar + autorizar) -->
+      <div class="screen-bank-app" id="screenBankSummary" hidden>
+        <div class="bank-app-header theme-azul" id="summaryScreenHeader">
+          <span class="bank-app-name" id="summaryScreenBankName">Mi Banco</span>
+        </div>
+        <div class="bank-app-body">
+          <div class="bank-app-charge-label">Cobro de</div>
+          <div class="bank-app-merchant">Carrito Don Ramón</div>
+          <div class="bank-app-amount" id="pSummaryAmount">$0</div>
+          <div class="bank-app-concept" id="pSummaryConcept">Cobro ACH</div>
+
+          <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+          <div class="account-list" id="bankSummaryAccountList">
+            <button class="account-item" data-account="ahorros" data-balance="$980.300">
+              <span class="account-dot dot-bank-app"></span>
+              <span class="account-info">
+                <span class="account-name">Cuenta de Ahorros</span>
+                <span class="account-balance">Saldo: $980.300</span>
+              </span>
+              <span class="account-check">✔</span>
+            </button>
+            <button class="account-item" data-account="corriente" data-balance="$210.750">
+              <span class="account-dot dot-bank-app"></span>
+              <span class="account-info">
+                <span class="account-name">Cuenta Corriente</span>
+                <span class="account-balance">Saldo: $210.750</span>
+              </span>
+              <span class="account-check">✔</span>
+            </button>
+          </div>
+        </div>
+        <button class="sheet-cta bank-app-cta" id="btnAuthorizeBankPayment" disabled>Autorizar pago desde mi banco</button>
+      </div>
+
+      <!-- P5: Biometría -->
+      <div class="screen-biometric" id="screenBiometric" hidden>
+        <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+        <div class="biometric-text">Coloca tu huella</div>
+        <div class="biometric-sub">Verificando identidad...</div>
+      </div>
+
+      <!-- P6: Pago exitoso -->
+      <div class="screen-web screen-web-success" id="pScreenSuccess" hidden>
+        <div class="web-success-icon">✅</div>
+        <div class="web-success-title">¡Pago exitoso!</div>
+        <div class="web-success-amount" id="pSuccessAmount">$0</div>
+        <div class="web-success-row"><span>Comercio</span><span>Carrito Don Ramón</span></div>
+        <div class="web-success-row"><span>Cuenta origen</span><span id="pSuccessAccount">—</span></div>
+        <div class="web-success-row"><span>Hora</span><span id="pSuccessTime">—</span></div>
+        <button class="web-cta" id="btnPDone">Listo</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

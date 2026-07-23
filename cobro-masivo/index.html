@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Cobro masivo de cartera con RTP (B2B)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <div class="status-bar">
+    <span class="status-time">11:15</span>
+    <span class="status-icons">📶 📡 🔋 85%</span>
+  </div>
+
+  <div class="role-tabs">
+    <button class="role-tab" id="tabTesoreria" data-role="tesoreria">🏦 Tesorería</button>
+    <button class="role-tab selected" id="tabDeudor" data-role="deudor">👤 Deudor</button>
+  </div>
+
+  <!-- ============ VISTA DEUDOR (RTP individual, patrón whatsapp/vaquita) ============ -->
+  <div class="view-deudor" id="viewDeudor">
+    <div class="chat-header">
+      <span class="back-arrow">←</span>
+      <div class="avatar">🏢</div>
+      <div class="chat-title">
+        <div class="chat-name">Tesorería Distribuidora Ánfora <span class="verified-badge" title="Empresa verificada">✔</span></div>
+        <div class="chat-status">Cartera: Julio 2026</div>
+      </div>
+      <div class="header-icons">
+        <span>📹</span>
+        <span>📞</span>
+        <span>⋮</span>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+
+      <div class="bubble incoming invite-bubble">
+        <div class="bubble-text">
+          Hola Ana 👋 Tienes una factura pendiente con <strong>Distribuidora Ánfora</strong> dentro del ciclo de cobro masivo de cartera.
+        </div>
+        <div class="invite-card">
+          <div class="invite-card-row"><span>Monto adeudado</span><span id="invitePartAmount">$850.000</span></div>
+          <div class="invite-card-row"><span>Vence</span><span id="inviteVencimiento">31/07/2026</span></div>
+          <div class="invite-card-row"><span>Estado</span><span id="inviteEstadoText">Pendiente</span></div>
+        </div>
+        <div class="order-actions">
+          <button class="btn-pay-wa" id="btnViewFacturaDetail">Ver detalle y pagar</button>
+        </div>
+        <div class="bubble-time">11:15</div>
+      </div>
+
+      <div class="bubble incoming receipt-bubble" id="receiptBubble" hidden>
+        <div class="receipt-preview">🧾</div>
+        <div class="receipt-amount">Pago confirmado: <strong id="receiptAmountText">$850.000</strong></div>
+        <button class="btn-view-receipt" id="btnViewReceipt">Ver recibo</button>
+        <div class="bubble-time" id="receiptTime">11:18</div>
+      </div>
+
+    </div>
+
+    <div class="chat-input-bar">
+      <span class="input-icon">😊</span>
+      <div class="input-field">Escribe un mensaje</div>
+      <span class="input-icon">📎</span>
+      <span class="input-icon">📷</span>
+      <span class="mic-icon">🎤</span>
+    </div>
+  </div>
+
+  <!-- ============ VISTA TESORERÍA ============ -->
+  <div class="view-tesoreria" id="viewTesoreria" hidden>
+
+    <!-- Pantalla 1: carga de batch (mock) -->
+    <div class="screen-batch-load" id="screenBatchLoad">
+      <div class="payment-header">
+        <div class="payment-title">Cobro masivo de cartera</div>
+      </div>
+      <div class="payment-body">
+        <div class="form-field">
+          <label>Archivo de cartera</label>
+          <div class="batch-file-row">
+            <span class="batch-file-icon">📄</span>
+            <span class="batch-file-name">cartera-julio-2026.csv</span>
+          </div>
+        </div>
+        <div class="form-field-row">
+          <div class="form-field">
+            <label>Deudores en el batch</label>
+            <input type="text" class="email-input" id="batchDeudorCount" value="5" readonly>
+          </div>
+          <div class="form-field">
+            <label>Monto total cartera</label>
+            <input type="text" class="email-input" id="batchMontoTotal" value="$8.220.000" readonly>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Vista previa de deudores</label>
+          <div class="form-participant-list" id="batchPreviewList"></div>
+        </div>
+      </div>
+      <button class="cart-cta" id="btnCargarBatch">Cargar batch y generar RTP a la cartera</button>
+    </div>
+
+    <!-- Pantalla 2: dashboard de estados (equivalente al consolidado de vaquita/) -->
+    <div class="screen-consolidado" id="screenDashboard" hidden>
+      <div class="payment-header">
+        <span class="back-arrow" id="btnBackToBatch">←</span>
+        <div class="payment-title">Dashboard de estados de cartera</div>
+      </div>
+      <div class="payment-body">
+        <div class="consolidado-meta-name" id="consolidadoMetaNombre">Cartera comercial · Julio 2026</div>
+
+        <div class="consolidado-progress-card">
+          <div class="consolidado-progress-row">
+            <span class="consolidado-progress-label">Recaudado</span>
+            <span class="consolidado-progress-value" id="consolidadoRecaudado">$3.820.000</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="consolidadoProgressFill" style="width: 46%;"></div>
+          </div>
+          <div class="consolidado-progress-row consolidado-progress-row-sub">
+            <span id="consolidadoPorcentaje">46% de la cartera</span>
+            <span id="consolidadoMeta">Meta: $8.220.000</span>
+          </div>
+        </div>
+
+        <div class="consolidado-goal-banner" id="consolidadoGoalBanner" hidden>🎯 ¡Cartera 100% recaudada! Todos los deudores pagaron.</div>
+
+        <div class="consolidado-list-label">Deudores</div>
+        <div class="consolidado-list" id="consolidadoList"></div>
+      </div>
+      <button class="cart-cta cart-cta-secondary" id="btnSimulateOtherPayment">Simular pago de otro deudor</button>
+      <button class="cart-cta" id="btnCerrarCiclo">Cerrar ciclo de cobro y ver conciliación</button>
+    </div>
+
+    <!-- Pantalla 3: conciliación consolidada final -->
+    <div class="screen-reconciliation" id="screenConciliacionFinal" hidden>
+      <div class="reconciliation-body">
+        <div class="confirmation-icon">📊</div>
+        <div class="reconciliation-title">Conciliación consolidada de cartera</div>
+        <div class="reconciliation-sub">Cierre del ciclo de cobro masivo. Resumen final de la cartera cargada.</div>
+
+        <div class="invoice-meta-card">
+          <div class="invoice-meta-row"><span>Total cartera</span><span id="reconTotalCartera">—</span></div>
+          <div class="invoice-meta-row"><span>Total recaudado</span><span id="reconTotalRecaudado">—</span></div>
+          <div class="invoice-meta-row invoice-meta-row-highlight"><span>Total vencido</span><span id="reconTotalVencido">—</span></div>
+        </div>
+      </div>
+      <button class="cart-cta" id="btnVolverDashboard">Volver al dashboard</button>
+    </div>
+  </div>
+
+  <!-- ============ OVERLAYS / SHEETS COMPARTIDOS (flujo de RTP individual, patrón whatsapp/vaquita) ============ -->
+  <div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
+
+  <!-- Sheet: detalle de la factura individual -->
+  <div class="sheet sheet-large" id="sheetDetail" hidden>
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Detalle de tu factura</h3>
+    <div class="aporte-meta-name" id="facturaDetailNombre">Distribuidora Ánfora S.A.S.</div>
+    <div class="order-summary">
+      <div class="order-summary-row">
+        <span>Monto adeudado</span><span id="facturaDetailMonto">$850.000</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Fecha de vencimiento</span><span id="facturaDetailVencimiento">31/07/2026</span>
+      </div>
+      <div class="order-summary-row order-summary-total">
+        <span>Estado actual</span><span id="facturaDetailEstado">Pendiente</span>
+      </div>
+    </div>
+    <button class="sheet-cta" id="btnAuthorize">Pagar con RTP</button>
+  </div>
+
+  <!-- Full screen: biometric -->
+  <div class="screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Coloca tu huella</div>
+    <div class="biometric-sub">Verificando identidad...</div>
+  </div>
+
+  <!-- Sheet: bank picker -->
+  <div class="sheet sheet-large" id="sheetBankPicker" hidden>
+    <div class="sheet-handle"></div>
+    <div class="sheet-back-row">
+      <button class="sheet-back" id="btnBackToDetail" aria-label="Regresar">←</button>
+      <h3 class="sheet-title">Selecciona tu banco</h3>
+    </div>
+    <div class="bank-search">🔍 Buscar banco</div>
+    <div class="bank-favorites-label">Favoritos</div>
+    <div class="bank-favorites" id="bankFavorites">
+      <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
+        <span class="bank-logo dot-amarillo">BA</span>
+        <span class="bank-favorite-name">Banco Amarillo</span>
+      </button>
+      <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
+        <span class="bank-logo dot-rojo">BR</span>
+        <span class="bank-favorite-name">Banco Rojo</span>
+      </button>
+      <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
+        <span class="bank-logo dot-azul">BZ</span>
+        <span class="bank-favorite-name">Banco Azul</span>
+      </button>
+    </div>
+    <div class="bank-other-label">Otros bancos</div>
+    <div class="bank-other-list">
+      <div class="bank-other-item">Banco Verde</div>
+      <div class="bank-other-item">Banco Morado</div>
+      <div class="bank-other-item">Banco Gris</div>
+    </div>
+  </div>
+
+  <!-- Sheet: identity verification -->
+  <div class="sheet sheet-large" id="sheetEmailInput" hidden>
+    <div class="sheet-handle"></div>
+    <div class="sheet-back-row">
+      <button class="sheet-back" id="btnBackToBankPicker" aria-label="Regresar">←</button>
+      <h3 class="sheet-title">Confirma tu identidad</h3>
+    </div>
+    <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="emailScreenBankName">Banco</strong> para continuar con el pago de tu factura.</div>
+
+    <div class="bank-favorites" id="authMethodList">
+      <button class="bank-favorite" data-method="email">
+        <span class="bank-logo bank-logo-plain">📧</span>
+        <span class="bank-favorite-name">Correo</span>
+      </button>
+      <button class="bank-favorite" data-method="phone">
+        <span class="bank-logo bank-logo-plain">📱</span>
+        <span class="bank-favorite-name">Celular</span>
+      </button>
+      <button class="bank-favorite" data-method="id">
+        <span class="bank-logo bank-logo-plain">🪪</span>
+        <span class="bank-favorite-name">Cédula</span>
+      </button>
+    </div>
+
+    <div class="email-field" id="authFieldEmail">
+      <label for="emailInput">Correo electrónico</label>
+      <input type="email" id="emailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
+    </div>
+
+    <div class="email-field" id="authFieldPhone" hidden>
+      <label for="phoneInput">Número celular</label>
+      <input type="tel" id="phoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
+    </div>
+
+    <div class="email-field" id="authFieldId" hidden>
+      <label for="idTypeSelect">Tipo de identificación</label>
+      <select id="idTypeSelect" class="email-input">
+        <option value="">Selecciona...</option>
+        <option value="CC">Cédula de ciudadanía</option>
+        <option value="CE">Cédula de extranjería</option>
+      </select>
+      <label for="idNumberInput" class="auth-field-id-number-label">Número de documento</label>
+      <input type="text" id="idNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
+    </div>
+
+    <button class="sheet-cta" id="btnStartPayment" disabled>Iniciar pago</button>
+  </div>
+
+  <!-- Full screen: simulated push notification / lock screen -->
+  <div class="screen-push-notification" id="screenPushNotification" hidden>
+    <div class="push-lockscreen-time">11:16</div>
+    <div class="push-lockscreen-date">Autorización pendiente</div>
+    <button class="push-notification-card" id="pushNotificationCard">
+      <span class="push-notification-icon" id="pushNotificationIcon">BA</span>
+      <span class="push-notification-body">
+        <span class="push-notification-title" id="pushNotificationTitle">Banco</span>
+        <span class="push-notification-text">Tienes un pago de factura pendiente por autorizar. Toca para continuar.</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- Full screen: bank payment summary -->
+  <div class="screen-bank-app" id="screenBankSummary" hidden>
+    <div class="bank-app-header" id="summaryScreenHeader">
+      <span class="bank-app-name" id="summaryScreenBankName">Banco</span>
+    </div>
+    <div class="bank-app-body">
+      <div class="bank-app-charge-label">Resumen del pago</div>
+      <div class="bank-app-merchant" id="summaryFacturaNombre">Distribuidora Ánfora S.A.S.</div>
+      <div class="bank-app-amount" id="summaryAmount">$850.000</div>
+      <div class="bank-app-concept">Pago de factura de cartera</div>
+
+      <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
+      <div class="account-list" id="bankSummaryAccountList">
+        <button class="account-item" data-account="ahorros" data-balance="$980.300">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta de Ahorros</span>
+            <span class="account-balance">Saldo: $980.300</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-account="corriente" data-balance="$1.210.750">
+          <span class="account-dot dot-bank-app"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente</span>
+            <span class="account-balance">Saldo: $1.210.750</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+      </div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnAuthorizeBankPayment" disabled>Autorizar pago desde mi banco</button>
+  </div>
+
+  <!-- Sheet: already paid notice -->
+  <div class="sheet sheet-small" id="sheetAlreadyPaid" hidden>
+    <div class="sheet-handle"></div>
+    <div class="already-paid-icon">✅</div>
+    <h3 class="sheet-title already-paid-title">Ya pagaste esta factura</h3>
+    <div class="already-paid-text">Ya realizaste tu pago de <strong id="alreadyPaidAmount">$850.000</strong>. Revisa el recibo en el chat.</div>
+    <button class="sheet-cta" id="btnCloseAlreadyPaid">Entendido</button>
+  </div>
+
+  <!-- Sheet: receipt detail -->
+  <div class="sheet sheet-medium" id="sheetReceipt" hidden>
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">Recibo de tu pago</h3>
+    <div class="receipt-detail">
+      <div class="receipt-row"><span>Cartera</span><span>Distribuidora Ánfora S.A.S.</span></div>
+      <div class="receipt-row"><span>Concepto</span><span>Pago de factura de cartera</span></div>
+      <div class="receipt-row"><span>Cuenta origen</span><span id="receiptBankName">—</span></div>
+      <div class="receipt-row"><span>Fecha</span><span id="receiptDate">—</span></div>
+      <div class="receipt-row receipt-row-total"><span>Total pagado</span><span id="receiptDetailAmount">$850.000</span></div>
+    </div>
+    <button class="sheet-cta" id="btnCloseReceipt">Cerrar</button>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

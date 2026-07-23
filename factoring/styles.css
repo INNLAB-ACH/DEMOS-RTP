@@ -1,0 +1,916 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e4e8ee;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.phone {
+  position: relative;
+  width: 375px;
+  height: 720px;
+  background: #fff;
+  border-radius: 36px;
+  border: 10px solid #10233d;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 22px;
+  background: #10233d;
+  border-radius: 0 0 16px 16px;
+  z-index: 50;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 18px 4px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #0b1930;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* Screen 1: Facturas por pagar */
+.screen-invoices {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.store-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0b1930;
+  color: #fff;
+  padding: 10px 14px 14px 14px;
+}
+
+.back-arrow {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.store-title {
+  flex: 1;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.cart-icon {
+  font-size: 18px;
+}
+
+.invoices-body {
+  flex: 1;
+  padding: 14px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.invoices-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7a8f;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.invoice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f4f7fb;
+  border: 1px solid #dde4ee;
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.invoice-card:hover {
+  border-color: #2f6fed;
+}
+
+.invoice-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.invoice-card-number {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #10233d;
+}
+
+.invoice-card-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.invoice-card-badge-pending {
+  background: #fff2d6;
+  color: #a8710a;
+}
+
+.invoice-card-badge-paid {
+  background: #dcf3e6;
+  color: #1c8a47;
+}
+
+.invoice-card-badge-factoring {
+  background: #f3e8ff;
+  color: #7b2cbf;
+}
+
+.invoice-card-concept {
+  font-size: 13px;
+  color: #333;
+  font-weight: 600;
+}
+
+.invoice-card-issuer {
+  font-size: 11.5px;
+  color: #6b7a8f;
+}
+
+.invoice-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.invoice-card-due {
+  font-size: 11.5px;
+  color: #8291a3;
+}
+
+.invoice-card-amount {
+  font-size: 15px;
+  font-weight: 800;
+  color: #10233d;
+}
+
+.cart-cta {
+  margin: 12px 16px 18px 16px;
+  background: #10233d;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cart-cta:disabled {
+  background: #cfd3d8;
+  cursor: not-allowed;
+}
+
+/* Screen: detalle de factura */
+.screen-invoice-detail {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #0b1930;
+  color: #fff;
+  padding: 10px 14px 14px 14px;
+}
+
+.payment-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.payment-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.invoice-detail-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #2f6fed;
+  background: #eaf1fe;
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 14px;
+}
+
+/* Aviso de redirección de beneficiario: visible en el detalle, ANTES de que el comprador
+   autorice el pago. Crítico para no dar a entender que se paga directo al proveedor. */
+.factoring-banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #fff2d6;
+  border: 1px solid #f0d18e;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #7a5200;
+}
+
+.factoring-banner-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Tarjeta de beneficiarios: original atenuado/tachado, de pago destacado */
+.beneficiarios-card {
+  background: #f4f7fb;
+  border: 1px solid #dde4ee;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.beneficiarios-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8291a3;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+}
+
+.beneficiario-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  gap: 10px;
+}
+
+.beneficiario-row + .beneficiario-row {
+  border-top: 1px solid #e3e9f1;
+}
+
+.beneficiario-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8291a3;
+  flex-shrink: 0;
+}
+
+.beneficiario-original .beneficiario-nombre {
+  color: #99a4b2;
+  text-decoration: line-through;
+  font-weight: 600;
+  font-size: 12.5px;
+  text-align: right;
+}
+
+.beneficiario-pago .beneficiario-nombre {
+  color: #7b2cbf;
+  font-weight: 800;
+  font-size: 13.5px;
+  text-align: right;
+}
+
+.invoice-meta-card {
+  background: #f4f7fb;
+  border: 1px solid #dde4ee;
+  border-radius: 12px;
+  padding: 6px 16px;
+  margin-bottom: 16px;
+}
+
+.invoice-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e3e9f1;
+  font-size: 12.5px;
+}
+
+.invoice-meta-row:last-child {
+  border-bottom: none;
+}
+
+.invoice-meta-row span:first-child {
+  color: #6b7a8f;
+  flex-shrink: 0;
+}
+
+.invoice-meta-row span:last-child {
+  color: #10233d;
+  font-weight: 600;
+  text-align: right;
+}
+
+.invoice-meta-row-highlight span:last-child {
+  color: #2f6fed;
+  font-weight: 800;
+}
+
+.invoice-amount-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eaf1fe;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #2f6fed;
+  font-weight: 700;
+}
+
+.invoice-amount-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #10233d;
+}
+
+/* Screen: selección de banco */
+.screen-bank-picker {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-search {
+  background: #f0f3f7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #8291a3;
+  margin-bottom: 14px;
+}
+
+.bank-favorites-label,
+.bank-other-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8291a3;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.bank-favorites {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.bank-favorite {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 2px solid #e3e9f1;
+  border-radius: 10px;
+  padding: 12px 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.bank-favorite:hover {
+  border-color: #2f6fed;
+}
+
+.bank-favorite.selected {
+  border-color: #2f6fed;
+  background: #eaf1fe;
+}
+
+.bank-logo-plain {
+  background: none;
+  color: inherit;
+  font-size: 22px;
+}
+
+.bank-favorite-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #10233d;
+  text-align: center;
+}
+
+.bank-other-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bank-other-item {
+  padding: 10px 4px;
+  font-size: 13px;
+  color: #b3bdca;
+  border-bottom: 1px solid #eef1f5;
+}
+
+/* Screen: verificación de identidad */
+.screen-identity {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+}
+
+.email-step-sub {
+  font-size: 13px;
+  color: #6b7a8f;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.email-field {
+  text-align: left;
+}
+
+.email-field label {
+  display: block;
+  font-size: 12px;
+  color: #8291a3;
+  margin-bottom: 6px;
+}
+
+.email-input {
+  width: 100%;
+  background: #f4f7fb;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13.5px;
+  color: #10233d;
+  border: 1px solid #dde4ee;
+  font-family: inherit;
+  margin-bottom: 14px;
+}
+
+.email-input:focus {
+  outline: none;
+  border-color: #2f6fed;
+}
+
+.auth-field-id-number-label {
+  margin-top: -4px;
+}
+
+/* Simulated push notification / lock screen */
+.screen-push-notification {
+  position: absolute;
+  inset: 0;
+  background: #10233d;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 18px 0 18px;
+}
+
+.push-lockscreen-time {
+  color: #fff;
+  font-size: 48px;
+  font-weight: 300;
+}
+
+.push-lockscreen-date {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  margin-bottom: 40px;
+}
+
+.push-notification-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 14px;
+  padding: 14px;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.push-notification-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.push-notification-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.push-notification-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #10233d;
+}
+
+.push-notification-text {
+  font-size: 12.5px;
+  color: #555;
+  line-height: 1.4;
+}
+
+.bank-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dot-amarillo {
+  background: #f4c20d;
+}
+
+.dot-rojo {
+  background: #e53935;
+}
+
+.dot-azul {
+  background: #1e88e5;
+}
+
+/* Account list (used inside the bank app screen) */
+.account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.account-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #e3e9f1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.account-item.selected {
+  border-color: #2f6fed;
+  background: #eaf1fe;
+}
+
+.account-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-bank-app {
+  background: #99a4b2;
+}
+
+.account-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #10233d;
+}
+
+.account-balance {
+  font-size: 12px;
+  color: #8291a3;
+}
+
+.account-check {
+  color: #2f6fed;
+  font-size: 16px;
+  visibility: hidden;
+}
+
+.account-item.selected .account-check {
+  visibility: visible;
+}
+
+/* Bank app full screen */
+.screen-bank-app {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-app-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 16px 14px 16px;
+  color: #fff;
+}
+
+.bank-app-header.theme-amarillo {
+  background: #f4c20d;
+}
+
+.bank-app-header.theme-rojo {
+  background: #e53935;
+}
+
+.bank-app-header.theme-azul {
+  background: #1e88e5;
+}
+
+.bank-app-close {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.bank-app-name {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bank-app-body {
+  flex: 1;
+  padding: 22px 20px;
+  overflow-y: auto;
+  text-align: center;
+}
+
+.bank-app-charge-label {
+  font-size: 12.5px;
+  color: #8291a3;
+  margin-bottom: 4px;
+}
+
+.bank-app-merchant {
+  font-size: 15px;
+  font-weight: 700;
+  color: #10233d;
+  margin-bottom: 10px;
+}
+
+.bank-app-amount {
+  font-size: 30px;
+  font-weight: 800;
+  color: #10233d;
+  margin-bottom: 4px;
+}
+
+.bank-app-concept {
+  font-size: 12.5px;
+  color: #8291a3;
+  margin-bottom: 6px;
+}
+
+.bank-app-invoice-meta {
+  font-size: 11.5px;
+  color: #99a4b2;
+  margin-bottom: 22px;
+}
+
+.bank-app-accounts-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #8291a3;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.bank-app-cta {
+  margin: 0 20px 22px 20px;
+}
+
+/* Bank's own confirmation view, shown right after biometric authorization */
+.bank-app-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.bank-app-confirm .confirmation-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.bank-app-confirm-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c8a47;
+  margin-bottom: 10px;
+}
+
+.bank-app-confirm-beneficiario {
+  font-size: 13px;
+  color: #7b2cbf;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.bank-app-confirm-account {
+  font-size: 12.5px;
+  color: #8291a3;
+  margin-top: 8px;
+}
+
+/* Biometric screen */
+.screen-biometric {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.biometric-fingerprint {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #eaf1fe;
+  border: 3px solid #2f6fed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  cursor: pointer;
+  animation: pulse 1.4s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 111, 237, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(47, 111, 237, 0.08); }
+}
+
+.biometric-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #10233d;
+}
+
+.biometric-sub {
+  font-size: 13px;
+  color: #8291a3;
+}
+
+/* Confirmation / conciliación screen */
+.screen-reconciliation {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+}
+
+.reconciliation-body {
+  flex: 1;
+  padding: 40px 20px 0 20px;
+  text-align: center;
+  overflow-y: auto;
+}
+
+.reconciliation-body .confirmation-icon {
+  font-size: 44px;
+  margin-bottom: 10px;
+}
+
+.reconciliation-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #1c8a47;
+  margin-bottom: 6px;
+}
+
+.reconciliation-sub {
+  font-size: 12.5px;
+  color: #6b7a8f;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Mensaje simulado de liquidación posterior factor -> proveedor: comunica que el pago se
+   acreditó al factor y que el factor liquidará al proveedor por separado (criterio de
+   aceptación de tareas-b5). */
+.liquidacion-banner {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  text-align: left;
+  background: #f3e8ff;
+  border: 1px solid #e0c3f7;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 16px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #5a1e8c;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Floating button to return to the demo index, sits outside the phone frame */
+.back-to-index {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 200;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #10233d;
+  color: #fff;
+  font-size: 20px;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.back-to-index:hover {
+  transform: scale(1.06);
+}
