@@ -82,27 +82,27 @@
 
   const sheetReceipt = document.getElementById('sheetReceipt');
   const screenBiometric = document.getElementById('screenBiometric');
-  const sheetBankPicker = document.getElementById('sheetBankPicker');
-  const btnBackToDetail = document.getElementById('btnBackToDetail');
 
   const fingerprintTap = document.getElementById('fingerprintTap');
   const btnViewReceipt = document.getElementById('btnViewReceipt');
   const btnCloseReceipt = document.getElementById('btnCloseReceipt');
 
-  const bankFavorites = document.getElementById('bankFavorites');
+  const screenScenarioSelector = document.getElementById('screenScenarioSelector');
+  const btnScenarioOnboarding = document.getElementById('btnScenarioOnboarding');
+  const btnScenarioSkip = document.getElementById('btnScenarioSkip');
 
-  const sheetEmailInput = document.getElementById('sheetEmailInput');
-  const btnBackToBankPicker = document.getElementById('btnBackToBankPicker');
-  const emailScreenBankName = document.getElementById('emailScreenBankName');
-  const authMethodList = document.getElementById('authMethodList');
-  const authFieldEmail = document.getElementById('authFieldEmail');
-  const authFieldPhone = document.getElementById('authFieldPhone');
-  const authFieldId = document.getElementById('authFieldId');
-  const emailInput = document.getElementById('emailInput');
-  const phoneInput = document.getElementById('phoneInput');
-  const idTypeSelect = document.getElementById('idTypeSelect');
-  const idNumberInput = document.getElementById('idNumberInput');
-  const btnStartPayment = document.getElementById('btnStartPayment');
+  const screenOnboardingIntro = document.getElementById('screenOnboardingIntro');
+  const btnOnboardingContinue = document.getElementById('btnOnboardingContinue');
+
+  const screenOnboardingAccount = document.getElementById('screenOnboardingAccount');
+  const onboardingAccountList = document.getElementById('onboardingAccountList');
+  const btnSaveDefaultAccount = document.getElementById('btnSaveDefaultAccount');
+
+  const accountSelectedCard = document.getElementById('accountSelectedCard');
+  const accountSelectedDot = document.getElementById('accountSelectedDot');
+  const accountSelectedName = document.getElementById('accountSelectedName');
+  const accountSelectedBalance = document.getElementById('accountSelectedBalance');
+  const btnChangeAccount = document.getElementById('btnChangeAccount');
 
   const screenPushNotification = document.getElementById('screenPushNotification');
   const pushNotificationCard = document.getElementById('pushNotificationCard');
@@ -152,11 +152,15 @@
   const btnVolverDashboard = document.getElementById('btnVolverDashboard');
 
   let selectedBank = null;
-  let selectedBankKey = null;
-  let selectedBankName = null;
-  let selectedBankInitials = null;
-  let selectedAccount = null;
-  let authMethod = 'email';
+
+  // Cuenta configurada por defecto para pagos por WhatsApp (vía onboarding en la app del banco).
+  // Se preconfigura con Banco Amarillo / Cuenta de Ahorros para que el escenario "ir directo al pago" funcione sin pasar por el onboarding.
+  let defaultBankKey = 'amarillo';
+  let defaultBankName = 'Banco Amarillo';
+  let defaultBankInitials = 'BA';
+  let defaultAccountName = 'Cuenta de Ahorros';
+  let defaultAccountBalance = '$980.300';
+  let onboardingChoice = null;
 
   function showOverlay() {
     overlayBackdrop.hidden = false;
@@ -171,12 +175,49 @@
     sheetDetail.hidden = true;
     sheetReceipt.hidden = true;
     screenBiometric.hidden = true;
-    sheetBankPicker.hidden = true;
-    sheetEmailInput.hidden = true;
     screenPushNotification.hidden = true;
     screenBankSummary.hidden = true;
     sheetAlreadyPaid.hidden = true;
   }
+
+  // ===================== Selector de escenario + onboarding de cuenta por defecto =====================
+  btnScenarioOnboarding.addEventListener('click', function () {
+    screenScenarioSelector.hidden = true;
+    screenOnboardingIntro.hidden = false;
+  });
+
+  btnScenarioSkip.addEventListener('click', function () {
+    screenScenarioSelector.hidden = true;
+  });
+
+  btnOnboardingContinue.addEventListener('click', function () {
+    screenOnboardingIntro.hidden = true;
+    screenOnboardingAccount.hidden = false;
+  });
+
+  onboardingAccountList.addEventListener('click', function (e) {
+    const item = e.target.closest('.account-item');
+    if (!item) return;
+
+    onboardingAccountList.querySelectorAll('.account-item').forEach(function (el) {
+      el.classList.remove('selected');
+    });
+    item.classList.add('selected');
+    onboardingChoice = item;
+  });
+
+  btnSaveDefaultAccount.addEventListener('click', function () {
+    const chosen = onboardingChoice || onboardingAccountList.querySelector('.account-item.selected');
+    if (!chosen) return;
+
+    defaultBankKey = chosen.getAttribute('data-bank');
+    defaultBankName = chosen.getAttribute('data-bank-name');
+    defaultBankInitials = chosen.getAttribute('data-bank-initials');
+    defaultAccountName = chosen.querySelector('.account-name').textContent;
+    defaultAccountBalance = chosen.getAttribute('data-balance');
+
+    screenOnboardingAccount.hidden = true;
+  });
 
   function applyBankTheme(headerEl, bankKey) {
     headerEl.className = 'bank-app-header theme-' + bankKey;
@@ -248,92 +289,15 @@
     sheetDetail.hidden = false;
   });
 
-  // Paso 2 -> 3: pagar con RTP, ir al selector de banco
+  // Paso 2 -> 3: pagar con RTP. La cuenta y el banco ya están preconfigurados (onboarding),
+  // así que se salta directo a la notificación push, sin elegir banco ni verificar identidad de nuevo.
   btnAuthorize.addEventListener('click', function () {
     sheetDetail.hidden = true;
-    sheetBankPicker.hidden = false;
-  });
-
-  btnBackToDetail.addEventListener('click', function () {
-    sheetBankPicker.hidden = true;
-    sheetDetail.hidden = false;
-  });
-
-  // Paso 3: elegir banco favorito abre la verificación de identidad
-  bankFavorites.addEventListener('click', function (e) {
-    const favorite = e.target.closest('.bank-favorite');
-    if (!favorite) return;
-
-    const bankKey = favorite.getAttribute('data-bank');
-    const bankName = favorite.getAttribute('data-name');
-
-    selectedBankKey = bankKey;
-    selectedBankName = bankName;
-    selectedBankInitials = favorite.querySelector('.bank-logo').textContent;
-    selectedBank = null;
-
-    emailScreenBankName.textContent = selectedBankName;
-    emailInput.value = '';
-    phoneInput.value = '';
-    idTypeSelect.value = '';
-    idNumberInput.value = '';
-    selectAuthMethod('email');
-
-    sheetBankPicker.hidden = true;
-    sheetEmailInput.hidden = false;
-  });
-
-  btnBackToBankPicker.addEventListener('click', function () {
-    sheetEmailInput.hidden = true;
-    sheetBankPicker.hidden = false;
-  });
-
-  function selectAuthMethod(method) {
-    authMethod = method;
-
-    authMethodList.querySelectorAll('.bank-favorite').forEach(function (el) {
-      el.classList.toggle('selected', el.getAttribute('data-method') === method);
-    });
-
-    authFieldEmail.hidden = method !== 'email';
-    authFieldPhone.hidden = method !== 'phone';
-    authFieldId.hidden = method !== 'id';
-
-    updateStartPaymentState();
-  }
-
-  authMethodList.addEventListener('click', function (e) {
-    const method = e.target.closest('.bank-favorite');
-    if (!method) return;
-    selectAuthMethod(method.getAttribute('data-method'));
-  });
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  function updateStartPaymentState() {
-    let valid = false;
-    if (authMethod === 'email') {
-      valid = emailPattern.test(emailInput.value.trim());
-    } else if (authMethod === 'phone') {
-      valid = phoneInput.value.replace(/\D/g, '').length === 10;
-    } else if (authMethod === 'id') {
-      valid = idTypeSelect.value !== '' && idNumberInput.value.trim().length >= 5;
-    }
-    btnStartPayment.disabled = !valid;
-  }
-
-  emailInput.addEventListener('input', updateStartPaymentState);
-  phoneInput.addEventListener('input', updateStartPaymentState);
-  idTypeSelect.addEventListener('change', updateStartPaymentState);
-  idNumberInput.addEventListener('input', updateStartPaymentState);
-
-  btnStartPayment.addEventListener('click', function () {
-    sheetEmailInput.hidden = true;
     hideOverlay();
 
-    pushNotificationIcon.className = 'push-notification-icon dot-' + selectedBankKey;
-    pushNotificationIcon.textContent = selectedBankInitials;
-    pushNotificationTitle.textContent = selectedBankName;
+    pushNotificationIcon.className = 'push-notification-icon dot-' + defaultBankKey;
+    pushNotificationIcon.textContent = defaultBankInitials;
+    pushNotificationTitle.textContent = defaultBankName;
 
     screenPushNotification.hidden = false;
   });
@@ -343,22 +307,44 @@
     screenBiometric.hidden = false;
   });
 
+  // Muestra la cuenta por defecto en la tarjeta preseleccionada y colapsa el listado completo.
+  function selectAccountForSummary(item) {
+    bankSummaryAccountList.querySelectorAll('.account-item').forEach(function (el) {
+      el.classList.remove('selected');
+    });
+    item.classList.add('selected');
+
+    accountSelectedDot.className = item.querySelector('.account-dot').className;
+    accountSelectedName.textContent = item.querySelector('.account-name').textContent;
+    accountSelectedBalance.textContent = item.querySelector('.account-balance').textContent;
+
+    selectedBank = {
+      name: defaultBankName + ' - ' + item.querySelector('.account-name').textContent,
+      balance: item.getAttribute('data-balance')
+    };
+
+    btnAuthorizeBankPayment.disabled = false;
+    bankSummaryAccountList.hidden = true;
+  }
+
   function finishBankBiometric() {
     if (screenBiometric.hidden) return;
     screenBiometric.hidden = true;
 
     const you = cartera.deudores[YOU_INDEX];
 
-    applyBankTheme(summaryScreenHeader, selectedBankKey);
-    summaryScreenBankName.textContent = selectedBankName;
+    applyBankTheme(summaryScreenHeader, defaultBankKey);
+    summaryScreenBankName.textContent = defaultBankName;
     summaryFacturaNombre.textContent = cartera.organizacion;
     summaryAmount.textContent = formatCOP(you.monto);
 
-    bankSummaryAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
+    // La cuenta configurada como predeterminada en el onboarding queda preseleccionada.
+    const accountItems = bankSummaryAccountList.querySelectorAll('.account-item');
+    let matched = null;
+    accountItems.forEach(function (el) {
+      if (el.querySelector('.account-name').textContent === defaultAccountName) matched = el;
     });
-    btnAuthorizeBankPayment.disabled = true;
-    selectedBank = null;
+    selectAccountForSummary(matched || accountItems[0]);
 
     screenBankSummary.hidden = false;
   }
@@ -366,18 +352,11 @@
   bankSummaryAccountList.addEventListener('click', function (e) {
     const item = e.target.closest('.account-item');
     if (!item) return;
+    selectAccountForSummary(item);
+  });
 
-    bankSummaryAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
-    });
-    item.classList.add('selected');
-
-    selectedBank = {
-      name: selectedBankName + ' - ' + item.querySelector('.account-name').textContent,
-      balance: item.getAttribute('data-balance')
-    };
-
-    btnAuthorizeBankPayment.disabled = false;
+  btnChangeAccount.addEventListener('click', function () {
+    bankSummaryAccountList.hidden = !bankSummaryAccountList.hidden;
   });
 
   fingerprintTap.addEventListener('click', finishBankBiometric);

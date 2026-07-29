@@ -1014,6 +1014,72 @@ body {
   margin: 0 20px 22px 20px;
 }
 
+.onboarding-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+/* Selector de escenario inicial de la demo */
+.screen-scenario-selector {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.scenario-selector-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.scenario-selector-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #222;
+  margin: 0 0 10px 0;
+}
+
+.scenario-selector-sub {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 26px;
+}
+
+.screen-scenario-selector .cart-cta {
+  width: 100%;
+  margin: 0 0 12px 0;
+}
+
+/* Cuenta por defecto preseleccionada, con opción de cambiarla */
+.account-selected-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #25d366;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #f3fcf6;
+  margin-bottom: 10px;
+}
+
+.account-change-link {
+  background: none;
+  border: none;
+  color: #075e54;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
 /* Identity verification sheet */
 .email-step-sub {
   font-size: 13px;

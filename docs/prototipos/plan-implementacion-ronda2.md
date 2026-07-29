@@ -94,3 +94,17 @@ Se mantiene la convención ya establecida: cada prototipo en su propia carpeta
   ronda 3.
 - Revisar si conviene consolidar el patrón de consolidado 1-a-muchos (`vaquita/` + `B3`) en
   un solo módulo de referencia, dado que ya se usa en dos prototipos.
+
+### Aclaración de sesión de equipo sobre B4 (previo a demo GoPayments)
+
+En la sesión de equipo recogida en `docs/cambios-requeridos-claude-code.md` se confirmó
+que **la cadena/reglas de aprobación de B4 las define el esquema de administración de cada
+banco, no ACH**. Esto simplifica el alcance de un futuro prototipo de B4: no necesita
+simular umbrales ni configuración de roles — solo debe mostrar el **componente visual de
+qué pasos de la solicitud ya se cumplieron**, con dos patrones a soportar:
+
+- Aprobación simultánea (todos los aprobadores ven la solicitud al mismo tiempo).
+- Aprobación secuencial (un aprobador habilita al siguiente).
+
+No se inicia construcción de B4, C4 ni C7 en este ciclo. Queda pendiente de la evaluación
+en la reunión del martes sobre si amerita abrir una "ronda 3" con estos tres casos.

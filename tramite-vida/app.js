@@ -118,11 +118,16 @@
     if (screenBiometric.hidden) return;
     screenBiometric.hidden = true;
 
-    bankAppAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
-    });
-    btnAuthorizePayment.disabled = true;
-    selectedAccount = null;
+    // Cuenta por defecto: la primera cuenta queda preseleccionada, sin forzar el click.
+    const accountItems = bankAppAccountList.querySelectorAll('.account-item');
+    accountItems.forEach(function (el) { el.classList.remove('selected'); });
+    const defaultItem = accountItems[0];
+    defaultItem.classList.add('selected');
+    selectedAccount = {
+      name: defaultItem.querySelector('.account-name').textContent,
+      balance: defaultItem.getAttribute('data-balance')
+    };
+    btnAuthorizePayment.disabled = false;
 
     bankAppPaymentView.hidden = false;
     btnAuthorizePayment.hidden = false;

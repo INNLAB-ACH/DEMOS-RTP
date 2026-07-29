@@ -591,15 +591,15 @@ p { font-size: 14.5px; line-height: 1.65; color: #3a3a3f; margin: 0; }
     <div class="report-header__title-block">
       <span class="report-header__eyebrow">ACH Colombia · Cóbrame / RTP · GOU Payments — Grupo Aval</span>
       <h1 class="report-header__title">Experiencias de Request to Pay para el ecosistema Grupo Aval</h1>
-      <p class="report-header__subtitle">Catálogo resumido de 14 experiencias candidatas, organizadas según el rol que juega ACH: proveedor de infraestructura hacia GOU en B2B, y proveedor del riel de cara al usuario final en B2C.</p>
+      <p class="report-header__subtitle">Catálogo resumido de 15 experiencias candidatas, organizadas según el rol que juega ACH: proveedor de infraestructura hacia GOU en B2B, y proveedor del riel de cara al usuario final en B2C.</p>
     </div>
     <div class="report-header__kpi-bar">
       <div class="report-header__kpi-item">
-        <span class="report-header__kpi-value">14</span>
+        <span class="report-header__kpi-value">15</span>
         <span class="report-header__kpi-label">Experiencias candidatas</span>
       </div>
       <div class="report-header__kpi-item">
-        <span class="report-header__kpi-value">7</span>
+        <span class="report-header__kpi-value">8</span>
         <span class="report-header__kpi-label">B2B — ACH como oferente</span>
       </div>
       <div class="report-header__kpi-item">
@@ -674,6 +674,12 @@ p { font-size: 14.5px; line-height: 1.65; color: #3a3a3f; margin: 0; }
               <td>Entidad de factoring</td>
               <td><span class="badge badge--orange">Alta</span></td>
               <td>Depende de B1 + redirección de beneficiario</td>
+            </tr>
+            <tr class="row--highlight">
+              <td>B8 · Split payment (pago dividido entre cuentas)</td>
+              <td>Empresa pagadora con múltiples cuentas</td>
+              <td><span class="badge badge--blue">Media</span></td>
+              <td>Equivalente al caso multi-fuente ya existente en PSE, sin gap de enabler nuevo</td>
             </tr>
           </tbody>
         </table>
@@ -751,6 +757,12 @@ p { font-size: 14.5px; line-height: 1.65; color: #3a3a3f; margin: 0; }
     <div class="highlight-box highlight-box--green">
       <span class="highlight-box__label">Quick wins · Ola 0-1</span>
       <span class="highlight-box__texto">B6, C1 y C3 son variaciones de superficie sobre flujos ya prototipados (WhatsApp asíncrono y POS con QR) — no requieren enablers nuevos de backend y son los candidatos naturales para arrancar.</span>
+    </div>
+
+    <!-- DECISIÓN B4 / C4 / C7 (sesión de equipo previo a demo GoPayments) -->
+    <div class="alerta alerta--advertencia">
+      <span class="alerta__titulo">B4, C4 y C7 — sin prototipar en este ciclo</span>
+      <p class="alerta__texto">Quedan sin construir por decisión de la sesión de equipo previa a la demo con GoPayments. Para B4 (workflow de aprobación multiusuario) se aclaró que la cadena/reglas de aprobación las define el esquema de administración de cada banco, no ACH — el prototipo, cuando se construya, solo necesita mostrar el componente visual de qué pasos de la solicitud ya se cumplieron, con dos patrones (aprobación simultánea vs. secuencial). Pendiente evaluar en la reunión del martes si ameritan abrir una "ronda 3".</p>
     </div>
 
   </div>

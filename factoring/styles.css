@@ -200,6 +200,78 @@ body {
   cursor: not-allowed;
 }
 
+.cart-cta-secondary {
+  background: #fff;
+  color: #10233d;
+  border: 2px solid #10233d;
+}
+
+.onboarding-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+/* Selector de escenario inicial de la demo */
+.screen-scenario-selector {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.scenario-selector-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.scenario-selector-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #10233d;
+  margin: 0 0 10px 0;
+}
+
+.scenario-selector-sub {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 26px;
+}
+
+.screen-scenario-selector .cart-cta {
+  width: 100%;
+  margin: 0 0 12px 0;
+}
+
+/* Cuenta por defecto preseleccionada, con opción de cambiarla */
+.account-selected-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #2f6fed;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #eaf1fe;
+  margin-bottom: 10px;
+}
+
+.account-change-link {
+  background: none;
+  border: none;
+  color: #2f6fed;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
 /* Screen: detalle de factura */
 .screen-invoice-detail {
   position: absolute;
@@ -885,6 +957,111 @@ body {
   font-size: 12.5px;
   line-height: 1.5;
   color: #5a1e8c;
+}
+
+/* ===================== Marketplace de facturas (vista proveedor) — piloto ===================== */
+.marketplace-link {
+  flex-shrink: 0;
+  margin: 12px 16px 0 16px;
+  background: #f3e8ff;
+  color: #7b2cbf;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.marketplace-pilot-badge {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #7b2cbf;
+  background: #f3e8ff;
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 14px;
+}
+
+.marketplace-offers-sub {
+  font-size: 12.5px;
+  color: #6b7a8f;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.offer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.offer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f4f7fb;
+  border: 2px solid #dde4ee;
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.offer-card:hover {
+  border-color: #7b2cbf;
+}
+
+.offer-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.offer-card-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #10233d;
+}
+
+.offer-card-descuento {
+  font-size: 12px;
+  font-weight: 700;
+  color: #c62828;
+}
+
+.offer-card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7a8f;
+}
+
+.offer-card-neto {
+  font-weight: 700;
+  color: #1c8a47;
+}
+
+.detail-select-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 12.5px;
+  color: #10233d;
+  cursor: pointer;
+}
+
+.detail-select-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: #2f6fed;
+  flex-shrink: 0;
 }
 
 [hidden] {

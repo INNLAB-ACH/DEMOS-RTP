@@ -92,6 +92,73 @@
     <!-- Overlay backdrop -->
     <div class="overlay-backdrop" id="overlayBackdrop" hidden></div>
 
+    <!-- Full screen: selector de escenario de la demo -->
+    <div class="screen-scenario-selector" id="screenScenarioSelector">
+      <div class="scenario-selector-icon">🏦</div>
+      <h3 class="scenario-selector-title">¿Cómo quieres iniciar la demo?</h3>
+      <div class="scenario-selector-sub">Puedes ver primero cómo el usuario configura su cuenta por defecto para pagos por WhatsApp en la app de su banco (onboarding), o ir directo al pago con la cuenta ya configurada de antemano.</div>
+      <button class="cart-cta" id="btnScenarioOnboarding">🏦 Ver onboarding: configurar cuenta por defecto</button>
+      <button class="cart-cta cart-cta-secondary" id="btnScenarioSkip">💬 Ir directo al pago por WhatsApp</button>
+    </div>
+
+    <!-- Full screen: onboarding paso 1, app del banco -->
+    <div class="screen-bank-app" id="screenOnboardingIntro" hidden>
+      <div class="bank-app-header theme-amarillo">
+        <span class="bank-app-name">Mi Banco</span>
+      </div>
+      <div class="bank-app-body">
+        <div class="onboarding-icon">⚡</div>
+        <div class="bank-app-merchant">Configura tus pagos por WhatsApp</div>
+        <div class="bank-app-concept">Elige la cuenta que quieres usar por defecto para aprobar tus pagos por WhatsApp. Así, la próxima vez que pagues, solo tendrás que confirmar con tu huella: sin elegir banco ni verificar tu identidad de nuevo.</div>
+      </div>
+      <button class="sheet-cta bank-app-cta" id="btnOnboardingContinue">Configurar cuenta</button>
+    </div>
+
+    <!-- Full screen: onboarding paso 2, selección de cuenta por defecto -->
+    <div class="screen-bank-app" id="screenOnboardingAccount" hidden>
+      <div class="bank-app-header theme-amarillo">
+        <span class="bank-app-name">Mi Banco</span>
+      </div>
+      <div class="bank-app-body">
+        <div class="bank-app-accounts-label">Cuenta por defecto para pagos por WhatsApp</div>
+        <div class="account-list" id="onboardingAccountList">
+          <button class="account-item selected" data-bank="amarillo" data-bank-name="Banco Amarillo" data-bank-initials="BA" data-balance="$980.300">
+            <span class="account-dot dot-amarillo"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta de Ahorros</span>
+              <span class="account-balance">Banco Amarillo · Saldo: $980.300</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+          <button class="account-item" data-bank="amarillo" data-bank-name="Banco Amarillo" data-bank-initials="BA" data-balance="$210.750">
+            <span class="account-dot dot-amarillo"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta Corriente</span>
+              <span class="account-balance">Banco Amarillo · Saldo: $210.750</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+          <button class="account-item" data-bank="rojo" data-bank-name="Banco Rojo" data-bank-initials="BR" data-balance="$980.300">
+            <span class="account-dot dot-rojo"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta de Ahorros</span>
+              <span class="account-balance">Banco Rojo · Saldo: $980.300</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+          <button class="account-item" data-bank="azul" data-bank-name="Banco Azul" data-bank-initials="BZ" data-balance="$980.300">
+            <span class="account-dot dot-azul"></span>
+            <span class="account-info">
+              <span class="account-name">Cuenta de Ahorros</span>
+              <span class="account-balance">Banco Azul · Saldo: $980.300</span>
+            </span>
+            <span class="account-check">✔</span>
+          </button>
+        </div>
+      </div>
+      <button class="sheet-cta bank-app-cta" id="btnSaveDefaultAccount">Guardar cuenta por defecto</button>
+    </div>
+
     <!-- Sheet: charge detail -->
     <div class="sheet sheet-large" id="sheetDetail" hidden>
       <div class="sheet-handle"></div>
@@ -122,85 +189,6 @@
       <div class="biometric-sub">Verificando identidad...</div>
     </div>
 
-    <!-- Sheet: bank picker -->
-    <div class="sheet sheet-large" id="sheetBankPicker" hidden>
-      <div class="sheet-handle"></div>
-      <div class="sheet-back-row">
-        <button class="sheet-back" id="btnBackToDetail" aria-label="Regresar">←</button>
-        <h3 class="sheet-title">Selecciona tu banco</h3>
-      </div>
-      <div class="bank-search">🔍 Buscar banco</div>
-      <div class="bank-favorites-label">Favoritos</div>
-      <div class="bank-favorites" id="bankFavorites">
-        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
-          <span class="bank-logo dot-amarillo">BA</span>
-          <span class="bank-favorite-name">Banco Amarillo</span>
-        </button>
-        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
-          <span class="bank-logo dot-rojo">BR</span>
-          <span class="bank-favorite-name">Banco Rojo</span>
-        </button>
-        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
-          <span class="bank-logo dot-azul">BZ</span>
-          <span class="bank-favorite-name">Banco Azul</span>
-        </button>
-      </div>
-      <div class="bank-other-label">Otros bancos</div>
-      <div class="bank-other-list">
-        <div class="bank-other-item">Banco Verde</div>
-        <div class="bank-other-item">Banco Morado</div>
-        <div class="bank-other-item">Banco Gris</div>
-      </div>
-    </div>
-
-    <!-- Sheet: identity verification -->
-    <div class="sheet sheet-large" id="sheetEmailInput" hidden>
-      <div class="sheet-handle"></div>
-      <div class="sheet-back-row">
-        <button class="sheet-back" id="btnBackToBankPicker" aria-label="Regresar">←</button>
-        <h3 class="sheet-title">Confirma tu identidad</h3>
-      </div>
-      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="emailScreenBankName">Banco</strong> para continuar con el pago.</div>
-
-      <div class="bank-favorites" id="authMethodList">
-        <button class="bank-favorite" data-method="email">
-          <span class="bank-logo bank-logo-plain">📧</span>
-          <span class="bank-favorite-name">Correo</span>
-        </button>
-        <button class="bank-favorite" data-method="phone">
-          <span class="bank-logo bank-logo-plain">📱</span>
-          <span class="bank-favorite-name">Celular</span>
-        </button>
-        <button class="bank-favorite" data-method="id">
-          <span class="bank-logo bank-logo-plain">🪪</span>
-          <span class="bank-favorite-name">Cédula</span>
-        </button>
-      </div>
-
-      <div class="email-field" id="authFieldEmail">
-        <label for="emailInput">Correo electrónico</label>
-        <input type="email" id="emailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
-      </div>
-
-      <div class="email-field" id="authFieldPhone" hidden>
-        <label for="phoneInput">Número celular</label>
-        <input type="tel" id="phoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
-      </div>
-
-      <div class="email-field" id="authFieldId" hidden>
-        <label for="idTypeSelect">Tipo de identificación</label>
-        <select id="idTypeSelect" class="email-input">
-          <option value="">Selecciona...</option>
-          <option value="CC">Cédula de ciudadanía</option>
-          <option value="CE">Cédula de extranjería</option>
-        </select>
-        <label for="idNumberInput" class="auth-field-id-number-label">Número de documento</label>
-        <input type="text" id="idNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
-      </div>
-
-      <button class="sheet-cta" id="btnStartPayment" disabled>Iniciar pago</button>
-    </div>
-
     <!-- Full screen: simulated push notification / lock screen -->
     <div class="screen-push-notification" id="screenPushNotification" hidden>
       <div class="push-lockscreen-time">11:16</div>
@@ -225,8 +213,16 @@
         <div class="bank-app-amount" id="summaryAmount">$1.200.000</div>
         <div class="bank-app-concept" id="summaryMotivo">Arriendo apartamento — julio 2026</div>
 
-        <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
-        <div class="account-list" id="bankSummaryAccountList">
+        <div class="bank-app-accounts-label">Cuenta a debitar</div>
+        <div class="account-selected-card" id="accountSelectedCard">
+          <span class="account-dot dot-bank-app" id="accountSelectedDot"></span>
+          <span class="account-info">
+            <span class="account-name" id="accountSelectedName">Cuenta de Ahorros</span>
+            <span class="account-balance" id="accountSelectedBalance">Saldo: $980.300</span>
+          </span>
+          <button class="account-change-link" id="btnChangeAccount">Cambiar cuenta</button>
+        </div>
+        <div class="account-list" id="bankSummaryAccountList" hidden>
           <button class="account-item" data-account="ahorros" data-balance="$980.300">
             <span class="account-dot dot-bank-app"></span>
             <span class="account-info">

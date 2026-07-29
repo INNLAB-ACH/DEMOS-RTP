@@ -3,11 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prototipo Factura con RTP embebido (B2B)</title>
+<title>Prototipo Factura con RTP embebido (B2B) — Banco Azul de Occidente</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+<div class="stage-label">
+  <span class="stage-label__badge">Factura con RTP · B1 · Empresarial · Banco Azul de Occidente</span>
+</div>
+
+<div class="stage" id="stage">
 <div class="phone">
   <div class="phone-notch"></div>
 
@@ -110,7 +115,7 @@
         <div class="identity-precargada-summary" id="identitySummary">0 facturas · $0</div>
         <div class="invoice-meta-row"><span>Identificación</span><span>NIT 900.555.222-1</span></div>
         <div class="invoice-meta-row"><span>Empresa</span><span>Constructora Vértice S.A.</span></div>
-        <div class="invoice-meta-row"><span>Banca empresarial</span><span>Banco Azul Empresas</span></div>
+        <div class="invoice-meta-row"><span>Banca empresarial</span><span>Banco Azul de Occidente Empresas</span></div>
       </div>
     </div>
     <button class="cart-cta" id="btnContinueFromIdentity">Continuar</button>
@@ -118,9 +123,10 @@
 
   <!-- Screen: app del banco -->
   <div class="screen-bank-app" id="screenBankApp" hidden>
-    <div class="bank-app-header theme-azul" id="bankAppHeader">
+    <div class="bank-app-header theme-occidente" id="bankAppHeader">
       <span class="bank-app-close" id="btnCloseBankApp">✕</span>
-      <span class="bank-app-name" id="bankAppName">Banco Azul Empresas</span>
+      <span class="bank-app-logo-badge"><img class="bank-app-logo-img" src="../assets/bcoocc.png" alt="Banco de Occidente"></span>
+      <span class="bank-app-name" id="bankAppName">Banco Azul de Occidente Empresas</span>
     </div>
     <div class="bank-app-body" id="bankAppPaymentView">
       <div class="bank-app-charge-label">Pago de facturas</div>
@@ -190,6 +196,92 @@
     </div>
     <button class="cart-cta" id="btnCloseReconciliation">Volver a facturas</button>
   </div>
+
+</div>
+
+<!-- Vista simultánea: réplica de escritorio de la banca empresarial / TESO ACH -->
+<div class="desktop-panel" id="desktopPanel">
+  <div class="desktop-panel-topbar">
+    <span class="desktop-panel-hint">Vista simultánea · lo que ve la empresa en su computador</span>
+  </div>
+
+  <div class="desktop-browser">
+    <div class="desktop-browser-chrome">
+      <span class="browser-dot browser-dot-red"></span>
+      <span class="browser-dot browser-dot-yellow"></span>
+      <span class="browser-dot browser-dot-green"></span>
+      <div class="desktop-browser-address" id="desktopBrowserAddress">bancoazuldeoccidente.com/empresas</div>
+    </div>
+
+    <div class="desktop-app theme-desktop-occidente" id="desktopApp">
+      <div class="desktop-app-header">
+        <span class="desktop-app-logo-badge" id="desktopAppLogoBadge">
+          <img class="desktop-app-logo-img" id="desktopAppLogoImg" src="../assets/bcoocc.png" alt="Banco de Occidente">
+          <span class="desktop-app-logo-emoji" id="desktopAppLogoEmoji" hidden>🔗</span>
+        </span>
+        <div class="desktop-app-header-text">
+          <strong id="desktopAppName">Banco Azul de Occidente Empresas</strong>
+          <span id="desktopAppSubtitle">Banca empresarial en línea</span>
+        </div>
+        <button class="desktop-app-switch-btn" id="btnSwitchDesktopApp">Ver en TESO ACH →</button>
+      </div>
+
+      <div class="desktop-app-body">
+
+        <!-- Vista 1: facturas por pagar (propia, independiente del celular) -->
+        <div class="desktop-app-view" id="desktopViewInvoices">
+          <div class="desktop-app-section-title-row">
+            <div class="desktop-app-section-title">Facturas por pagar</div>
+            <button class="cashflow-link desktop-cashflow-link" id="btnDesktopOpenCashflow">📊 Ver flujo de caja proyectado</button>
+          </div>
+          <div class="desktop-invoice-table" id="desktopInvoiceTable"></div>
+          <div class="desktop-app-summary" id="desktopAppSummary">Selecciona facturas para pagarlas desde aquí.</div>
+          <div class="desktop-selection-bar" id="desktopSelectionBar" hidden>
+            <div class="desktop-selection-bar-info">
+              <span class="desktop-selection-bar-count" id="desktopSelectionCount">0 facturas seleccionadas</span>
+              <span class="desktop-selection-bar-total" id="desktopSelectionTotal">$0</span>
+            </div>
+            <button class="desktop-app-cta" id="btnDesktopPaySelected">Pagar seleccionadas</button>
+          </div>
+        </div>
+
+        <!-- Vista: flujo de caja proyectado (propia, independiente del celular) -->
+        <div class="desktop-app-view" id="desktopViewCashflow" hidden>
+          <button class="desktop-back-link" id="btnDesktopBackFromCashflow">← Volver a facturas</button>
+          <div class="desktop-app-section-title">Flujo de caja proyectado</div>
+          <p class="cashflow-sub">Facturas pendientes ordenadas por fecha de vencimiento, con el acumulado por pagar.</p>
+          <div class="cashflow-list" id="desktopCashflowList"></div>
+          <div class="cashflow-total-card">
+            <span>Total pendiente por pagar</span>
+            <span class="cashflow-total-value" id="desktopCashflowTotal">$0</span>
+          </div>
+        </div>
+
+        <!-- Vista 2: autorizar pago (cuenta a debitar) -->
+        <div class="desktop-app-view" id="desktopViewAuthorize" hidden>
+          <button class="desktop-back-link" id="btnDesktopBackToInvoices">← Volver a facturas</button>
+          <div class="desktop-app-section-title">Facturas a pagar</div>
+          <div class="desktop-invoice-table" id="desktopAuthorizeInvoiceList"></div>
+          <div class="desktop-authorize-amount" id="desktopAuthorizeAmount">$0</div>
+          <div class="desktop-app-section-title">Cuenta a debitar</div>
+          <div class="desktop-account-list" id="desktopAccountList"></div>
+          <button class="desktop-app-cta" id="btnDesktopAuthorize">Autorizar pago</button>
+        </div>
+
+        <!-- Vista 3: confirmación -->
+        <div class="desktop-app-view desktop-app-view-confirm" id="desktopViewConfirm" hidden>
+          <div class="confirmation-icon">✅</div>
+          <div class="desktop-confirm-title">Pago exitoso</div>
+          <div class="desktop-confirm-amount" id="desktopConfirmAmount">$0</div>
+          <div class="desktop-confirm-detail" id="desktopConfirmDetail">—</div>
+          <div class="desktop-confirm-account" id="desktopConfirmAccount">—</div>
+          <button class="desktop-app-cta" id="btnDesktopDone">Volver a facturas</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 </div>
 

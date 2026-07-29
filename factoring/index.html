@@ -16,6 +16,73 @@
     <span class="status-icons">📶 📡 🔋 85%</span>
   </div>
 
+  <!-- Full screen: selector de escenario de la demo -->
+  <div class="screen-scenario-selector" id="screenScenarioSelector">
+    <div class="scenario-selector-icon">🏦</div>
+    <h3 class="scenario-selector-title">¿Cómo quieres iniciar la demo?</h3>
+    <div class="scenario-selector-sub">Puedes ver primero cómo la empresa compradora configura su cuenta por defecto para pagos por RTP embebido en la app de su banco (onboarding), o ir directo al pago con la cuenta ya configurada de antemano.</div>
+    <button class="cart-cta" id="btnScenarioOnboarding">🏦 Ver onboarding: configurar cuenta por defecto</button>
+    <button class="cart-cta cart-cta-secondary" id="btnScenarioSkip">💳 Ir directo al pago</button>
+  </div>
+
+  <!-- Full screen: onboarding paso 1, app del banco -->
+  <div class="screen-bank-app" id="screenOnboardingIntro" hidden>
+    <div class="bank-app-header theme-amarillo">
+      <span class="bank-app-name">Mi Banco</span>
+    </div>
+    <div class="bank-app-body">
+      <div class="onboarding-icon">⚡</div>
+      <div class="bank-app-merchant">Configura tus pagos con RTP embebido</div>
+      <div class="bank-app-concept">Elige la cuenta que quieres usar por defecto para autorizar los pagos de facturas con RTP embebido. Así, la próxima vez que pagues, solo tendrás que confirmar con tu huella: sin elegir banco ni verificar tu identidad de nuevo.</div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnOnboardingContinue">Configurar cuenta</button>
+  </div>
+
+  <!-- Full screen: onboarding paso 2, selección de cuenta por defecto -->
+  <div class="screen-bank-app" id="screenOnboardingAccount" hidden>
+    <div class="bank-app-header theme-amarillo">
+      <span class="bank-app-name">Mi Banco</span>
+    </div>
+    <div class="bank-app-body">
+      <div class="bank-app-accounts-label">Cuenta por defecto para pagos con RTP embebido</div>
+      <div class="account-list" id="onboardingAccountList">
+        <button class="account-item selected" data-bank="amarillo" data-bank-name="Banco Amarillo" data-bank-initials="BA" data-balance="$18.400.000">
+          <span class="account-dot dot-amarillo"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente Principal</span>
+            <span class="account-balance">Banco Amarillo · Saldo: $18.400.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-bank="amarillo" data-bank-name="Banco Amarillo" data-bank-initials="BA" data-balance="$6.250.000">
+          <span class="account-dot dot-amarillo"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Operativa</span>
+            <span class="account-balance">Banco Amarillo · Saldo: $6.250.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-bank="rojo" data-bank-name="Banco Rojo" data-bank-initials="BR" data-balance="$18.400.000">
+          <span class="account-dot dot-rojo"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente Principal</span>
+            <span class="account-balance">Banco Rojo · Saldo: $18.400.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+        <button class="account-item" data-bank="azul" data-bank-name="Banco Azul" data-bank-initials="BZ" data-balance="$18.400.000">
+          <span class="account-dot dot-azul"></span>
+          <span class="account-info">
+            <span class="account-name">Cuenta Corriente Principal</span>
+            <span class="account-balance">Banco Azul · Saldo: $18.400.000</span>
+          </span>
+          <span class="account-check">✔</span>
+        </button>
+      </div>
+    </div>
+    <button class="sheet-cta bank-app-cta" id="btnSaveDefaultAccount">Guardar cuenta por defecto</button>
+  </div>
+
   <!-- Screen 1: Facturas por pagar (banca empresarial del comprador) -->
   <div class="screen-invoices" id="screenInvoices">
     <div class="store-header">
@@ -23,6 +90,8 @@
       <div class="store-title">Banca Empresarial · Cuentas por pagar</div>
       <span class="cart-icon">🏢</span>
     </div>
+
+    <button class="marketplace-link" id="btnOpenMarketplace">🏪 Marketplace de facturas (vista proveedor) — piloto</button>
 
     <div class="invoices-body" id="invoicesBody">
       <div class="invoices-section-title">Facturas recibidas (2)</div>
@@ -107,86 +176,6 @@
     <button class="cart-cta" id="btnPayInvoice">Pagar con RTP</button>
   </div>
 
-  <!-- Screen: selección de banco (reusado tal cual de factura-rtp/) -->
-  <div class="screen-bank-picker" id="screenBankPicker" hidden>
-    <div class="payment-header">
-      <span class="back-arrow" id="btnBackToInvoiceDetail">←</span>
-      <div class="payment-title">Selecciona tu banco</div>
-    </div>
-    <div class="payment-body">
-      <div class="bank-search">🔍 Buscar banco</div>
-      <div class="bank-favorites-label">Favoritos</div>
-      <div class="bank-favorites" id="bankFavorites">
-        <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
-          <span class="bank-logo dot-amarillo">BA</span>
-          <span class="bank-favorite-name">Banco Amarillo</span>
-        </button>
-        <button class="bank-favorite" data-bank="rojo" data-name="Banco Rojo">
-          <span class="bank-logo dot-rojo">BR</span>
-          <span class="bank-favorite-name">Banco Rojo</span>
-        </button>
-        <button class="bank-favorite" data-bank="azul" data-name="Banco Azul">
-          <span class="bank-logo dot-azul">BZ</span>
-          <span class="bank-favorite-name">Banco Azul</span>
-        </button>
-      </div>
-      <div class="bank-other-label">Otros bancos</div>
-      <div class="bank-other-list">
-        <div class="bank-other-item">Banco Verde</div>
-        <div class="bank-other-item">Banco Morado</div>
-        <div class="bank-other-item">Banco Gris</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Screen: verificación de identidad (reusado tal cual de factura-rtp/) -->
-  <div class="screen-identity" id="screenIdentityVerification" hidden>
-    <div class="payment-header">
-      <span class="back-arrow" id="btnBackToBankPicker">←</span>
-      <div class="payment-title">Confirma tu identidad</div>
-    </div>
-    <div class="payment-body">
-      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="identityBankName">Banco</strong> para autorizar el pago de la factura.</div>
-
-      <div class="bank-favorites" id="authMethodList">
-        <button class="bank-favorite" data-method="email">
-          <span class="bank-logo bank-logo-plain">📧</span>
-          <span class="bank-favorite-name">Correo</span>
-        </button>
-        <button class="bank-favorite" data-method="phone">
-          <span class="bank-logo bank-logo-plain">📱</span>
-          <span class="bank-favorite-name">Celular</span>
-        </button>
-        <button class="bank-favorite" data-method="id">
-          <span class="bank-logo bank-logo-plain">🪪</span>
-          <span class="bank-favorite-name">Cédula</span>
-        </button>
-      </div>
-
-      <div class="email-field" id="authFieldEmail">
-        <label for="identityEmailInput">Correo electrónico</label>
-        <input type="email" id="identityEmailInput" class="email-input" placeholder="tesoreria@empresa.com" autocomplete="off">
-      </div>
-
-      <div class="email-field" id="authFieldPhone" hidden>
-        <label for="identityPhoneInput">Número celular</label>
-        <input type="tel" id="identityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
-      </div>
-
-      <div class="email-field" id="authFieldId" hidden>
-        <label for="identityIdTypeSelect">Tipo de identificación</label>
-        <select id="identityIdTypeSelect" class="email-input">
-          <option value="">Selecciona...</option>
-          <option value="CC">Cédula de ciudadanía</option>
-          <option value="CE">Cédula de extranjería</option>
-        </select>
-        <label for="identityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
-        <input type="text" id="identityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
-      </div>
-    </div>
-    <button class="cart-cta" id="btnStartPayment" disabled>Iniciar pago</button>
-  </div>
-
   <!-- Full screen: simulated push notification / lock screen -->
   <div class="screen-push-notification" id="screenPushNotification" hidden>
     <div class="push-lockscreen-time">11:16</div>
@@ -213,8 +202,16 @@
       <div class="bank-app-concept" id="bankAppConcept">Suministro de materia prima textil</div>
       <div class="bank-app-invoice-meta" id="bankAppInvoiceMeta">Se acredita a: Factoring Andino S.A. · Vence: 05/08/2026</div>
 
-      <div class="bank-app-accounts-label">Selecciona la cuenta a debitar</div>
-      <div class="account-list" id="bankAppAccountList">
+      <div class="bank-app-accounts-label">Cuenta a debitar</div>
+      <div class="account-selected-card" id="accountSelectedCard">
+        <span class="account-dot dot-bank-app" id="accountSelectedDot"></span>
+        <span class="account-info">
+          <span class="account-name" id="accountSelectedName">Cuenta Corriente Principal</span>
+          <span class="account-balance" id="accountSelectedBalance">Saldo: $18.400.000</span>
+        </span>
+        <button class="account-change-link" id="btnChangeAccount">Cambiar cuenta</button>
+      </div>
+      <div class="account-list" id="bankAppAccountList" hidden>
         <button class="account-item" data-account="ahorros" data-balance="$18.400.000">
           <span class="account-dot dot-bank-app"></span>
           <span class="account-info">
@@ -276,6 +273,113 @@
       </div>
     </div>
     <button class="cart-cta" id="btnCloseReconciliation">Volver a facturas</button>
+  </div>
+
+  <!-- ===================== Marketplace de facturas (vista proveedor) — piloto ===================== -->
+  <!-- Ampliación evaluada en sesión de equipo (backlog de tareas-b5-factoring.md), construida
+       aquí a modo de piloto sin validar aún el flujo operativo real con empresas de factoring. -->
+
+  <!-- Screen: factura propia del proveedor, lista para publicar -->
+  <div class="screen-invoice-detail" id="screenSupplierEntry" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackFromSupplierEntry">←</span>
+      <div class="payment-title">Vender factura (proveedor)</div>
+    </div>
+    <div class="payment-body">
+      <div class="marketplace-pilot-badge">Marketplace · Piloto — pendiente validar con empresas de factoring</div>
+
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Número de factura</span><span>FE-2026-00940</span></div>
+        <div class="invoice-meta-row"><span>Concepto</span><span>Insumos de empaque industrial</span></div>
+        <div class="invoice-meta-row"><span>Comprador</span><span>Comercializadora Nortex S.A.S.</span></div>
+        <div class="invoice-meta-row"><span>Fecha de emisión</span><span>28/07/2026</span></div>
+        <div class="invoice-meta-row"><span>Fecha de vencimiento</span><span>20/08/2026</span></div>
+      </div>
+
+      <div class="invoice-amount-card">
+        <span>Valor de la factura</span>
+        <span class="invoice-amount-value">$9.200.000</span>
+      </div>
+    </div>
+    <button class="cart-cta" id="btnPublishInvoice">Publicar en el marketplace</button>
+  </div>
+
+  <!-- Screen: ofertas de inversionistas de factoring -->
+  <div class="screen-invoice-detail" id="screenMarketplaceOffers" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackFromOffers">←</span>
+      <div class="payment-title">Ofertas recibidas</div>
+    </div>
+    <div class="payment-body">
+      <p class="marketplace-offers-sub">3 inversionistas de factoring pujaron por esta factura. Selecciona la oferta que más te convenga.</p>
+
+      <div class="offer-list" id="offerList">
+        <button class="offer-card" data-offer="rapida">
+          <div class="offer-card-top">
+            <span class="offer-card-name">Inversión Rápida S.A.S.</span>
+            <span class="offer-card-descuento">-4.5%</span>
+          </div>
+          <div class="offer-card-row"><span>Recibes</span><span class="offer-card-neto">$8.786.000</span></div>
+          <div class="offer-card-row"><span>Liquidación</span><span>24 horas</span></div>
+        </button>
+        <button class="offer-card" data-offer="agil">
+          <div class="offer-card-top">
+            <span class="offer-card-name">Capital Ágil Fondos</span>
+            <span class="offer-card-descuento">-3.8%</span>
+          </div>
+          <div class="offer-card-row"><span>Recibes</span><span class="offer-card-neto">$8.850.400</span></div>
+          <div class="offer-card-row"><span>Liquidación</span><span>48 horas</span></div>
+        </button>
+        <button class="offer-card" data-offer="factorplus">
+          <div class="offer-card-top">
+            <span class="offer-card-name">FactorPlus Inversiones</span>
+            <span class="offer-card-descuento">-5.2%</span>
+          </div>
+          <div class="offer-card-row"><span>Recibes</span><span class="offer-card-neto">$8.721.600</span></div>
+          <div class="offer-card-row"><span>Liquidación</span><span>12 horas</span></div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen: confirmar oferta seleccionada -->
+  <div class="screen-invoice-detail" id="screenOfferConfirm" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackFromOfferConfirm">←</span>
+      <div class="payment-title">Confirmar venta de factura</div>
+    </div>
+    <div class="payment-body">
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Inversionista</span><span id="offerConfirmName">—</span></div>
+        <div class="invoice-meta-row"><span>Factura</span><span>FE-2026-00940</span></div>
+        <div class="invoice-meta-row"><span>Descuento</span><span id="offerConfirmDescuento">—</span></div>
+        <div class="invoice-meta-row"><span>Liquidación</span><span id="offerConfirmPlazo">—</span></div>
+      </div>
+      <div class="invoice-amount-card">
+        <span>Recibes hoy</span>
+        <span class="invoice-amount-value" id="offerConfirmNeto">$0</span>
+      </div>
+      <label class="detail-select-row">
+        <input type="checkbox" id="offerConfirmCheckbox">
+        <span>Autorizo ceder el derecho de cobro de esta factura al inversionista seleccionado</span>
+      </label>
+    </div>
+    <button class="cart-cta" id="btnConfirmOffer" disabled>Confirmar venta</button>
+  </div>
+
+  <!-- Screen: factura factorizada -->
+  <div class="screen-reconciliation" id="screenMarketplaceDone" hidden>
+    <div class="reconciliation-body">
+      <div class="confirmation-icon">✅</div>
+      <div class="reconciliation-title">Factura factorizada</div>
+      <div class="reconciliation-sub" id="marketplaceDoneSub">—</div>
+      <div class="liquidacion-banner">
+        💸 <span>El comprador (Comercializadora Nortex S.A.S.) ahora verá esta factura como
+        factorizada y pagará directamente al inversionista, con el mismo aviso de redirección
+        que ya usa este prototipo.</span>
+      </div>
+    </div>
+    <button class="cart-cta" id="btnCloseMarketplaceDone">Volver a facturas</button>
   </div>
 
 </div>

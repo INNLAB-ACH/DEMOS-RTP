@@ -207,11 +207,13 @@
   function openBankSummary() {
     pSummaryAmount.textContent = formatCOP(charge.amount);
     pSummaryConcept.textContent = charge.concept;
-    bankSummaryAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
-    });
-    selectedAccountLabel = null;
-    btnAuthorizeBankPayment.disabled = true;
+    // Cuenta por defecto: la primera cuenta queda preseleccionada, sin forzar el click.
+    const accountItems = bankSummaryAccountList.querySelectorAll('.account-item');
+    accountItems.forEach(function (el) { el.classList.remove('selected'); });
+    const defaultItem = accountItems[0];
+    defaultItem.classList.add('selected');
+    selectedAccountLabel = 'Mi Banco - ' + defaultItem.querySelector('.account-name').textContent;
+    btnAuthorizeBankPayment.disabled = false;
     screenBankSummary.hidden = false;
   }
 

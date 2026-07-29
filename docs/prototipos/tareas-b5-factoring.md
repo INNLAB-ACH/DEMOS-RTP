@@ -95,3 +95,24 @@ Agregar a la factura:
 - Modelado del contrato de factoring o de la liquidación real factor→proveedor.
 - Flujo de "factorización" en sí (el proveedor vendiendo la factura al factor) — se asume
   ya ocurrido antes de que el comprador vea el cobro.
+
+## Marketplace de facturas — piloto sin validar
+
+En la sesión de equipo previo a la demo GoPayments (ver
+[`docs/cambios-requeridos-claude-code.md`](../cambios-requeridos-claude-code.md), sección
+2) se planteó evaluar ampliar el alcance de este prototipo a un **marketplace de
+facturas**: la empresa sube su factura y varios inversionistas de factoring compiten por
+comprarla, en vez del modelo actual de un solo factor ya asignado. El acuerdo original de
+esa sesión fue **no iniciar construcción todavía**, pendiente de una sesión con empresas de
+factoring para entender el flujo operativo real (cómo pujan los inversionistas, cómo se
+selecciona el ganador, qué visibilidad tiene el proveedor del proceso).
+
+Por decisión explícita posterior, se construyó de todas formas un piloto dentro de
+`factoring/` (vista proveedor: publicar factura → ver 3 ofertas de inversionistas mock →
+aceptar una → factura queda factorizada), accesible desde el botón "🏪 Marketplace de
+facturas (vista proveedor) — piloto" en la pantalla inicial. Los montos de descuento, plazos
+de liquidación y la mecánica de "3 ofertas fijas" **son suposiciones sin validar**, no un
+flujo operativo confirmado. El piloto está marcado como tal en la propia UI
+(`.marketplace-pilot-badge`) para dejarlo claro en cualquier demo. Sigue pendiente la sesión
+con empresas de factoring para confirmar o corregir el flujo antes de tratarlo como
+definitivo.

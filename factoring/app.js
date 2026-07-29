@@ -73,22 +73,22 @@
   const detailMonto = document.getElementById('detailMonto');
   const btnPayInvoice = document.getElementById('btnPayInvoice');
 
-  const screenBankPicker = document.getElementById('screenBankPicker');
-  const btnBackToInvoiceDetail = document.getElementById('btnBackToInvoiceDetail');
-  const bankFavorites = document.getElementById('bankFavorites');
+  const screenScenarioSelector = document.getElementById('screenScenarioSelector');
+  const btnScenarioOnboarding = document.getElementById('btnScenarioOnboarding');
+  const btnScenarioSkip = document.getElementById('btnScenarioSkip');
 
-  const screenIdentityVerification = document.getElementById('screenIdentityVerification');
-  const btnBackToBankPicker = document.getElementById('btnBackToBankPicker');
-  const identityBankName = document.getElementById('identityBankName');
-  const authMethodList = document.getElementById('authMethodList');
-  const authFieldEmail = document.getElementById('authFieldEmail');
-  const authFieldPhone = document.getElementById('authFieldPhone');
-  const authFieldId = document.getElementById('authFieldId');
-  const identityEmailInput = document.getElementById('identityEmailInput');
-  const identityPhoneInput = document.getElementById('identityPhoneInput');
-  const identityIdTypeSelect = document.getElementById('identityIdTypeSelect');
-  const identityIdNumberInput = document.getElementById('identityIdNumberInput');
-  const btnStartPayment = document.getElementById('btnStartPayment');
+  const screenOnboardingIntro = document.getElementById('screenOnboardingIntro');
+  const btnOnboardingContinue = document.getElementById('btnOnboardingContinue');
+
+  const screenOnboardingAccount = document.getElementById('screenOnboardingAccount');
+  const onboardingAccountList = document.getElementById('onboardingAccountList');
+  const btnSaveDefaultAccount = document.getElementById('btnSaveDefaultAccount');
+
+  const accountSelectedCard = document.getElementById('accountSelectedCard');
+  const accountSelectedDot = document.getElementById('accountSelectedDot');
+  const accountSelectedName = document.getElementById('accountSelectedName');
+  const accountSelectedBalance = document.getElementById('accountSelectedBalance');
+  const btnChangeAccount = document.getElementById('btnChangeAccount');
 
   const screenPushNotification = document.getElementById('screenPushNotification');
   const pushNotificationCard = document.getElementById('pushNotificationCard');
@@ -127,9 +127,55 @@
   const btnCloseReconciliation = document.getElementById('btnCloseReconciliation');
 
   let currentInvoice = null;
-  let selectedBank = null;
+
+  // Banco y cuenta configurados por defecto para pagos con RTP embebido (vía onboarding en la app del banco).
+  // Se preconfiguran con Banco Amarillo / Cuenta Corriente Principal para que el escenario "ir directo al pago" funcione sin pasar por el onboarding.
+  let selectedBank = { key: 'amarillo', name: 'Banco Amarillo', initials: 'BA' };
+  let defaultAccountName = 'Cuenta Corriente Principal';
+  let defaultAccountBalance = '$18.400.000';
   let selectedAccount = null;
-  let authMethod = 'email';
+  let onboardingChoice = null;
+
+  // ===================== Selector de escenario + onboarding de cuenta por defecto =====================
+  btnScenarioOnboarding.addEventListener('click', function () {
+    screenScenarioSelector.hidden = true;
+    screenOnboardingIntro.hidden = false;
+  });
+
+  btnScenarioSkip.addEventListener('click', function () {
+    screenScenarioSelector.hidden = true;
+  });
+
+  btnOnboardingContinue.addEventListener('click', function () {
+    screenOnboardingIntro.hidden = true;
+    screenOnboardingAccount.hidden = false;
+  });
+
+  onboardingAccountList.addEventListener('click', function (e) {
+    const item = e.target.closest('.account-item');
+    if (!item) return;
+
+    onboardingAccountList.querySelectorAll('.account-item').forEach(function (el) {
+      el.classList.remove('selected');
+    });
+    item.classList.add('selected');
+    onboardingChoice = item;
+  });
+
+  btnSaveDefaultAccount.addEventListener('click', function () {
+    const chosen = onboardingChoice || onboardingAccountList.querySelector('.account-item.selected');
+    if (!chosen) return;
+
+    selectedBank = {
+      key: chosen.getAttribute('data-bank'),
+      name: chosen.getAttribute('data-bank-name'),
+      initials: chosen.getAttribute('data-bank-initials')
+    };
+    defaultAccountName = chosen.querySelector('.account-name').textContent;
+    defaultAccountBalance = chosen.getAttribute('data-balance');
+
+    screenOnboardingAccount.hidden = true;
+  });
 
   // ===================== Paso 1: lista de facturas =====================
   function renderInvoiceList() {
@@ -195,94 +241,11 @@
     screenInvoices.hidden = false;
   });
 
-  // ===================== Paso 2 -> 3: pagar con RTP (reusado tal cual de factura-rtp/) =====================
+  // ===================== Paso 2 -> 3: pagar con RTP. El banco y la cuenta ya están preconfigurados
+  // (onboarding), así que se salta directo a la notificación push, sin elegir banco ni verificar
+  // identidad de nuevo. =====================
   btnPayInvoice.addEventListener('click', function () {
-    bankFavorites.querySelectorAll('.bank-favorite').forEach(function (el) {
-      el.classList.remove('selected');
-    });
-    selectedBank = null;
-
     screenInvoiceDetail.hidden = true;
-    screenBankPicker.hidden = false;
-  });
-
-  btnBackToInvoiceDetail.addEventListener('click', function () {
-    screenBankPicker.hidden = true;
-    screenInvoiceDetail.hidden = false;
-  });
-
-  // ===================== Paso 3: elegir banco (reusado tal cual de factura-rtp/) =====================
-  bankFavorites.addEventListener('click', function (e) {
-    const favorite = e.target.closest('.bank-favorite');
-    if (!favorite) return;
-
-    const bankKey = favorite.getAttribute('data-bank');
-    const bankName = favorite.getAttribute('data-name');
-
-    selectedBank = {
-      key: bankKey,
-      name: bankName,
-      initials: favorite.querySelector('.bank-logo').textContent
-    };
-
-    identityBankName.textContent = selectedBank.name;
-    identityEmailInput.value = '';
-    identityPhoneInput.value = '';
-    identityIdTypeSelect.value = '';
-    identityIdNumberInput.value = '';
-    selectAuthMethod('email');
-
-    screenBankPicker.hidden = true;
-    screenIdentityVerification.hidden = false;
-  });
-
-  btnBackToBankPicker.addEventListener('click', function () {
-    screenIdentityVerification.hidden = true;
-    screenBankPicker.hidden = false;
-  });
-
-  // ===================== Verificación de identidad (reusada tal cual de factura-rtp/) =====================
-  function selectAuthMethod(method) {
-    authMethod = method;
-
-    authMethodList.querySelectorAll('.bank-favorite').forEach(function (el) {
-      el.classList.toggle('selected', el.getAttribute('data-method') === method);
-    });
-
-    authFieldEmail.hidden = method !== 'email';
-    authFieldPhone.hidden = method !== 'phone';
-    authFieldId.hidden = method !== 'id';
-
-    updateStartPaymentState();
-  }
-
-  authMethodList.addEventListener('click', function (e) {
-    const method = e.target.closest('.bank-favorite');
-    if (!method) return;
-    selectAuthMethod(method.getAttribute('data-method'));
-  });
-
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  function updateStartPaymentState() {
-    let valid = false;
-    if (authMethod === 'email') {
-      valid = emailPattern.test(identityEmailInput.value.trim());
-    } else if (authMethod === 'phone') {
-      valid = identityPhoneInput.value.replace(/\D/g, '').length === 10;
-    } else if (authMethod === 'id') {
-      valid = identityIdTypeSelect.value !== '' && identityIdNumberInput.value.trim().length >= 5;
-    }
-    btnStartPayment.disabled = !valid;
-  }
-
-  identityEmailInput.addEventListener('input', updateStartPaymentState);
-  identityPhoneInput.addEventListener('input', updateStartPaymentState);
-  identityIdTypeSelect.addEventListener('change', updateStartPaymentState);
-  identityIdNumberInput.addEventListener('input', updateStartPaymentState);
-
-  btnStartPayment.addEventListener('click', function () {
-    screenIdentityVerification.hidden = true;
 
     pushNotificationIcon.className = 'push-notification-icon dot-' + selectedBank.key;
     pushNotificationIcon.textContent = selectedBank.initials;
@@ -311,11 +274,13 @@
     bankAppConcept.textContent = currentInvoice.concepto;
     bankAppInvoiceMeta.textContent = 'Se acredita a: ' + currentInvoice.beneficiarioPago + ' · Vence: ' + currentInvoice.fechaVencimiento;
 
-    bankAppAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
+    // La cuenta configurada como predeterminada en el onboarding queda preseleccionada.
+    const accountItems = bankAppAccountList.querySelectorAll('.account-item');
+    let matched = null;
+    accountItems.forEach(function (el) {
+      if (el.querySelector('.account-name').textContent === defaultAccountName) matched = el;
     });
-    btnAuthorizePayment.disabled = true;
-    selectedAccount = null;
+    selectAccountForBankApp(matched || accountItems[0]);
 
     bankAppPaymentView.hidden = false;
     btnAuthorizePayment.hidden = false;
@@ -338,15 +303,17 @@
     screenBankApp.hidden = true;
   });
 
-  // ===================== Selección de cuenta a debitar (reusada tal cual de factura-rtp/) =====================
-  bankAppAccountList.addEventListener('click', function (e) {
-    const item = e.target.closest('.account-item');
-    if (!item) return;
-
+  // ===================== Selección de cuenta a debitar =====================
+  // Muestra la cuenta por defecto en la tarjeta preseleccionada y colapsa el listado completo.
+  function selectAccountForBankApp(item) {
     bankAppAccountList.querySelectorAll('.account-item').forEach(function (el) {
       el.classList.remove('selected');
     });
     item.classList.add('selected');
+
+    accountSelectedDot.className = item.querySelector('.account-dot').className;
+    accountSelectedName.textContent = item.querySelector('.account-name').textContent;
+    accountSelectedBalance.textContent = item.querySelector('.account-balance').textContent;
 
     selectedAccount = {
       name: item.querySelector('.account-name').textContent,
@@ -354,6 +321,17 @@
     };
 
     btnAuthorizePayment.disabled = false;
+    bankAppAccountList.hidden = true;
+  }
+
+  bankAppAccountList.addEventListener('click', function (e) {
+    const item = e.target.closest('.account-item');
+    if (!item) return;
+    selectAccountForBankApp(item);
+  });
+
+  btnChangeAccount.addEventListener('click', function () {
+    bankAppAccountList.hidden = !bankAppAccountList.hidden;
   });
 
   // ===================== Autorización desde el banco =====================
@@ -405,10 +383,104 @@
 
     renderInvoiceList();
 
-    selectedBank = null;
+    // selectedBank NO se resetea: es la cuenta por defecto configurada en el onboarding y persiste entre pagos.
     selectedAccount = null;
     currentInvoice = null;
 
+    screenInvoices.hidden = false;
+  });
+
+  // ===================== Marketplace de facturas (vista proveedor) — piloto =====================
+  // Ampliación de backlog evaluada en sesión de equipo (ver tareas-b5-factoring.md), construida
+  // aquí sin validar aún el flujo operativo real con empresas de factoring.
+  const supplierInvoice = { numeroFactura: 'FE-2026-00940', monto: 9200000 };
+  const offers = {
+    rapida: { nombre: 'Inversión Rápida S.A.S.', descuento: '4.5%', neto: 8786000, plazo: '24 horas' },
+    agil: { nombre: 'Capital Ágil Fondos', descuento: '3.8%', neto: 8850400, plazo: '48 horas' },
+    factorplus: { nombre: 'FactorPlus Inversiones', descuento: '5.2%', neto: 8721600, plazo: '12 horas' }
+  };
+  let selectedOffer = null;
+
+  const btnOpenMarketplace = document.getElementById('btnOpenMarketplace');
+  const screenSupplierEntry = document.getElementById('screenSupplierEntry');
+  const btnBackFromSupplierEntry = document.getElementById('btnBackFromSupplierEntry');
+  const btnPublishInvoice = document.getElementById('btnPublishInvoice');
+
+  const screenMarketplaceOffers = document.getElementById('screenMarketplaceOffers');
+  const btnBackFromOffers = document.getElementById('btnBackFromOffers');
+  const offerList = document.getElementById('offerList');
+
+  const screenOfferConfirm = document.getElementById('screenOfferConfirm');
+  const btnBackFromOfferConfirm = document.getElementById('btnBackFromOfferConfirm');
+  const offerConfirmName = document.getElementById('offerConfirmName');
+  const offerConfirmDescuento = document.getElementById('offerConfirmDescuento');
+  const offerConfirmPlazo = document.getElementById('offerConfirmPlazo');
+  const offerConfirmNeto = document.getElementById('offerConfirmNeto');
+  const offerConfirmCheckbox = document.getElementById('offerConfirmCheckbox');
+  const btnConfirmOffer = document.getElementById('btnConfirmOffer');
+
+  const screenMarketplaceDone = document.getElementById('screenMarketplaceDone');
+  const marketplaceDoneSub = document.getElementById('marketplaceDoneSub');
+  const btnCloseMarketplaceDone = document.getElementById('btnCloseMarketplaceDone');
+
+  btnOpenMarketplace.addEventListener('click', function () {
+    screenInvoices.hidden = true;
+    screenSupplierEntry.hidden = false;
+  });
+
+  btnBackFromSupplierEntry.addEventListener('click', function () {
+    screenSupplierEntry.hidden = true;
+    screenInvoices.hidden = false;
+  });
+
+  btnPublishInvoice.addEventListener('click', function () {
+    screenSupplierEntry.hidden = true;
+    screenMarketplaceOffers.hidden = false;
+  });
+
+  btnBackFromOffers.addEventListener('click', function () {
+    screenMarketplaceOffers.hidden = true;
+    screenSupplierEntry.hidden = false;
+  });
+
+  offerList.addEventListener('click', function (e) {
+    const card = e.target.closest('.offer-card');
+    if (!card) return;
+
+    selectedOffer = offers[card.getAttribute('data-offer')];
+
+    offerConfirmName.textContent = selectedOffer.nombre;
+    offerConfirmDescuento.textContent = '-' + selectedOffer.descuento;
+    offerConfirmPlazo.textContent = selectedOffer.plazo;
+    offerConfirmNeto.textContent = formatCOP(selectedOffer.neto);
+    offerConfirmCheckbox.checked = false;
+    btnConfirmOffer.disabled = true;
+
+    screenMarketplaceOffers.hidden = true;
+    screenOfferConfirm.hidden = false;
+  });
+
+  btnBackFromOfferConfirm.addEventListener('click', function () {
+    screenOfferConfirm.hidden = true;
+    screenMarketplaceOffers.hidden = false;
+  });
+
+  offerConfirmCheckbox.addEventListener('change', function () {
+    btnConfirmOffer.disabled = !offerConfirmCheckbox.checked;
+  });
+
+  btnConfirmOffer.addEventListener('click', function () {
+    screenOfferConfirm.hidden = true;
+
+    marketplaceDoneSub.textContent = 'Factura ' + supplierInvoice.numeroFactura + ' cedida a ' +
+      selectedOffer.nombre + '. Recibes ' + formatCOP(selectedOffer.neto) + ' en ' + selectedOffer.plazo + '.';
+
+    screenMarketplaceDone.hidden = false;
+  });
+
+  btnCloseMarketplaceDone.addEventListener('click', function () {
+    screenMarketplaceDone.hidden = true;
+    selectedOffer = null;
     screenInvoices.hidden = false;
   });
 })();

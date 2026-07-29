@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototipo Split Payment — pago dividido entre cuentas (B2B)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-notch"></div>
+
+  <div class="status-bar">
+    <span class="status-time">11:15</span>
+    <span class="status-icons">📶 📡 🔋 85%</span>
+  </div>
+
+  <!-- Screen 1: cobro entrante, supera el saldo de la cuenta principal -->
+  <div class="screen-charge" id="screenCharge">
+    <div class="store-header">
+      <span class="back-arrow">←</span>
+      <div class="store-title">Banca Empresarial · Cobro pendiente</div>
+      <span class="cart-icon">🏢</span>
+    </div>
+
+    <div class="payment-body">
+      <div class="invoice-detail-badge">RTP embebido</div>
+
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Concepto</span><span id="chargeConcepto">—</span></div>
+        <div class="invoice-meta-row"><span>Beneficiario</span><span id="chargeBeneficiario">—</span></div>
+        <div class="invoice-meta-row"><span>Referencia</span><span id="chargeReferencia">—</span></div>
+      </div>
+
+      <div class="invoice-amount-card">
+        <span>Total a pagar</span>
+        <span class="invoice-amount-value" id="chargeMonto">$0</span>
+      </div>
+
+      <div class="insufficient-banner">
+        <span class="insufficient-banner-icon">⚠️</span>
+        <span>Tu cuenta principal (<span id="mainAccountName">—</span>, saldo <span id="mainAccountBalance">—</span>) no cubre el monto total.</span>
+      </div>
+    </div>
+
+    <button class="cart-cta" id="btnSplitAcrossAccounts">Dividir entre varias cuentas</button>
+  </div>
+
+  <!-- Screen: selección de cuentas + distribución de montos -->
+  <div class="screen-split" id="screenSplit" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackFromSplit">←</span>
+      <div class="payment-title">Dividir pago entre cuentas</div>
+    </div>
+
+    <div class="payment-body">
+      <p class="split-sub">Activa las cuentas que quieres usar y define cuánto aporta cada una. La suma debe igualar el total del cobro.</p>
+
+      <div class="split-account-list" id="splitAccountList"></div>
+
+      <button class="split-autofill" id="btnAutofillSplit">Asignar automáticamente</button>
+
+      <div class="split-total-card" id="splitTotalCard">
+        <span id="splitTotalLabel">Asignado: $0 de $0</span>
+      </div>
+    </div>
+
+    <button class="cart-cta" id="btnContinueFromSplit" disabled>Continuar</button>
+  </div>
+
+  <!-- Screen: biometría del OS -->
+  <div class="screen-biometric" id="screenBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
+    <div class="biometric-text">Coloca tu huella</div>
+    <div class="biometric-sub">Verificando identidad...</div>
+  </div>
+
+  <!-- Screen: confirmación única del pagador, con el detalle del split -->
+  <div class="screen-split-confirm" id="screenSplitConfirm" hidden>
+    <div class="payment-header">
+      <span class="back-arrow" id="btnBackFromConfirm">←</span>
+      <div class="payment-title">Confirmar pago dividido</div>
+    </div>
+
+    <div class="payment-body">
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Beneficiario</span><span id="confirmBeneficiario">—</span></div>
+        <div class="invoice-meta-row"><span>Concepto</span><span id="confirmConcepto">—</span></div>
+      </div>
+
+      <div class="split-summary-list" id="splitSummaryList"></div>
+
+      <div class="invoice-amount-card">
+        <span>Total combinado</span>
+        <span class="invoice-amount-value" id="confirmMonto">$0</span>
+      </div>
+    </div>
+
+    <button class="cart-cta" id="btnAuthorizeSplitPayment">Autorizar pago combinado</button>
+  </div>
+
+  <!-- Screen: confirmación al beneficiario, sin exponer el detalle del split -->
+  <div class="screen-reconciliation" id="screenBeneficiaryConfirm" hidden>
+    <div class="reconciliation-body">
+      <div class="confirmation-icon">✅</div>
+      <div class="reconciliation-title">Pago recibido</div>
+      <div class="reconciliation-sub">El beneficiario solo ve un pago único por el monto total — sin el detalle de las cuentas de origen.</div>
+
+      <div class="invoice-meta-card">
+        <div class="invoice-meta-row"><span>Beneficiario</span><span id="beneficiaryConfirmBeneficiario">—</span></div>
+        <div class="invoice-meta-row"><span>Concepto</span><span id="beneficiaryConfirmConcepto">—</span></div>
+        <div class="invoice-meta-row invoice-meta-row-highlight"><span>Monto recibido</span><span id="beneficiaryConfirmMonto">—</span></div>
+      </div>
+    </div>
+    <button class="cart-cta" id="btnCloseSplitPayment">Volver al cobro</button>
+  </div>
+
+</div>
+
+<a class="back-to-index" href="../index.html" title="Volver al índice" aria-label="Volver al índice">←</a>
+
+<script src="app.js"></script>
+</body>
+</html>

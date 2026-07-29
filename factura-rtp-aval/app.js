@@ -96,6 +96,41 @@
   const btnPaySelected = document.getElementById('btnPaySelected');
   const btnOpenCashflow = document.getElementById('btnOpenCashflow');
 
+  const desktopApp = document.getElementById('desktopApp');
+  const desktopAppLogoImg = document.getElementById('desktopAppLogoImg');
+  const desktopAppLogoEmoji = document.getElementById('desktopAppLogoEmoji');
+  const desktopAppName = document.getElementById('desktopAppName');
+  const desktopAppSubtitle = document.getElementById('desktopAppSubtitle');
+  const desktopBrowserAddress = document.getElementById('desktopBrowserAddress');
+  const btnSwitchDesktopApp = document.getElementById('btnSwitchDesktopApp');
+
+  const desktopViewInvoices = document.getElementById('desktopViewInvoices');
+  const desktopInvoiceTable = document.getElementById('desktopInvoiceTable');
+  const desktopAppSummary = document.getElementById('desktopAppSummary');
+  const desktopSelectionBar = document.getElementById('desktopSelectionBar');
+  const desktopSelectionCount = document.getElementById('desktopSelectionCount');
+  const desktopSelectionTotal = document.getElementById('desktopSelectionTotal');
+  const btnDesktopPaySelected = document.getElementById('btnDesktopPaySelected');
+  const btnDesktopOpenCashflow = document.getElementById('btnDesktopOpenCashflow');
+
+  const desktopViewCashflow = document.getElementById('desktopViewCashflow');
+  const btnDesktopBackFromCashflow = document.getElementById('btnDesktopBackFromCashflow');
+  const desktopCashflowList = document.getElementById('desktopCashflowList');
+  const desktopCashflowTotal = document.getElementById('desktopCashflowTotal');
+
+  const desktopViewAuthorize = document.getElementById('desktopViewAuthorize');
+  const btnDesktopBackToInvoices = document.getElementById('btnDesktopBackToInvoices');
+  const desktopAuthorizeInvoiceList = document.getElementById('desktopAuthorizeInvoiceList');
+  const desktopAuthorizeAmount = document.getElementById('desktopAuthorizeAmount');
+  const desktopAccountList = document.getElementById('desktopAccountList');
+  const btnDesktopAuthorize = document.getElementById('btnDesktopAuthorize');
+
+  const desktopViewConfirm = document.getElementById('desktopViewConfirm');
+  const desktopConfirmAmount = document.getElementById('desktopConfirmAmount');
+  const desktopConfirmDetail = document.getElementById('desktopConfirmDetail');
+  const desktopConfirmAccount = document.getElementById('desktopConfirmAccount');
+  const btnDesktopDone = document.getElementById('btnDesktopDone');
+
   const screenInvoiceDetail = document.getElementById('screenInvoiceDetail');
   const btnBackToInvoices = document.getElementById('btnBackToInvoices');
   const invoiceDetailStatusBadge = document.getElementById('invoiceDetailStatusBadge');
@@ -206,13 +241,243 @@
 
     if (selectedIds.size === 0) {
       selectionBar.hidden = true;
-      return;
+    } else {
+      selectionBar.hidden = false;
+      selectionCount.textContent = selectedIds.size + (selectedIds.size === 1 ? ' factura seleccionada' : ' facturas seleccionadas');
+      selectionTotal.textContent = formatCOP(total);
+    }
+  }
+
+  // ===================== Vista de escritorio (Banca Empresarial / TESO ACH) =====================
+  // Réplica web funcionalmente equivalente al celular, pero sin vínculo entre ambas:
+  // son dos canales independientes hacia la misma cuenta empresarial (cada una con su
+  // propia selección de facturas y su propio flujo de pago), no una vista espejo.
+  let desktopAppMode = 'occidente'; // 'occidente' | 'teso'
+  const desktopSelectedIds = new Set();
+  let desktopSelectedAccount = null;
+
+  const desktopAccounts = [
+    { id: 'corriente', name: 'Cuenta Corriente Principal', balance: '$18.400.000' },
+    { id: 'operativa', name: 'Cuenta Operativa', balance: '$6.250.000' }
+  ];
+
+  function desktopInvoiceRowHTML(invoice) {
+    if (invoice.paid) {
+      return (
+        '<div class="desktop-invoice-row desktop-invoice-row-paid">' +
+          '<span class="desktop-invoice-row-dot"></span>' +
+          '<span class="desktop-invoice-row-main">' +
+            '<span class="desktop-invoice-row-number">' + invoice.numeroFactura + ' · Conciliada</span>' +
+            '<span class="desktop-invoice-row-detail">' + invoice.emisor + '</span>' +
+          '</span>' +
+          '<span class="desktop-invoice-row-amount">' + formatCOP(invoice.monto) + '</span>' +
+        '</div>'
+      );
     }
 
-    selectionBar.hidden = false;
-    selectionCount.textContent = selectedIds.size + (selectedIds.size === 1 ? ' factura seleccionada' : ' facturas seleccionadas');
-    selectionTotal.textContent = formatCOP(total);
+    const alerta = semaforo(invoice);
+    const selected = desktopSelectedIds.has(invoice.id);
+
+    return (
+      '<label class="desktop-invoice-row' + (selected ? ' desktop-invoice-row-selected' : '') + '">' +
+        '<input type="checkbox" class="desktop-invoice-row-checkbox" data-id="' + invoice.id + '" ' + (selected ? 'checked' : '') + '>' +
+        '<span class="desktop-invoice-row-main">' +
+          '<span class="desktop-invoice-row-number">' + invoice.numeroFactura + '</span>' +
+          '<span class="desktop-invoice-row-detail">' + invoice.emisor + ' · ' + alerta.texto + '</span>' +
+        '</span>' +
+        '<span class="desktop-invoice-row-amount">' + formatCOP(invoice.monto) + '</span>' +
+      '</label>'
+    );
   }
+
+  function renderDesktopInvoiceList() {
+    desktopInvoiceTable.innerHTML = invoices.map(desktopInvoiceRowHTML).join('');
+    updateDesktopSelectionBar();
+  }
+
+  function updateDesktopSelectionBar() {
+    const selected = invoices.filter(function (inv) { return desktopSelectedIds.has(inv.id); });
+
+    if (selected.length === 0) {
+      desktopSelectionBar.hidden = true;
+      desktopAppSummary.hidden = false;
+    } else {
+      desktopSelectionBar.hidden = false;
+      desktopAppSummary.hidden = true;
+      const total = selected.reduce(function (sum, inv) { return sum + inv.monto; }, 0);
+      desktopSelectionCount.textContent = selected.length + (selected.length === 1 ? ' factura seleccionada' : ' facturas seleccionadas');
+      desktopSelectionTotal.textContent = formatCOP(total);
+    }
+  }
+
+  desktopInvoiceTable.addEventListener('change', function (e) {
+    const checkbox = e.target.closest('.desktop-invoice-row-checkbox');
+    if (!checkbox) return;
+
+    const id = checkbox.getAttribute('data-id');
+    if (checkbox.checked) desktopSelectedIds.add(id); else desktopSelectedIds.delete(id);
+    checkbox.closest('.desktop-invoice-row').classList.toggle('desktop-invoice-row-selected', checkbox.checked);
+    updateDesktopSelectionBar();
+  });
+
+  function showDesktopView(view) {
+    desktopViewInvoices.hidden = view !== 'invoices';
+    desktopViewCashflow.hidden = view !== 'cashflow';
+    desktopViewAuthorize.hidden = view !== 'authorize';
+    desktopViewConfirm.hidden = view !== 'confirm';
+  }
+
+  // ===================== Flujo de caja proyectado (propio del panel de escritorio) =====================
+  function renderDesktopCashflow() {
+    const pendientes = invoices
+      .filter(function (inv) { return !inv.paid; })
+      .slice()
+      .sort(function (a, b) { return a.fechaVencimientoISO.localeCompare(b.fechaVencimientoISO); });
+
+    let acumulado = 0;
+    desktopCashflowList.innerHTML = pendientes.map(function (inv) {
+      acumulado += inv.monto;
+      const alerta = semaforo(inv);
+      return (
+        '<div class="cashflow-row">' +
+          '<div class="cashflow-row-main">' +
+            '<span class="cashflow-row-date">' + inv.fechaVencimiento + '</span>' +
+            '<span class="due-alert due-alert-' + alerta.nivel + '">' + alerta.texto + '</span>' +
+          '</div>' +
+          '<div class="cashflow-row-detail">' + inv.numeroFactura + ' · ' + inv.emisor + '</div>' +
+          '<div class="cashflow-row-amounts">' +
+            '<span>' + formatCOP(inv.monto) + '</span>' +
+            '<span class="cashflow-row-accum">Acum: ' + formatCOP(acumulado) + '</span>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+
+    desktopCashflowTotal.textContent = formatCOP(acumulado);
+  }
+
+  btnDesktopOpenCashflow.addEventListener('click', function () {
+    renderDesktopCashflow();
+    showDesktopView('cashflow');
+  });
+
+  btnDesktopBackFromCashflow.addEventListener('click', function () {
+    showDesktopView('invoices');
+  });
+
+  function desktopAccountItemHTML(account) {
+    const selected = desktopSelectedAccount && desktopSelectedAccount.id === account.id;
+    return (
+      '<button class="desktop-account-item' + (selected ? ' selected' : '') + '" data-id="' + account.id + '">' +
+        '<span class="account-dot dot-bank-app"></span>' +
+        '<span class="account-info">' +
+          '<span class="account-name">' + account.name + '</span>' +
+          '<span class="account-balance">Saldo: ' + account.balance + '</span>' +
+        '</span>' +
+        '<span class="desktop-account-item-check">✔</span>' +
+      '</button>'
+    );
+  }
+
+  function renderDesktopAccountList() {
+    desktopAccountList.innerHTML = desktopAccounts.map(desktopAccountItemHTML).join('');
+  }
+
+  desktopAccountList.addEventListener('click', function (e) {
+    const item = e.target.closest('.desktop-account-item');
+    if (!item) return;
+
+    const id = item.getAttribute('data-id');
+    desktopSelectedAccount = desktopAccounts.find(function (acc) { return acc.id === id; });
+    renderDesktopAccountList();
+  });
+
+  btnDesktopPaySelected.addEventListener('click', function () {
+    const selected = invoices.filter(function (inv) { return desktopSelectedIds.has(inv.id); });
+    if (selected.length === 0) return;
+
+    const total = selected.reduce(function (sum, inv) { return sum + inv.monto; }, 0);
+
+    desktopAuthorizeInvoiceList.innerHTML = selected.map(function (inv) {
+      return (
+        '<div class="desktop-invoice-row desktop-invoice-row-paid">' +
+          '<span class="desktop-invoice-row-dot"></span>' +
+          '<span class="desktop-invoice-row-main">' +
+            '<span class="desktop-invoice-row-number">' + inv.numeroFactura + '</span>' +
+            '<span class="desktop-invoice-row-detail">' + inv.emisor + '</span>' +
+          '</span>' +
+          '<span class="desktop-invoice-row-amount">' + formatCOP(inv.monto) + '</span>' +
+        '</div>'
+      );
+    }).join('');
+    desktopAuthorizeAmount.textContent = formatCOP(total);
+
+    desktopSelectedAccount = desktopAccounts[0];
+    renderDesktopAccountList();
+
+    showDesktopView('authorize');
+  });
+
+  btnDesktopBackToInvoices.addEventListener('click', function () {
+    showDesktopView('invoices');
+  });
+
+  btnDesktopAuthorize.addEventListener('click', function () {
+    if (!desktopSelectedAccount) return;
+
+    const selected = invoices.filter(function (inv) { return desktopSelectedIds.has(inv.id); });
+    const total = selected.reduce(function (sum, inv) { return sum + inv.monto; }, 0);
+
+    selected.forEach(function (inv) { inv.paid = true; });
+
+    desktopConfirmAmount.textContent = formatCOP(total);
+    desktopConfirmDetail.textContent = selected.length === 1
+      ? 'Factura ' + selected[0].numeroFactura
+      : selected.length + ' facturas';
+    desktopConfirmAccount.textContent = desktopSelectedAccount.name + ' · Saldo: ' + desktopSelectedAccount.balance;
+
+    showDesktopView('confirm');
+
+    // La factura queda conciliada en el backend del emisor sin importar el canal
+    // (banca empresarial o TESO ACH) desde el que se autorizó el pago.
+    if (!screenInvoices.hidden) renderInvoiceList();
+  });
+
+  btnDesktopDone.addEventListener('click', function () {
+    desktopSelectedIds.clear();
+    desktopSelectedAccount = null;
+    renderDesktopInvoiceList();
+    showDesktopView('invoices');
+  });
+
+  function applyDesktopAppMode() {
+    if (desktopAppMode === 'teso') {
+      desktopApp.className = 'desktop-app theme-desktop-teso';
+      desktopAppLogoImg.hidden = true;
+      desktopAppLogoEmoji.hidden = false;
+      desktopAppName.textContent = 'TESO ACH';
+      desktopAppSubtitle.textContent = 'Portal empresarial · ACH Colombia';
+      desktopBrowserAddress.textContent = 'teso.achcolombia.com.co/empresas';
+      btnSwitchDesktopApp.textContent = 'Ver en Banco Azul de Occidente →';
+    } else {
+      desktopApp.className = 'desktop-app theme-desktop-occidente';
+      desktopAppLogoImg.hidden = false;
+      desktopAppLogoEmoji.hidden = true;
+      desktopAppName.textContent = 'Banco Azul de Occidente Empresas';
+      desktopAppSubtitle.textContent = 'Banca empresarial en línea';
+      desktopBrowserAddress.textContent = 'bancoazuldeoccidente.com/empresas';
+      btnSwitchDesktopApp.textContent = 'Ver en TESO ACH →';
+    }
+  }
+
+  applyDesktopAppMode();
+  showDesktopView('invoices');
+  renderDesktopInvoiceList();
+
+  btnSwitchDesktopApp.addEventListener('click', function () {
+    desktopAppMode = desktopAppMode === 'teso' ? 'occidente' : 'teso';
+    applyDesktopAppMode();
+  });
 
   invoicesBody.addEventListener('click', function (e) {
     const checkbox = e.target.closest('.invoice-checkbox');

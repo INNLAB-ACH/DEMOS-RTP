@@ -6,94 +6,57 @@ body {
   margin: 0;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #e9e6e1;
+  gap: 18px;
+  background: #e4e8ee;
   font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-  padding: 24px 12px;
+  padding: 32px 16px;
 }
 
-.page-wrap {
+/* Small label above the stage flagging bank + demo topic */
+.stage-label {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  text-align: center;
 }
 
-/* Contexto: bandeja de cobros de la banca empresarial (no interactiva a fondo) */
-.inbox-panel {
-  width: 375px;
-  max-width: 100%;
-  background: #10233d;
+.stage-label__badge {
+  background: #163a70;
   color: #fff;
-  border-radius: 14px;
-  padding: 14px 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
-}
-
-.inbox-panel-header {
-  margin-bottom: 10px;
-}
-
-.inbox-panel-title {
-  font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.inbox-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-
-.inbox-row-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.inbox-row-company {
-  font-size: 13.5px;
-  font-weight: 700;
-}
-
-.inbox-row-detail {
   font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.65);
-  margin-top: 2px;
-}
-
-.inbox-row-side {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.inbox-row-amount {
-  font-size: 14px;
   font-weight: 700;
-}
-
-.inbox-row-status {
-  margin-top: 4px;
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.3px;
-  background: #f4c20d;
-  color: #1a1a1a;
-  border-radius: 10px;
-  padding: 3px 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
 }
 
-.inbox-panel-note {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.6);
-  margin-top: 10px;
-  text-align: right;
+.stage {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.phone-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone-owner-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #163a70;
+  background: #fff;
+  border: 1px solid #dde4ee;
+  border-radius: 999px;
+  padding: 5px 12px;
+  text-align: center;
 }
 
 .phone {
@@ -128,7 +91,7 @@ body {
   padding: 6px 18px 4px 18px;
   font-size: 12px;
   font-weight: 600;
-  background: #075e54;
+  background: #163a70;
   color: #fff;
 }
 
@@ -136,7 +99,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #075e54;
+  background: #163a70;
   color: #fff;
   padding: 8px 12px 12px 12px;
 }
@@ -156,11 +119,20 @@ body {
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.avatar-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 4px;
 }
 
 .chat-title {
   flex: 1;
   line-height: 1.25;
+  min-width: 0;
 }
 
 .chat-name {
@@ -181,11 +153,15 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .chat-status {
   font-size: 12px;
   opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-icons {
@@ -231,6 +207,11 @@ body {
   margin-bottom: 8px;
 }
 
+.bubble-sub-note {
+  color: #a8710a;
+  font-weight: 600;
+}
+
 /* Badge used everywhere to flag this as a corporate approval, not a personal payment */
 .corp-badge {
   display: inline-block;
@@ -238,7 +219,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.3px;
-  background: #10233d;
+  background: #163a70;
   color: #fff;
   border-radius: 10px;
   padding: 3px 8px;
@@ -299,6 +280,13 @@ body {
 
 .receipt-amount {
   font-size: 13.5px;
+  margin-bottom: 4px;
+}
+
+.receipt-status-note {
+  font-size: 12px;
+  color: #a8710a;
+  font-weight: 600;
   margin-bottom: 8px;
 }
 
@@ -369,11 +357,11 @@ body {
 }
 
 .sheet-large {
-  height: 62%;
+  height: 66%;
 }
 
 .sheet-medium {
-  height: 48%;
+  height: 50%;
 }
 
 .sheet-small {
@@ -417,25 +405,12 @@ body {
   color: #222;
 }
 
-.sheet-back-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.sheet-back-row .sheet-title {
-  margin: 0;
-}
-
-.sheet-back {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 18px;
-  color: #333;
-  cursor: pointer;
-  line-height: 1;
+/* Contenido scrolleable del sheet, para que el CTA quede siempre visible aunque el
+   contenido (p. ej. el checklist de firmas) sea más alto que el sheet. */
+.sheet-scroll-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* Approval detail item (sheetDetail) */
@@ -464,6 +439,40 @@ body {
   color: #222;
   font-weight: 600;
   text-align: right;
+}
+
+/* Checklist de las 2 firmas requeridas, mostrado antes de firmar */
+.approvers-checklist-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.approvers-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.approvers-checklist-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #555;
+  background: #fdeed2;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.approvers-checklist-row-approved {
+  background: #dcf3e6;
+  color: #1c8a47;
+  font-weight: 600;
 }
 
 .order-summary {
@@ -505,6 +514,15 @@ body {
 }
 
 /* Account list */
+.bank-app-accounts-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
 .account-list {
   display: flex;
   flex-direction: column;
@@ -536,6 +554,10 @@ body {
   height: 16px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+.dot-bank-app {
+  background: #999;
 }
 
 .account-info {
@@ -574,15 +596,6 @@ body {
   text-align: left;
 }
 
-.account-favorite-star {
-  background: none;
-  border: none;
-  font-size: 18px;
-  color: #a8710a;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
 .account-change-link {
   align-self: flex-start;
   background: none;
@@ -593,10 +606,6 @@ body {
   padding: 0;
   cursor: pointer;
   font-family: inherit;
-}
-
-.dot-bank-app {
-  background: #999;
 }
 
 /* Biometric screen */
@@ -674,7 +683,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .receipt-row {
@@ -698,8 +707,286 @@ body {
   border-bottom: none;
 }
 
+.receipt-approval-status {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #a8710a;
+  margin-bottom: 10px;
+}
+
 [hidden] {
   display: none !important;
+}
+
+/* ===================== Vista simultánea de escritorio (banca empresarial) ===================== */
+.desktop-panel {
+  width: 620px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.desktop-panel-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.desktop-panel-hint {
+  font-size: 12px;
+  color: #56606f;
+  font-weight: 600;
+}
+
+.desktop-browser {
+  background: #d7dde6;
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.desktop-browser-chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 10px 6px;
+}
+
+.browser-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.browser-dot-red { background: #ec6a5e; }
+.browser-dot-yellow { background: #f4bf4f; }
+.browser-dot-green { background: #61c454; }
+
+.desktop-browser-address {
+  flex: 1;
+  margin-left: 8px;
+  background: #fff;
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 11.5px;
+  color: #6b7a8f;
+}
+
+.desktop-app {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-app-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  color: #fff;
+}
+
+.desktop-app.theme-desktop-bogota .desktop-app-header {
+  background: #163a70;
+}
+
+.desktop-app-logo-badge {
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.desktop-app-logo-img {
+  height: 26px;
+  display: block;
+}
+
+.desktop-app-header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-app-header-text strong {
+  font-size: 16px;
+}
+
+.desktop-app-header-text span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.desktop-app-body {
+  flex: 1;
+  padding: 20px 22px;
+}
+
+.desktop-app-section-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #6b7a8f;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 14px;
+}
+
+/* Tarjeta del pago pendiente de doble aprobación */
+.desktop-payment-card {
+  background: #f4f7fb;
+  border: 1px solid #dde4ee;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.desktop-payment-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.desktop-payment-status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.desktop-payment-status-badge-pending {
+  background: #fdeed2;
+  color: #a8710a;
+}
+
+.desktop-payment-status-badge-approved {
+  background: #dcf3e6;
+  color: #1c8a47;
+}
+
+.desktop-payment-amount {
+  font-size: 20px;
+  font-weight: 800;
+  color: #163a70;
+}
+
+.desktop-payment-beneficiario {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.desktop-payment-concept {
+  font-size: 12.5px;
+  color: #56606f;
+  margin-bottom: 4px;
+}
+
+.desktop-payment-meta {
+  font-size: 12px;
+  color: #8291a3;
+  margin-bottom: 18px;
+}
+
+.desktop-approvers-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #6b7a8f;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+}
+
+.desktop-approvers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.desktop-approver-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #dde4ee;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.desktop-approver-row-approved {
+  border-color: #9fd8b6;
+  background: #f2fbf6;
+}
+
+.desktop-approver-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #163a70;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.desktop-approver-row-approved .desktop-approver-avatar {
+  background: #1c8a47;
+}
+
+.desktop-approver-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.desktop-approver-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #222;
+}
+
+.desktop-approver-role {
+  font-size: 11.5px;
+  color: #8291a3;
+}
+
+.desktop-approver-status {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #a8710a;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.desktop-approver-row-approved .desktop-approver-status {
+  color: #1c8a47;
+}
+
+.desktop-payment-banner {
+  background: #dcf3e6;
+  color: #1c8a47;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 10px;
+  padding: 12px;
 }
 
 /* Floating button to return to the demo index, sits outside the phone frame */
