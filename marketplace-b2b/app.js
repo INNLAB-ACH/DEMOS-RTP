@@ -324,8 +324,6 @@
     selectedBank = null;
     selectedAccount = null;
 
-    bankListLabel.hidden = true;
-    bankFavorites.hidden = true;
     bankAppAccountList.hidden = true;
   });
 })();
