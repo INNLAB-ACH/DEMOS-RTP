@@ -111,32 +111,43 @@
     <button class="cart-cta" id="btnGoToPayFinal" disabled>Ir a pagar</button>
   </div>
 
-  <!-- Screen: selector de rol empresarial (nuevo, mock) -->
-  <div class="screen-role" id="screenRoleSelector" hidden>
+  <!-- Screen: verificación de identidad (solo cédula) -->
+  <div class="screen-identity" id="screenIdentityVerification" hidden>
     <div class="payment-header">
-      <span class="back-arrow" id="btnBackToPaymentFromRole">←</span>
-      <div class="payment-title">Confirma tu rol</div>
+      <span class="back-arrow" id="btnBackToPayment">←</span>
+      <div class="payment-title">Confirma tu identidad</div>
     </div>
     <div class="payment-body">
-      <div class="role-card">
-        <div class="role-card-label">Comprando en nombre de</div>
-        <div class="role-card-company" id="roleCompanyName">Distribuidora ANDES S.A.S.</div>
-        <div class="corp-badge corp-badge-block" id="roleBadge">Comprador autorizado</div>
+      <div class="email-step-sub">Ingresa tu número de cédula para identificarte y continuar con el pago.</div>
+
+      <div class="email-field" id="authFieldId">
+        <label for="identityIdTypeSelect">Tipo de identificación</label>
+        <select id="identityIdTypeSelect" class="email-input">
+          <option value="">Selecciona...</option>
+          <option value="CC">Cédula de ciudadanía</option>
+          <option value="CE">Cédula de extranjería</option>
+        </select>
+        <label for="identityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
+        <input type="text" id="identityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
       </div>
-      <p class="role-note">Esta compra quedará registrada a nombre de la empresa. Verifica que tu rol dentro de la
-        organización esté habilitado para pagos antes de continuar al banco.</p>
     </div>
-    <button class="cart-cta" id="btnConfirmRole">Confirmar y continuar</button>
+    <button class="cart-cta" id="btnStartPayment" disabled>Continuar</button>
   </div>
 
-  <!-- Screen: selección de banco -->
-  <div class="screen-bank-picker" id="screenBankPicker" hidden>
+  <!-- Screen: banco preconfigurado por defecto (definido por el usuario con esa cédula en su configuración inicial) -->
+  <div class="screen-bank-picker" id="screenBankDefault" hidden>
     <div class="payment-header">
-      <span class="back-arrow" id="btnBackToRole">←</span>
-      <div class="payment-title">Selecciona tu banco</div>
+      <span class="back-arrow" id="btnBackToIdentity">←</span>
+      <div class="payment-title">Tu banco</div>
     </div>
     <div class="payment-body">
-      <div class="bank-search">🔍 Buscar banco</div>
+      <div class="bank-selected-card" id="bankSelectedCard">
+        <span class="bank-logo" id="bankSelectedLogo">BA</span>
+        <span class="bank-favorite-name" id="bankSelectedName">Banco Amarillo</span>
+      </div>
+      <p class="role-note">Este es el banco que configuraste por defecto para pagos con ACH en tu proceso de
+        configuración inicial. Si lo prefieres, puedes elegir otro banco para este pago.</p>
+
       <div class="bank-favorites-label">Favoritos</div>
       <div class="bank-favorites" id="bankFavorites">
         <button class="bank-favorite" data-bank="amarillo" data-name="Banco Amarillo">
@@ -152,6 +163,7 @@
           <span class="bank-favorite-name">Banco Azul</span>
         </button>
       </div>
+
       <div class="bank-other-label">Otros bancos</div>
       <div class="bank-other-list">
         <div class="bank-other-item">Banco Verde</div>
@@ -159,54 +171,7 @@
         <div class="bank-other-item">Banco Gris</div>
       </div>
     </div>
-  </div>
-
-  <!-- Screen: verificación de identidad -->
-  <div class="screen-identity" id="screenIdentityVerification" hidden>
-    <div class="payment-header">
-      <span class="back-arrow" id="btnBackToBankPicker">←</span>
-      <div class="payment-title">Confirma tu identidad</div>
-    </div>
-    <div class="payment-body">
-      <div class="email-step-sub">Selecciona cómo quieres verificar tu identidad en <strong id="identityBankName">Banco</strong> para continuar con el pago.</div>
-
-      <div class="bank-favorites" id="authMethodList">
-        <button class="bank-favorite" data-method="email">
-          <span class="bank-logo bank-logo-plain">📧</span>
-          <span class="bank-favorite-name">Correo</span>
-        </button>
-        <button class="bank-favorite" data-method="phone">
-          <span class="bank-logo bank-logo-plain">📱</span>
-          <span class="bank-favorite-name">Celular</span>
-        </button>
-        <button class="bank-favorite" data-method="id">
-          <span class="bank-logo bank-logo-plain">🪪</span>
-          <span class="bank-favorite-name">Cédula</span>
-        </button>
-      </div>
-
-      <div class="email-field" id="authFieldEmail">
-        <label for="identityEmailInput">Correo electrónico</label>
-        <input type="email" id="identityEmailInput" class="email-input" placeholder="nombre@correo.com" autocomplete="off">
-      </div>
-
-      <div class="email-field" id="authFieldPhone" hidden>
-        <label for="identityPhoneInput">Número celular</label>
-        <input type="tel" id="identityPhoneInput" class="email-input" placeholder="300 123 4567" autocomplete="off">
-      </div>
-
-      <div class="email-field" id="authFieldId" hidden>
-        <label for="identityIdTypeSelect">Tipo de identificación</label>
-        <select id="identityIdTypeSelect" class="email-input">
-          <option value="">Selecciona...</option>
-          <option value="CC">Cédula de ciudadanía</option>
-          <option value="CE">Cédula de extranjería</option>
-        </select>
-        <label for="identityIdNumberInput" class="auth-field-id-number-label">Número de documento</label>
-        <input type="text" id="identityIdNumberInput" class="email-input" placeholder="1020304050" autocomplete="off" inputmode="numeric">
-      </div>
-    </div>
-    <button class="cart-cta" id="btnStartPayment" disabled>Iniciar pago</button>
+    <button class="cart-cta" id="btnConfirmBankDefault">Continuar</button>
   </div>
 
   <!-- Full screen: simulated push notification / lock screen -->
@@ -234,8 +199,18 @@
       <div class="bank-app-amount">$18.450.000</div>
       <div class="bank-app-concept">Orden de compra OC-48213</div>
 
-      <div class="bank-app-accounts-label">Selecciona la cuenta empresarial a debitar</div>
-      <div class="account-list" id="bankAppAccountList">
+      <div class="bank-app-accounts-label">Cuenta empresarial a debitar</div>
+      <div class="account-selected-card" id="accountSelectedCard">
+        <span class="account-dot dot-bank-app" id="accountSelectedDot"></span>
+        <span class="account-info">
+          <span class="account-name" id="accountSelectedName">Cuenta Corriente Empresarial</span>
+          <span class="account-balance" id="accountSelectedBalance">Saldo: $142.300.000</span>
+        </span>
+        <button class="account-change-link" id="btnChangeAccount">Cambiar cuenta</button>
+      </div>
+      <p class="role-note">Esta es la cuenta principal que seleccionaste en el onboarding de tu empresa.</p>
+
+      <div class="account-list" id="bankAppAccountList" hidden>
         <button class="account-item" data-account="corriente" data-balance="$142.300.000">
           <span class="account-dot dot-bank-app"></span>
           <span class="account-info">
@@ -254,7 +229,7 @@
         </button>
       </div>
     </div>
-    <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment" disabled>Autorizar pago</button>
+    <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment">Autorizar pago</button>
 
     <!-- Bank's own confirmation, shown after the internal approver confirms -->
     <div class="bank-app-body bank-app-confirm" id="bankAppConfirmView" hidden>

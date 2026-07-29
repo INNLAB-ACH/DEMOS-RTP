@@ -30,6 +30,14 @@
     </button>
   </div>
 
+  <!-- Screen: verificación biométrica antes de abrir el detalle del trámite -->
+  <div class="screen-biometric" id="screenPushBiometric" hidden>
+    <div class="biometric-fingerprint" id="fingerprintPushTap">👆</div>
+    <div class="biometric-text">Verifica tu identidad</div>
+    <div class="biometric-sub">Para abrir el detalle del trámite usa tu biometría.</div>
+    <button class="biometric-cancel" id="btnCancelPushBiometric">Cancelar</button>
+  </div>
+
   <!-- Screen: detalle del trámite con datos precargados -->
   <div class="screen-tramite-detail" id="screenTramiteDetail" hidden>
     <div class="tramite-header">
@@ -97,7 +105,7 @@
     </div>
     <button class="sheet-cta bank-app-cta" id="btnAuthorizePayment" disabled>Autorizar pago</button>
 
-    <!-- Confirmación propia del banco, inmediatamente tras la biometría -->
+    <!-- Confirmación propia del banco tras autorizar el pago -->
     <div class="bank-app-body bank-app-confirm" id="bankAppConfirmView" hidden>
       <div class="confirmation-icon">✅</div>
       <div class="bank-app-confirm-title">Pago exitoso</div>
@@ -106,13 +114,6 @@
       <div class="bank-app-confirm-account" id="bankAppConfirmAccount">—</div>
     </div>
     <button class="sheet-cta bank-app-cta" id="btnReturnToNotification" hidden>Continuar</button>
-  </div>
-
-  <!-- Screen: biometría del OS -->
-  <div class="screen-biometric" id="screenBiometric" hidden>
-    <div class="biometric-fingerprint" id="fingerprintTap">👆</div>
-    <div class="biometric-text">Coloca tu huella</div>
-    <div class="biometric-sub">Verificando identidad...</div>
   </div>
 
   <!-- Screen: confirmación final con trazabilidad -->

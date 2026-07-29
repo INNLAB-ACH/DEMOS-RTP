@@ -4,7 +4,6 @@
   const screenPayment = document.getElementById('screenPayment');
   const paymentBody = document.getElementById('paymentBody');
   const paymentWaiting = document.getElementById('paymentWaiting');
-  const screenRoleSelector = document.getElementById('screenRoleSelector');
   const screenBankApp = document.getElementById('screenBankApp');
   const screenApproverConfirm = document.getElementById('screenApproverConfirm');
   const screenBiometric = document.getElementById('screenBiometric');
@@ -16,26 +15,19 @@
   const paymentMethodList = document.getElementById('paymentMethodList');
   const btnGoToPayFinal = document.getElementById('btnGoToPayFinal');
 
-  const btnBackToPaymentFromRole = document.getElementById('btnBackToPaymentFromRole');
-  const roleCompanyName = document.getElementById('roleCompanyName');
-  const btnConfirmRole = document.getElementById('btnConfirmRole');
-
-  const screenBankPicker = document.getElementById('screenBankPicker');
-  const btnBackToRole = document.getElementById('btnBackToRole');
-  const bankFavorites = document.getElementById('bankFavorites');
-
   const screenIdentityVerification = document.getElementById('screenIdentityVerification');
-  const btnBackToBankPicker = document.getElementById('btnBackToBankPicker');
-  const identityBankName = document.getElementById('identityBankName');
-  const authMethodList = document.getElementById('authMethodList');
-  const authFieldEmail = document.getElementById('authFieldEmail');
-  const authFieldPhone = document.getElementById('authFieldPhone');
-  const authFieldId = document.getElementById('authFieldId');
-  const identityEmailInput = document.getElementById('identityEmailInput');
-  const identityPhoneInput = document.getElementById('identityPhoneInput');
+  const btnBackToPayment = document.getElementById('btnBackToPayment');
   const identityIdTypeSelect = document.getElementById('identityIdTypeSelect');
   const identityIdNumberInput = document.getElementById('identityIdNumberInput');
   const btnStartPayment = document.getElementById('btnStartPayment');
+
+  const screenBankDefault = document.getElementById('screenBankDefault');
+  const btnBackToIdentity = document.getElementById('btnBackToIdentity');
+  const bankSelectedCard = document.getElementById('bankSelectedCard');
+  const bankSelectedLogo = document.getElementById('bankSelectedLogo');
+  const bankSelectedName = document.getElementById('bankSelectedName');
+  const bankFavorites = document.getElementById('bankFavorites');
+  const btnConfirmBankDefault = document.getElementById('btnConfirmBankDefault');
 
   const screenPushNotification = document.getElementById('screenPushNotification');
   const pushNotificationCard = document.getElementById('pushNotificationCard');
@@ -46,6 +38,11 @@
   const bankAppName = document.getElementById('bankAppName');
   const btnCloseBankApp = document.getElementById('btnCloseBankApp');
   const bankAppPaymentView = document.getElementById('bankAppPaymentView');
+  const accountSelectedCard = document.getElementById('accountSelectedCard');
+  const accountSelectedDot = document.getElementById('accountSelectedDot');
+  const accountSelectedName = document.getElementById('accountSelectedName');
+  const accountSelectedBalance = document.getElementById('accountSelectedBalance');
+  const btnChangeAccount = document.getElementById('btnChangeAccount');
   const bankAppAccountList = document.getElementById('bankAppAccountList');
   const btnAuthorizePayment = document.getElementById('btnAuthorizePayment');
   const bankAppConfirmView = document.getElementById('bankAppConfirmView');
@@ -70,12 +67,15 @@
   const ORDER_NUMBER = 'OC-48213';
   const BUYER_COMPANY = 'Distribuidora ANDES S.A.S.';
 
+  // Banco y cuenta configurados por defecto en el proceso de configuración inicial (onboarding)
+  // asociado a la cédula del comprador. Se preseleccionan para que el usuario no tenga que
+  // volver a elegirlos en cada pago, con la opción de cambiarlos si lo necesita.
+  const DEFAULT_BANK = { key: 'amarillo', name: 'Banco Amarillo', initials: 'BA' };
+  const DEFAULT_ACCOUNT_NAME = 'Cuenta Corriente Empresarial';
+
   let selectedMethod = null;
   let selectedBank = null;
   let selectedAccount = null;
-  let authMethod = 'email';
-
-  roleCompanyName.textContent = BUYER_COMPANY;
 
   // Step 1 -> 2: ir a pagar desde la orden de compra
   btnGoToPay.addEventListener('click', function () {
@@ -100,108 +100,70 @@
     btnGoToPayFinal.disabled = false;
   });
 
-  // Step 2 -> selector de rol empresarial: solo "Cóbrame con ACH" dispara el flujo
+  // Step 2 -> verificación de identidad: solo "Cóbrame con ACH" dispara el flujo
   btnGoToPayFinal.addEventListener('click', function () {
     if (selectedMethod !== 'ach') return;
-    screenRoleSelector.hidden = false;
+
+    identityIdTypeSelect.value = '';
+    identityIdNumberInput.value = '';
+    updateStartPaymentState();
+
+    screenIdentityVerification.hidden = false;
   });
 
-  btnBackToPaymentFromRole.addEventListener('click', function () {
-    screenRoleSelector.hidden = true;
+  // Identity verification -> volver al método de pago
+  btnBackToPayment.addEventListener('click', function () {
+    screenIdentityVerification.hidden = true;
   });
 
-  // Selector de rol -> confirma "comprando en nombre de" y sigue al banco
-  btnConfirmRole.addEventListener('click', function () {
+  // Identity verification, step: habilita "Continuar" cuando la cédula es válida
+  function updateStartPaymentState() {
+    const valid = identityIdTypeSelect.value !== '' && identityIdNumberInput.value.trim().length >= 5;
+    btnStartPayment.disabled = !valid;
+  }
+
+  identityIdTypeSelect.addEventListener('change', updateStartPaymentState);
+  identityIdNumberInput.addEventListener('input', updateStartPaymentState);
+
+  // Identity verification -> muestra el banco preconfigurado por defecto para esa cédula
+  function selectBankForDefault(bank) {
+    selectedBank = bank;
+    bankSelectedLogo.className = 'bank-logo dot-' + bank.key;
+    bankSelectedLogo.textContent = bank.initials;
+    bankSelectedName.textContent = bank.name;
+
     bankFavorites.querySelectorAll('.bank-favorite').forEach(function (el) {
-      el.classList.remove('selected');
+      el.classList.toggle('selected', el.getAttribute('data-bank') === bank.key);
     });
-    selectedBank = null;
+  }
 
-    screenRoleSelector.hidden = true;
-    screenBankPicker.hidden = false;
+  btnStartPayment.addEventListener('click', function () {
+    screenIdentityVerification.hidden = true;
+    selectBankForDefault(DEFAULT_BANK);
+    screenBankDefault.hidden = false;
   });
 
-  // Bank picker -> volver al selector de rol
-  btnBackToRole.addEventListener('click', function () {
-    screenBankPicker.hidden = true;
-    screenRoleSelector.hidden = false;
+  // Banco por defecto -> volver a la verificación de identidad
+  btnBackToIdentity.addEventListener('click', function () {
+    screenBankDefault.hidden = true;
+    screenIdentityVerification.hidden = false;
   });
 
-  // Step 3: elegir banco favorito abre la verificación de identidad
+  // Banco por defecto, step: elegir un banco distinto del listado siempre visible
   bankFavorites.addEventListener('click', function (e) {
     const favorite = e.target.closest('.bank-favorite');
     if (!favorite) return;
 
-    const bankKey = favorite.getAttribute('data-bank');
-    const bankName = favorite.getAttribute('data-name');
-
-    selectedBank = {
-      key: bankKey,
-      name: bankName,
+    selectBankForDefault({
+      key: favorite.getAttribute('data-bank'),
+      name: favorite.getAttribute('data-name'),
       initials: favorite.querySelector('.bank-logo').textContent
-    };
-
-    identityBankName.textContent = selectedBank.name;
-    identityEmailInput.value = '';
-    identityPhoneInput.value = '';
-    identityIdTypeSelect.value = '';
-    identityIdNumberInput.value = '';
-    selectAuthMethod('email');
-
-    screenBankPicker.hidden = true;
-    screenIdentityVerification.hidden = false;
-  });
-
-  // Identity verification -> volver al selector de banco
-  btnBackToBankPicker.addEventListener('click', function () {
-    screenIdentityVerification.hidden = true;
-    screenBankPicker.hidden = false;
-  });
-
-  // Identity verification, step: elegir cómo autenticarse (correo, celular o cédula)
-  function selectAuthMethod(method) {
-    authMethod = method;
-
-    authMethodList.querySelectorAll('.bank-favorite').forEach(function (el) {
-      el.classList.toggle('selected', el.getAttribute('data-method') === method);
     });
-
-    authFieldEmail.hidden = method !== 'email';
-    authFieldPhone.hidden = method !== 'phone';
-    authFieldId.hidden = method !== 'id';
-
-    updateStartPaymentState();
-  }
-
-  authMethodList.addEventListener('click', function (e) {
-    const method = e.target.closest('.bank-favorite');
-    if (!method) return;
-    selectAuthMethod(method.getAttribute('data-method'));
   });
 
-  // Identity verification, step: habilita "Iniciar pago" cuando el campo activo es válido
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  function updateStartPaymentState() {
-    let valid = false;
-    if (authMethod === 'email') {
-      valid = emailPattern.test(identityEmailInput.value.trim());
-    } else if (authMethod === 'phone') {
-      valid = identityPhoneInput.value.replace(/\D/g, '').length === 10;
-    } else if (authMethod === 'id') {
-      valid = identityIdTypeSelect.value !== '' && identityIdNumberInput.value.trim().length >= 5;
-    }
-    btnStartPayment.disabled = !valid;
-  }
-
-  identityEmailInput.addEventListener('input', updateStartPaymentState);
-  identityPhoneInput.addEventListener('input', updateStartPaymentState);
-  identityIdTypeSelect.addEventListener('change', updateStartPaymentState);
-  identityIdNumberInput.addEventListener('input', updateStartPaymentState);
-
-  // Identity verification -> notificación push simulada del banco
-  btnStartPayment.addEventListener('click', function () {
-    screenIdentityVerification.hidden = true;
+  // Banco por defecto -> notificación push simulada del banco
+  btnConfirmBankDefault.addEventListener('click', function () {
+    screenBankDefault.hidden = true;
 
     pushNotificationIcon.className = 'push-notification-icon dot-' + selectedBank.key;
     pushNotificationIcon.textContent = selectedBank.initials;
@@ -216,6 +178,26 @@
     screenBiometric.hidden = false;
   });
 
+  // Step: selección de la cuenta empresarial a debitar (preselecciona la cuenta principal
+  // definida por el usuario en el onboarding y colapsa el listado completo)
+  function selectAccountForBankApp(item) {
+    bankAppAccountList.querySelectorAll('.account-item').forEach(function (el) {
+      el.classList.remove('selected');
+    });
+    item.classList.add('selected');
+
+    accountSelectedDot.className = item.querySelector('.account-dot').className;
+    accountSelectedName.textContent = item.querySelector('.account-name').textContent;
+    accountSelectedBalance.textContent = item.querySelector('.account-balance').textContent;
+
+    selectedAccount = {
+      name: item.querySelector('.account-name').textContent,
+      balance: item.getAttribute('data-balance')
+    };
+
+    bankAppAccountList.hidden = true;
+  }
+
   // Step: la huella da acceso a la app del banco -> pantalla de cobro y cuentas empresariales
   function completeBiometric() {
     if (screenBiometric.hidden) return;
@@ -224,11 +206,12 @@
     bankAppHeader.className = 'bank-app-header theme-' + selectedBank.key;
     bankAppName.textContent = selectedBank.name;
 
-    bankAppAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
+    const accountItems = bankAppAccountList.querySelectorAll('.account-item');
+    let matched = null;
+    accountItems.forEach(function (el) {
+      if (el.querySelector('.account-name').textContent === DEFAULT_ACCOUNT_NAME) matched = el;
     });
-    btnAuthorizePayment.disabled = true;
-    selectedAccount = null;
+    selectAccountForBankApp(matched || accountItems[0]);
 
     bankAppPaymentView.hidden = false;
     btnAuthorizePayment.hidden = false;
@@ -252,22 +235,15 @@
     screenBankApp.hidden = true;
   });
 
-  // Step: selección de cuenta empresarial a debitar
+  // Step: mostrar/ocultar el listado para elegir una cuenta distinta a la principal
+  btnChangeAccount.addEventListener('click', function () {
+    bankAppAccountList.hidden = !bankAppAccountList.hidden;
+  });
+
   bankAppAccountList.addEventListener('click', function (e) {
     const item = e.target.closest('.account-item');
     if (!item) return;
-
-    bankAppAccountList.querySelectorAll('.account-item').forEach(function (el) {
-      el.classList.remove('selected');
-    });
-    item.classList.add('selected');
-
-    selectedAccount = {
-      name: item.querySelector('.account-name').textContent,
-      balance: item.getAttribute('data-balance')
-    };
-
-    btnAuthorizePayment.disabled = false;
+    selectAccountForBankApp(item);
   });
 
   // Step: autorizar pago desde el banco -> confirmación separada del aprobador interno
@@ -347,5 +323,9 @@
     selectedMethod = null;
     selectedBank = null;
     selectedAccount = null;
+
+    bankListLabel.hidden = true;
+    bankFavorites.hidden = true;
+    bankAppAccountList.hidden = true;
   });
 })();

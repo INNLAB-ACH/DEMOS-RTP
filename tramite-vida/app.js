@@ -31,6 +31,9 @@
   const pushNotificationTitle = document.getElementById('pushNotificationTitle');
   const pushNotificationSubtitle = document.getElementById('pushNotificationSubtitle');
   const pushNotificationAmount = document.getElementById('pushNotificationAmount');
+  const screenPushBiometric = document.getElementById('screenPushBiometric');
+  const fingerprintPushTap = document.getElementById('fingerprintPushTap');
+  const btnCancelPushBiometric = document.getElementById('btnCancelPushBiometric');
 
   const screenTramiteDetail = document.getElementById('screenTramiteDetail');
   const btnBackToNotification = document.getElementById('btnBackToNotification');
@@ -57,9 +60,6 @@
   const bankAppConfirmAccount = document.getElementById('bankAppConfirmAccount');
   const btnReturnToNotification = document.getElementById('btnReturnToNotification');
 
-  const screenBiometric = document.getElementById('screenBiometric');
-  const fingerprintTap = document.getElementById('fingerprintTap');
-
   const screenTrazabilidad = document.getElementById('screenTrazabilidad');
   const trazabilidadSub = document.getElementById('trazabilidadSub');
   const trazTipoTramite = document.getElementById('trazTipoTramite');
@@ -81,8 +81,34 @@
   renderNotification();
 
   pushNotificationCard.addEventListener('click', function () {
-    openTramiteDetail();
+    openPushBiometricCheck();
   });
+
+  // ===================== Paso 1 -> 2: verificación biométrica tras recibir el push =====================
+  function openPushBiometricCheck() {
+    screenPushNotification.hidden = true;
+    screenPushBiometric.hidden = false;
+  }
+
+  function completePushBiometricCheck() {
+    if (screenPushBiometric.hidden) return;
+    screenPushBiometric.hidden = true;
+    openTramiteDetail();
+  }
+
+  fingerprintPushTap.addEventListener('click', completePushBiometricCheck);
+
+  btnCancelPushBiometric.addEventListener('click', function () {
+    screenPushBiometric.hidden = true;
+    screenPushNotification.hidden = false;
+  });
+
+  const pushBiometricObserver = new MutationObserver(function () {
+    if (!screenPushBiometric.hidden) {
+      setTimeout(completePushBiometricCheck, 1500);
+    }
+  });
+  pushBiometricObserver.observe(screenPushBiometric, { attributes: true, attributeFilter: ['hidden'] });
 
   // ===================== Paso 2: detalle del trámite con datos precargados =====================
   function openTramiteDetail() {
@@ -102,7 +128,7 @@
     screenPushNotification.hidden = false;
   });
 
-  // ===================== Paso 2 -> 3: pagar con RTP (abre la app del banco directamente) =====================
+  // ===================== Paso 2 -> 3: pagar con RTP (abre la app del banco) =====================
   btnPayTramite.addEventListener('click', function () {
     bankAppTipoTramite.textContent = tramite.tipoTramite;
     bankAppAmount.textContent = formatCOP(tramite.monto);
@@ -110,14 +136,11 @@
     bankAppTramiteMeta.textContent = 'Radicado ' + tramite.numeroRadicado + ' · Límite ' + tramite.fechaLimite;
 
     screenTramiteDetail.hidden = true;
-    screenBiometric.hidden = false;
+    openBankAppPayment();
   });
 
-  // ===================== Biometría -> app del banco con selección de cuenta =====================
-  function completeBiometric() {
-    if (screenBiometric.hidden) return;
-    screenBiometric.hidden = true;
-
+  // ===================== App del banco con selección de cuenta =====================
+  function openBankAppPayment() {
     // Cuenta por defecto: la primera cuenta queda preseleccionada, sin forzar el click.
     const accountItems = bankAppAccountList.querySelectorAll('.account-item');
     accountItems.forEach(function (el) { el.classList.remove('selected'); });
@@ -136,15 +159,6 @@
 
     screenBankApp.hidden = false;
   }
-
-  fingerprintTap.addEventListener('click', completeBiometric);
-
-  const biometricObserver = new MutationObserver(function () {
-    if (!screenBiometric.hidden) {
-      setTimeout(completeBiometric, 1500);
-    }
-  });
-  biometricObserver.observe(screenBiometric, { attributes: true, attributeFilter: ['hidden'] });
 
   btnCloseBankApp.addEventListener('click', function () {
     screenBankApp.hidden = true;

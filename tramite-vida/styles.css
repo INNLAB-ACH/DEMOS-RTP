@@ -487,6 +487,17 @@ body {
   color: #6b8177;
 }
 
+.biometric-cancel {
+  border: none;
+  background: transparent;
+  color: #0c3b30;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
 /* Confirmation / trazabilidad screen */
 .screen-trazabilidad {
   position: absolute;
